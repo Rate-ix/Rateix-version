@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Retix — Smart B2B Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- Sidebar mobile overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="dashboardSidebar">
+        <div class="sb-logo">
+            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                <div class="sb-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <div>
+                    <h1>Retix</h1>
+                    <span>B2B intelligence</span>
+                </div>
+            </div>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">&times;</button>
+        </div>
+
+        <div class="sb-user" onclick="openShopProfileModal()" style="cursor: pointer; position: relative;"
+            title="Click to manage shop & billing details">
+            <div class="sb-avatar" id="sbInit">R</div>
+            <div class="sb-user-meta">
+                <div class="sb-uname" id="sbName">Loading…</div>
+                <div class="sb-role" style="display: flex; align-items: center; gap: 4px;">
+                    <span>Configure Shop</span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12" height="12"
+                        style="opacity: 0.6; display: inline-block; vertical-align: middle;">
+                        <path
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sb-nav">
+            <div class="sb-label">Enterprise Services</div>
+            <button class="nav-item" id="nav-overview" onclick="nav('overview')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+                <span>Overview</span>
+            </button>
+
+            <button class="nav-item" id="nav-orders" onclick="nav('orders')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <span>Orders Ledger</span>
+            </button>
+
+            <button class="nav-item" id="nav-inventory" onclick="nav('inventory')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span>Smart Inventory</span>
+            </button>
+
+            <button class="nav-item" id="nav-distributors" onclick="nav('distributors')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span>Distributors</span>
+            </button>
+
+            <button class="nav-item" id="nav-khata" onclick="nav('khata')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span>Khata Book</span>
+            </button>
+
+            <button class="nav-item" id="nav-vision" onclick="nav('vision')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>AI Smart Vision</span>
+            </button>
+        </nav>
+
+        <div class="sb-bottom">
+            <button class="logout-btn" id="dashLogout">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>Secure Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="topbar-left" style="display: flex; align-items: center; gap: 16px;">
+                <button class="mobile-toggle-btn" id="mobileToggle" aria-label="Toggle Sidebar">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div>
+                    <div class="page-title" id="pageTitle">Overview</div>
+                    <div class="page-sub" id="pageSub">Real-time enterprise metrics & analytics</div>
+                </div>
+            </div>
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+                <div onclick="openCommandPalette()" class="greeting-pill"
+                    style="cursor: pointer; background: var(--color-brand-glow); border: 1px solid var(--color-brand-border); display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--color-brand); padding: 6px 12px; border-radius: var(--radius-sm);"
+                    title="Press Ctrl + K to search instantly.">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="14" height="14"
+                        style="display: inline-block; vertical-align: middle;">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span style="font-size: 0.75rem;">Search...</span>
+                    <span
+                        style="font-size: 0.6rem; background: var(--color-brand); color: #fff; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-weight: 800;">Ctrl+K</span>
+                </div>
+                <div class="greeting-pill">
+                    <div class="greeting-pulse"></div>
+                    <span>Hello, <strong id="topName">User</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- STATS WIDGETS -->
+            <div class="stats-container">
+                <div class="stat-card accent-saffron">
+                    <div class="stat-card-inner">
+                        <div class="stat-meta">
+                            <span class="stat-label">Total Orders</span>
+                            <span class="stat-num" id="stat-orders">—</span>
+                        </div>
+                        <div class="stat-card-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-footer-line">
+                        <span class="stat-trend trend-up">Active distribution orders</span>
+                    </div>
+                </div>
+
+                <div class="stat-card accent-emerald">
+                    <div class="stat-card-inner">
+                        <div class="stat-meta">
+                            <span class="stat-label">Net Sales Revenue</span>
+                            <span class="stat-num" id="stat-rev">—</span>
+                        </div>
+                        <div class="stat-card-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 8h6m-5 0a3 3 0 110 6h5" />
+                                <path d="M12 3v18" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-footer-line">
+                        <span class="stat-trend trend-up">Direct sales value</span>
+                    </div>
+                </div>
+
+                <div class="stat-card accent-indigo">
+                    <div class="stat-card-inner">
+                        <div class="stat-meta">
+                            <span class="stat-label">Products Tracked</span>
+                            <span class="stat-num" id="stat-inv">—</span>
+                        </div>
+                        <div class="stat-card-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-footer-line">
+                        <span class="stat-trend trend-up">Warehouse inventory count</span>
+                    </div>
+                </div>
+
+                <div class="stat-card accent-amber">
+                    <div class="stat-card-inner">
+                        <div class="stat-meta">
+                            <span class="stat-label">Active Distributors</span>
+                            <span class="stat-num" id="stat-dist">—</span>
+                        </div>
+                        <div class="stat-card-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-footer-line">
+                        <span class="stat-trend trend-up">Supply network partners</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OVERVIEW SECTION -->
+            <div class="section active" id="sec-overview">
+                <div class="sec-head">
+                    <span class="sec-title">Enterprise Dashboard Services</span>
+                </div>
+
+                <!-- Smart Alerts & Insights Panel -->
+                <div class="smart-alerts-panel" id="smartAlertsContainer"
+                    style="display: none; margin-bottom: 24px; padding: 20px; background: #fffbeb; border: 1px solid #fef3c7; border-left: 5px solid var(--color-brand); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                    <h4
+                        style="font-family: var(--font-title); color: var(--color-brand-hover); font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="18"
+                            height="18" style="color: var(--color-brand);">
+                            <path
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Smart Business Alerts
+                    </h4>
+                    <ul id="alertList"
+                        style="list-style-type: none; font-size: 0.88rem; color: var(--color-text); display: flex; flex-direction: column; gap: 8px;">
+                        <!-- Alerts dynamically inserted here -->
+                    </ul>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-card" onclick="nav('orders')">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-saffron">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                            </div>
+                            <div class="service-count-badge" id="ov-orders">0</div>
+                        </div>
+                        <h3>Orders Management</h3>
+                        <p>Supervise dispatch schedules, generate invoices, track status from pending to fulfilled.</p>
+                        <div class="service-card-action">
+                            <span>Access service</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="nav('inventory')">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-emerald">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <div class="service-count-badge" id="ov-inv">0</div>
+                        </div>
+                        <h3>Smart Inventory</h3>
+                        <p>Real-time stock controls, low inventory alerts, category analysis and pricing.</p>
+                        <div class="service-card-action">
+                            <span>Access service</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="nav('distributors')">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-indigo">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+                                </svg>
+                            </div>
+                            <div class="service-count-badge" id="ov-dist">0</div>
+                        </div>
+                        <h3>Distributors Ledger</h3>
+                        <p>Map partner channels, monitor outstanding balances, contact directories, and areas.</p>
+                        <div class="service-card-action">
+                            <span>Access service</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="nav('khata')">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-amber">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253" />
+                                </svg>
+                            </div>
+                            <div class="service-count-badge" id="ov-khata">0</div>
+                        </div>
+                        <h3>Digital Khata Book</h3>
+                        <p>Record business credit (Udhaar) and debit flows. Maintain neat transaction ledgers.</p>
+                        <div class="service-card-action">
+                            <span>Access service</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="nav('vision')">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-indigo"
+                                style="background: rgba(99, 102, 241, 0.08); color: rgb(99, 102, 241);">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </div>
+                            <div class="service-status-pill"
+                                style="background: var(--color-brand-glow); color: var(--color-brand); font-weight: 800;">
+                                ACTIVE</div>
+                        </div>
+                        <h3>AI Smart Vision</h3>
+                        <p>Scan shelves, track customer dwell-time, analyze item picking, and automatically detect
+                            theft.</p>
+                        <div class="service-card-action">
+                            <span>Activate scan</span>
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="service-card disabled-service">
+                        <div class="service-card-header">
+                            <div class="service-icon icon-muted">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                                </svg>
+                            </div>
+                            <div class="service-status-pill">Soon</div>
+                        </div>
+                        <h3>Route Optimizer</h3>
+                        <p>Minimize travel cost, optimize multiple dispatch shipments with smart GPS maps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS SECTION -->
+            <div class="section" id="sec-orders">
+                <div class="sec-head">
+                    <span class="sec-title">Active Orders Ledger</span>
+                    <button class="btn-add" onclick="openNewOrderModal()">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                            height="16">
+                            <path d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Add New Order</span>
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th>Distributor / Store</th>
+                                <th>Quantity / Unit</th>
+                                <th>Total Value</th>
+                                <th>Record Date</th>
+                                <th>Fulfillment</th>
+                                <th class="tbl-actions-head">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-body">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <span>Fetching active orders ledger…</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- INVENTORY SECTION -->
+            <div class="section" id="sec-inventory">
+                <div class="sec-head">
+                    <span class="sec-title">Warehouse Inventory Stocks</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-add" onclick="runAIBillScan()" style="background: #7c3aed; border: none; cursor: pointer;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>Scan Bill</span>
+                        </button>
+                        <button class="btn-add" onclick="runAIInventoryAnalysis()" style="background: #6366f1; border: none; cursor: pointer;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                            <span>AI Analysis</span>
+                        </button>
+                        <button class="btn-add" onclick="openModal('modal-inv')">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add Stock Item</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Product / SKU</th>
+                                <th>Category</th>
+                                <th>In-Stock Quantity</th>
+                                <th>Low-Stock Mark</th>
+                                <th>Cost Price</th>
+                                <th>Stock Status</th>
+                                <th class="tbl-actions-head">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inv-body">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <span>Syncing smart inventory stocks…</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DISTRIBUTORS SECTION -->
+            <div class="section" id="sec-distributors">
+                <div class="sec-head">
+                    <span class="sec-title">Distributors Directory</span>
+                    <button class="btn-add" onclick="openModal('modal-dist')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                            height="16">
+                            <path d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Register Distributor</span>
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Distributor Name</th>
+                                <th>Mobile Number</th>
+                                <th>Location Address</th>
+                                <th>Assigned Territory</th>
+                                <th>Outstanding Balance</th>
+                                <th class="tbl-actions-head">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dist-body">
+                            <tr>
+                                <td colspan="6">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <span>Pulling distributors directory…</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- KHATA SECTION -->
+            <div class="section" id="sec-khata">
+                <div class="sec-head">
+                    <span class="sec-title">Khata Account Ledger</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-add" onclick="runAIKhataAnalysis()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; cursor: pointer;">
+                            <span style="font-size: 1rem;">🤖</span>
+                            <span>AI Analysis + Reminders</span>
+                        </button>
+                        <button class="btn-add" onclick="openModal('modal-khata')">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Record Transaction</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="khata-summary">
+                    <div class="k-sum-card k-received">
+                        <div class="k-sum-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            </svg>
+                        </div>
+                        <div class="k-sum-meta">
+                            <span class="k-sum-lbl">Total Cash In (Received)</span>
+                            <div class="k-sum-val credit" id="k-credit">₹0</div>
+                        </div>
+                    </div>
+
+                    <div class="k-sum-card k-paid">
+                        <div class="k-sum-icon">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+                            </svg>
+                        </div>
+                        <div class="k-sum-meta">
+                            <span class="k-sum-lbl">Total Cash Out (Paid)</span>
+                            <div class="k-sum-val debit" id="k-debit">₹0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Business Associate</th>
+                                <th>Transaction Flow</th>
+                                <th>Transaction Value</th>
+                                <th>Description / Purpose</th>
+                                <th>Billing Date</th>
+                                <th class="tbl-actions-head">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="khata-body">
+                            <tr>
+                                <td colspan="6">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <span>Opening transaction ledgers…</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AI KHATA MODAL -->
+            <div class="modal-bg" id="aiKhataModal" onclick="if(event.target===this)closeModal('aiKhataModal')">
+                <div class="modal-card" style="max-width: 600px; background: #0f172a; color: #e2e8f0; border: 1px solid rgba(99,102,241,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <h3 style="margin: 0; font-family: var(--font-title); color: #a5b4fc; display: flex; align-items: center; gap: 8px;">
+                            📒 AI Khata Analysis
+                        </h3>
+                        <button onclick="closeModal('aiKhataModal')" class="btn-del" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 12px; border-radius: 6px; cursor: pointer;">✕ Close</button>
+                    </div>
+                    <div id="aiKhataContent" style="max-height: 70vh; overflow-y: auto; color: #e2e8f0;">
+                        <div style="text-align: center; padding: 2rem; color: #64748b;">Loading analysis...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI SMART VISION SECTION -->
+            <div class="section" id="sec-vision">
+                <div class="sec-head">
+                    <span class="sec-title">AI Smart Camera Vision & Theft Prevention</span>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <span id="vision-status" class="badge out"
+                            style="display: inline-flex; align-items: center; gap: 6px;">Camera Inactive</span>
+                        <button class="btn-add" id="toggleCameraBtn" onclick="toggleCamera()"
+                            style="background-color: var(--color-brand); border: none; cursor: pointer;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                                <path
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span>Activate AI Camera</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; margin-top: 20px;">
+                    <!-- Left Column: Video Feed & Real-time Scan Overlay -->
+                    <div class="table-container"
+                        style="padding: 24px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); position: relative; min-height: 420px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-md);">
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                            <span id="liveFeedPill"
+                                style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px;">
+                                <span
+                                    style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+                                Live Feed
+                            </span>
+                            <span
+                                style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">AIShield
+                                v2.4</span>
+                        </div>
+
+                        <!-- Video Container -->
+                        <div id="videoContainer"
+                            style="width: 100%; height: 350px; background: #020617; border-radius: var(--radius-md); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05);">
+                            <!-- Real HTML5 Video element used if camera activated -->
+                            <video id="webcamVideo" autoplay playsinline muted
+                                style="width: 100%; height: 100%; object-fit: cover; display: none; transform: scaleX(-1);"></video>
+
+                            <!-- Dynamic Canvas Overlay for mock Bounding Boxes -->
+                            <canvas id="visionOverlayCanvas" width="600" height="350"
+                                style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></canvas>
+
+                            <!-- Inactive State UI -->
+                            <div id="cameraInactiveUI"
+                                style="text-align: center; color: #94a3b8; padding: 40px; z-index: 4;">
+                                <div
+                                    style="background: #1e293b; color: #64748b; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                        width="28" height="28">
+                                        <path
+                                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <h3
+                                    style="color: #f1f5f9; font-size: 1.1rem; margin-bottom: 6px; font-family: var(--font-title);">
+                                    AI Anti-Theft Scanner Offline</h3>
+                                <p style="font-size: 0.8rem; max-width: 340px; margin: 0 auto 20px; line-height: 1.4;">
+                                    Activate your webcam device to initiate real-time behavioral tracking, pose parsing,
+                                    and item picker detection.</p>
+                                <button class="btn-add" onclick="toggleCamera()"
+                                    style="margin: 0 auto; padding: 10px 20px; font-size: 0.82rem; background: var(--color-brand); border: none; cursor: pointer;">Initialize
+                                    Camera</button>
+                            </div>
+
+                            <!-- Mock Laser Scanner line -->
+                            <div id="laserScanner"
+                                style="display: none; position: absolute; left: 0; width: 100%; height: 3px; background: linear-gradient(to right, transparent, var(--color-brand), transparent); box-shadow: 0 0 10px var(--color-brand); z-index: 6; animation: scanLaser 4s ease-in-out infinite;">
+                            </div>
+                        </div>
+
+                        <!-- Trigger simulation alert button -->
+                        <div
+                            style="display: flex; gap: 16px; width: 100%; margin-top: 16px; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.72rem; color: #64748b; margin: 0;">* Note: Camera streams are
+                                processed locally on your device using browser edge models to maintain consumer privacy.
+                            </p>
+                            <button id="triggerMockAlertBtn" class="btn-del" onclick="triggerMockAlert()" disabled
+                                style="padding: 8px 16px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-weight: 700; font-size: 0.8rem; cursor: not-allowed; border-radius: var(--radius-sm);">
+                                Simulate Suspicious Grab
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Real-time Incident Analytics & Log -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Security Stats Panel -->
+                        <div class="table-container"
+                            style="padding: 20px; background: #fff; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); border-radius: var(--radius-lg);">
+                            <h4
+                                style="font-family: var(--font-title); font-size: 0.95rem; margin-bottom: 14px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; color: var(--color-text);">
+                                Incident Analytics</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div
+                                    style="padding: 12px; background: #f8fafc; border-radius: var(--radius-md); text-align: center;">
+                                    <span
+                                        style="font-size: 0.68rem; text-transform: uppercase; color: var(--color-muted); font-weight: 700;">Scanning
+                                        Area</span>
+                                    <div
+                                        style="font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin-top: 2px;">
+                                        Zone A (Shelf)</div>
+                                </div>
+                                <div
+                                    style="padding: 12px; background: #f8fafc; border-radius: var(--radius-md); text-align: center;">
+                                    <span
+                                        style="font-size: 0.68rem; text-transform: uppercase; color: var(--color-muted); font-weight: 700;">Tracked
+                                        People</span>
+                                    <div id="vision-tracked-count"
+                                        style="font-size: 1.15rem; font-weight: 800; color: var(--color-text); margin-top: 2px;">
+                                        0</div>
+                                </div>
+                            </div>
+
+                            <div
+                                style="margin-top: 16px; padding: 12px; background: var(--color-success-bg); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+                                <span
+                                    style="font-size: 0.78rem; font-weight: 600; color: var(--color-success); display: flex; align-items: center; gap: 6px;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-success); display: inline-block;"></span>
+                                    AI Core Security Shield
+                                </span>
+                                <span
+                                    style="font-size: 0.72rem; font-weight: 700; color: var(--color-success);">ACTIVE</span>
+                            </div>
+                        </div>
+
+                        <!-- Live Activity Log -->
+                        <div class="table-container"
+                            style="padding: 20px; background: #fff; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); border-radius: var(--radius-lg); flex: 1; display: flex; flex-direction: column;">
+                            <h4
+                                style="font-family: var(--font-title); font-size: 0.95rem; margin-bottom: 12px; border-bottom: 1px solid var(--color-border); padding-bottom: 8px; color: var(--color-text);">
+                                Real-Time Scanner Log</h4>
+                            <div id="visionActivityLog"
+                                style="font-size: 0.8rem; line-height: 1.6; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 250px; min-height: 180px; color: var(--color-text);">
+                                <div style="color: var(--color-muted); font-style: italic;">No active camera logs...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI ANALYSIS MODAL -->
+    <div class="modal-bg" id="aiAnalysisModal" onclick="if(event.target===this)closeModal('aiAnalysisModal')">
+        <div class="modal-card" style="max-width: 600px; background: #0f172a; color: #e2e8f0; border: 1px solid rgba(99,102,241,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <h3 style="margin: 0; font-family: var(--font-title); color: #a5b4fc; display: flex; align-items: center; gap: 8px;">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20" height="20"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    AI Inventory Analysis
+                </h3>
+                <button onclick="closeModal('aiAnalysisModal')" class="btn-del" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 12px; border-radius: 6px; cursor: pointer;">Close</button>
+            </div>
+            <div id="aiAnalysisContent" style="max-height: 70vh; overflow-y: auto; color: #e2e8f0;">
+                <div style="text-align: center; padding: 2rem; color: #64748b;">Loading analysis...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- Invoice Modal -->
+    <div class="modal-bg" id="modal-invoice" onclick="if(event.target===this)closeModal('modal-invoice')">
+        <div class="modal-card" style="max-width: 650px; background: #f8fafc; padding: 20px;">
+
+            <!-- Invoice Actions Bar (Not Printed) -->
+            <div class="invoice-actions"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-family: var(--font-title); font-size: 1.1rem; color: var(--color-navy);">
+                    Order B2B Invoice Sheet</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-eco" onclick="toggleInkSaver()" class="btn-add"
+                        style="background: #10b981; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;"
+                        title="Reduces border weights and collapses empty rows to save up to 45% printer ink/ribbon.">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                            height="16" style="display: inline-block; vertical-align: middle;">
+                            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span id="inkSaverTxt" style="vertical-align: middle;">Eco Ink Saver: OFF</span>
+                    </button>
+                    <button onclick="window.print()" class="btn-add"
+                        style="background: var(--color-brand); border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                            height="16" style="display: inline-block; vertical-align: middle;">
+                            <path
+                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        <span style="vertical-align: middle;">Print / Download</span>
+                    </button>
+                    <button onclick="sendWhatsAppInvoice()" class="btn-add"
+                        style="background: #059669; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; color: #fff;"
+                        title="Sends the full itemized invoice list and credit link directly to the customer over WhatsApp.">
+                        <svg fill="currentColor" viewBox="0 0 24 24" width="16" height="16"
+                            style="display: inline-block; vertical-align: middle;">
+                            <path
+                                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
+                        </svg>
+                        <span style="vertical-align: middle;">WhatsApp Bill</span>
+                    </button>
+                    <button onclick="closeModal('modal-invoice')" class="btn-del"
+                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; font-size: 0.8rem; border-radius: var(--radius-sm); cursor: pointer;">Close</button>
+                </div>
+            </div>
+
+            <!-- The actual Carbon Bill Pad Card -->
+            <div id="invoiceCarbonPaper"
+                style="background: #ffffff; border: 2px solid #000000; padding: 24px; font-family: 'Courier New', Courier, monospace; color: #000000; box-shadow: var(--shadow-sm); position: relative; border-radius: 2px;">
+
+                <!-- Grid Border Styling -->
+                <div class="inv-inner-border" style="border: 1px double #000000; padding: 12px;">
+
+                    <!-- Header -->
+                    <div class="inv-header-block"
+                        style="display: grid; grid-template-columns: 1.8fr 1fr; border-bottom: 2px solid #000; padding-bottom: 12px; align-items: start;">
+                        <div>
+                            <h1 id="invShopName"
+                                style="font-family: 'Georgia', serif; font-size: 1.6rem; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                                YOUR SHOP NAME</h1>
+                            <p id="invShopAddress"
+                                style="font-size: 0.72rem; margin: 4px 0; line-height: 1.3; max-width: 320px;">Near M2K
+                                Cinemas E 115 Ground Floor Sector8 Rohini New Delhi 110085</p>
+                            <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Email:</strong> <span
+                                    id="invShopEmail">sauravkumaryadav@gmail.com</span></p>
+                            <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Reg No (GSTIN):</strong> <span
+                                    id="invShopGstin" style="text-transform: uppercase;">012345678900012</span></p>
+                        </div>
+                        <div style="text-align: right; font-size: 0.72rem; line-height: 1.5;">
+                            <p style="margin: 0;"><strong>Prop:</strong> <span id="invProprietor">Shaurav Yadav</span>
+                            </p>
+                            <p style="margin: 0;"><strong>Mob:</strong> <span id="invShopPhone">+91 0000000000</span>
+                            </p>
+                            <div class="inv-no-box"
+                                style="margin-top: 12px; border: 1px solid #000; padding: 4px; display: inline-block; text-align: left; background: #fff;">
+                                <p style="margin: 0; font-size: 0.7rem;"><strong>Invoice No:</strong> <span
+                                        id="invNo">00 2489</span></p>
+                                <p style="margin: 0; font-size: 0.7rem;"><strong>Date:</strong> <span
+                                        id="invDate">26-05-2026</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inv-title-banner eco-hide"
+                        style="text-align: center; margin: 10px 0; border: 3px double #000; padding: 4px 0; font-weight: 900; letter-spacing: 2px; font-size: 0.95rem; font-family: 'Georgia', serif;">
+                        INVOICE BOOK
+                    </div>
+
+                    <!-- Customer Info Box -->
+                    <div class="inv-cust-box"
+                        style="display: grid; grid-template-columns: 1fr; border: 1px solid #000; font-size: 0.75rem; margin-bottom: 12px; background: #fff;">
+                        <div class="inv-cust-row"
+                            style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
+                            <strong>Name :</strong>
+                            <span id="invCustName" style="border-bottom: 1px dotted #000; padding-left: 6px;">Sharma
+                                Store</span>
+                        </div>
+                        <div
+                            style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
+                            <strong>Address :</strong>
+                            <span style="border-bottom: 1px dotted #000; padding-left: 6px;">As Registered in
+                                Distributors Log</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 4px 8px;">
+                            <div
+                                style="display: grid; grid-template-columns: 80px 1fr; border-right: 1px solid #000; padding-right: 6px;">
+                                <strong>Phone No:</strong>
+                                <span id="invCustPhone"
+                                    style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 80px 1fr; padding-left: 6px;">
+                                <strong>Pan No:</strong>
+                                <span style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Table Grid -->
+                    <div class="inv-table-outer" style="border: 1px solid #000; background: #fff; margin-bottom: 12px;">
+                        <table
+                            style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left; font-family: 'Courier New', Courier, monospace;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #000; background: #f1f5f9;">
+                                    <th class="eco-hide"
+                                        style="width: 8%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                        Srl N.</th>
+                                    <th style="width: 50%; border-right: 1px solid #000; padding: 6px;">Description of
+                                        Goods</th>
+                                    <th class="eco-hide"
+                                        style="width: 12%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                        HSN</th>
+                                    <th
+                                        style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                        Qty.</th>
+                                    <th
+                                        style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: right;">
+                                        Rate</th>
+                                    <th style="width: 10%; padding: 6px; text-align: right;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceTableBody">
+                                <!-- Dynamically populated rows (1 filled, remaining 9 blank) -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Footer terms and Signatures -->
+                    <div class="inv-footer-sec"
+                        style="display: grid; grid-template-columns: 1.6fr 1fr; font-size: 0.7rem; align-items: end; border-top: 1px solid #000; padding-top: 10px;">
+                        <div>
+                            <p style="margin: 0 0 6px 0;"><strong>Rupees in Words :</strong> <span id="invRupeesWords"
+                                    style="text-decoration: underline; font-weight: 700;">Zero Rupees Only</span></p>
+                            <div id="invQRParent"
+                                style="margin-top: 6px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                <img id="invQRCode" src=""
+                                    style="width: 70px; height: 70px; border: 1px solid #000; padding: 2px; background: #fff;"
+                                    alt="UPI QR Code">
+                                <div>
+                                    <p
+                                        style="margin: 0; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;">
+                                        Scan to Pay UPI</p>
+                                    <p
+                                        style="margin: 2px 0 0 0; font-size: 0.58rem; line-height: 1.2; max-width: 200px;">
+                                        GPay / Paytm / PhonePe. Scan to settle bill instantly.</p>
+                                </div>
+                            </div>
+                            <div class="eco-hide"
+                                style="border: 1px solid #000; padding: 6px; font-size: 0.65rem; background: #fff; max-width: 320px; line-height: 1.3;">
+                                <strong>Terms & Conditions :</strong><br>
+                                1. Warranty & Guarantee will be Provided by the Authorised Company Service.<br>
+                                2. Goods once sold will not be taken back or Exchanged. Goods mentioned above received
+                                in proper Condition. Subject to local Jurisdiction only.
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="inv-total-display"
+                                style="font-size: 0.85rem; font-weight: 800; border: 2px solid #000; padding: 6px; display: inline-block; margin-bottom: 24px; background: #f8fafc; font-family: 'Courier New', monospace; min-width: 120px;">
+                                TOTAL: <span id="invTotalAmt" style="color: #000;">₹0</span>
+                            </div>
+                            <div class="eco-hide" style="text-align: center; margin-top: 10px;">
+                                <span id="invAuthSigName"
+                                    style="font-family: 'Georgia', cursive, serif; font-style: italic; font-weight: 800; font-size: 0.9rem; text-decoration: underline;">Shaurav
+                                    Yadav</span>
+                                <p
+                                    style="margin: 4px 0 0 0; font-size: 0.65rem; border-top: 1px solid #000; display: inline-block; padding-top: 2px; width: 130px;">
+                                    Auth. Signature</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Shop Profile Settings Modal -->
+    <div class="modal-bg" id="modal-shop-profile" onclick="if(event.target===this)closeModal('modal-shop-profile')">
+        <div class="modal-card"
+            style="max-width: 480px; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
+            <div class="modal-header" style="margin-bottom: 18px;">
+                <h2
+                    style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 6px 0;">
+                    Configure Shop Profile</h2>
+                <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Set details for printed B2B billing
+                    invoices</p>
+            </div>
+            <form onsubmit="saveShopProfile(event)" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="form-group">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop / Business Name
+                        *</label>
+                    <input id="sp-shop-name" placeholder="e.g. Gupta Wholesale Store" required
+                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                </div>
+                <div class="form-group">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">GSTIN (GST
+                        Number)</label>
+                    <input id="sp-gstin" placeholder="e.g. 07AAAAA1111A1Z1" maxlength="15"
+                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; text-transform: uppercase; font-family: inherit;">
+                </div>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Proprietor Name
+                            *</label>
+                        <input id="sp-prop-name" placeholder="e.g. Lucky Anish" required
+                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Mobile Number
+                            *</label>
+                        <input id="sp-phone" placeholder="e.g. 9304277935" required
+                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop Address
+                        *</label>
+                    <textarea id="sp-address" placeholder="Enter complete billing address" required
+                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; min-height: 70px; resize: vertical; font-family: inherit;"></textarea>
+                </div>
+                <div
+                    style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
+                    <button type="button" onclick="closeModal('modal-shop-profile')" class="btn-del"
+                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Cancel</button>
+                    <button type="submit" class="btn-add"
+                        style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save
+                        Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal-bg" id="modal-order" onclick="if(event.target===this)closeModal('modal-order')">
+        <div class="modal-card"
+            style="max-width: 680px; width: 90%; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
+            <div class="modal-header" style="margin-bottom: 16px;">
+                <h2
+                    style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 4px 0;">
+                    Record New Order</h2>
+                <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Log a verified distribution
+                    transaction with multiple items</p>
+            </div>
+            <form onsubmit="submitOrder(event)" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="form-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Distributor Store
+                            *</label>
+                        <input id="o-dist" list="inv-distributors-datalist" placeholder="e.g. Sharma Kirana Store"
+                            required
+                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Fulfillment
+                            Status</label>
+                        <select id="o-status"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
+                            <option>Pending</option>
+                            <option>In Transit</option>
+                            <option>Delivered</option>
+                            <option>Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Multi-Item Basket Grid -->
+                <div
+                    style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4
+                            style="margin: 0; font-family: var(--font-title); color: var(--color-navy); font-size: 0.88rem; font-weight: 700;">
+                            Order Basket Items</h4>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button id="btn-voice-dictate" type="button" onclick="toggleVoiceRecognition()"
+                                style="padding: 4px 10px; font-size: 0.75rem; background: #ef4444; border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                                <svg fill="currentColor" viewBox="0 0 24 24" width="12" height="12" id="voice-mic-icon"
+                                    style="display: inline-block;">
+                                    <path
+                                        d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+                                </svg>
+                                <span id="voice-dictate-txt">Voice Type</span>
+                            </button>
+                            <button type="button" onclick="addBasketItemRow()" class="btn-add"
+                                style="padding: 4px 10px; font-size: 0.75rem; background: var(--color-brand); border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" width="12"
+                                    height="12">
+                                    <path d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg> Add Item
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        style="max-height: 160px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+                        <table
+                            style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; font-family: inherit;">
+                            <thead>
+                                <tr
+                                    style="border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.75rem; background: #f1f5f9;">
+                                    <th style="padding: 8px; width: 45%;">Product Name *</th>
+                                    <th style="padding: 8px; width: 20%; text-align: center;">Qty *</th>
+                                    <th style="padding: 8px; width: 25%; text-align: right;">Unit Rate (₹) *</th>
+                                    <th style="padding: 8px; width: 10%; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderBasketBody">
+                                <!-- Dynamically populated rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 8px; font-weight: 700; color: var(--color-navy); font-size: 0.88rem;">
+                        <span>Basket Subtotal:</span>
+                        <span id="basketGrandTotal" style="color: var(--color-brand);">₹0.00</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Internal Audit
+                        Notes</label>
+                    <textarea id="o-notes" rows="2" placeholder="Describe shipment routing parameters…"
+                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                </div>
+
+                <div class="modal-actions"
+                    style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
+                    <button type="button" class="btn-cancel" onclick="closeModal('modal-order')"
+                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Discard</button>
+                    <button type="submit" class="btn-save"
+                        style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save
+                        Order Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div class="modal-bg" id="modal-inv" onclick="if(event.target===this)closeModal('modal-inv')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Add Product Stock</h2>
+                <p>Log wholesale items to smart warehouse registers</p>
+            </div>
+            <form onsubmit="submitInventory(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input id="i-name" placeholder="e.g. Fortune Mustard Oil 5L" required>
+                    </div>
+                    <div class="form-group">
+                        <label>SKU Registry Code</label>
+                        <input id="i-sku" placeholder="e.g. MUST-5L-003">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Stock Category</label>
+                        <input id="i-cat" placeholder="e.g. Kitchen Supplies">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Unit</label>
+                        <input id="i-unit" placeholder="units / liters / pouches" value="units">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Wholesale Quantity *</label>
+                        <input id="i-qty" type="number" min="0" placeholder="250" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Low Stock Warning Limit</label>
+                        <input id="i-reorder" type="number" min="0" placeholder="15" value="15">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Buying Price per Unit (INR)</label>
+                        <input id="i-buy" type="number" step="0.01" placeholder="480">
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price per Unit (INR)</label>
+                        <input id="i-sell" type="number" step="0.01" placeholder="520">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Register Product</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('modal-inv')">Discard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Distributor Modal -->
+    <div class="modal-bg" id="modal-dist" onclick="if(event.target===this)closeModal('modal-dist')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Register Supply Partner</h2>
+                <p>Register external logistics/distribution agent accounts</p>
+            </div>
+            <form onsubmit="submitDistributor(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Distributor Name *</label>
+                        <input id="d-name" placeholder="e.g. Krishna Enterprises" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Primary Phone *</label>
+                        <input id="d-phone" placeholder="98765xxxxx" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Warehouse / Location</label>
+                        <input id="d-loc" placeholder="e.g. Okhla Phase 3, New Delhi">
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Territory</label>
+                        <input id="d-territory" placeholder="e.g. South Delhi Region">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Outstanding Advance Balance (INR)</label>
+                    <input id="d-balance" type="number" step="0.01" placeholder="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Supply Logistics Notes</label>
+                    <textarea id="d-notes" rows="2"
+                        placeholder="Specify credit period terms, truck load capacity parameters…"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Verify & Save Partner</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('modal-dist')">Discard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Khata Modal -->
+    <div class="modal-bg" id="modal-khata" onclick="if(event.target===this)closeModal('modal-khata')">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Record Cash Book Entry</h2>
+                <p>Save direct ledger cash inflow or outflow records</p>
+            </div>
+            <form onsubmit="submitKhata(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Associate Associate Name *</label>
+                        <input id="k-party" placeholder="e.g. Ramesh Chandra & Sons" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction Type *</label>
+                        <select id="k-type">
+                            <option>Credit</option>
+                            <option>Debit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Flow Amount (INR) *</label>
+                        <input id="k-amount" type="number" step="0.01" placeholder="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Transaction Date</label>
+                        <input id="k-date" type="date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Detailed Description</label>
+                    <textarea id="k-desc" rows="2"
+                        placeholder="Specify items purchase details, outstanding bill number…"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Save Cash Entry</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('modal-khata')">Discard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Datalist Autocompletes -->
+    <datalist id="inv-products-datalist"></datalist>
+    <datalist id="inv-distributors-datalist"></datalist>
+
+    <!-- Command Palette Modal -->
+    <div class="modal-bg" id="modal-command-palette"
+        onclick="if(event.target===this)closeModal('modal-command-palette')">
+        <div class="modal-card"
+            style="max-width: 520px; width: 90%; background: #ffffff; padding: 20px; border-radius: var(--radius-lg); position: relative; margin-top: 60px;">
+            <div
+                style="display: flex; align-items: center; border-bottom: 2px solid var(--color-border); padding-bottom: 10px; margin-bottom: 14px; gap: 10px;">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20" height="20"
+                    style="color: var(--color-brand);">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input id="cmdSearchInput" oninput="queryCommandPalette()"
+                    placeholder="Search anything (e.g. Products, Khata, Nav sections...)"
+                    style="border: none; width: 100%; font-size: 1rem; outline: none; font-family: inherit; color: var(--color-navy);">
+                <span
+                    style="font-size: 0.65rem; background: #e2e8f0; color: #64748b; padding: 3px 8px; border-radius: 4px; font-weight: 700; white-space: nowrap; font-family: monospace;">ESC</span>
+            </div>
+            <div id="cmdPaletteResults"
+                style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                <!-- Results populated by Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST notification systems -->
+    <div class="toast" id="toast">
+        <div class="toast-indicator"></div>
+        <div class="toast-content">
+            <div class="toast-title" id="tTitle">Notification Title</div>
+            <div class="toast-msg" id="tMsg">Short description message.</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker registered successfully!', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
