@@ -5,11 +5,16 @@
 
 -- 1. PROFILES (already created, skip if exists)
 CREATE TABLE IF NOT EXISTS public.profiles (
-  id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name   TEXT NOT NULL,
-  email       TEXT NOT NULL,
-  phone       TEXT,
-  created_at  TIMESTAMPTZ DEFAULT NOW()
+  id              UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name       TEXT NOT NULL,
+  email           TEXT NOT NULL,
+  phone           TEXT,
+  shop_name       TEXT,
+  gstin           TEXT,
+  shop_address    TEXT,
+  upi_id          TEXT,
+  business_type   TEXT DEFAULT 'retail',
+  created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 2. ORDERS
@@ -82,8 +87,10 @@ ALTER TABLE public.khata       ENABLE ROW LEVEL SECURITY;
 -- PROFILES
 DROP POLICY IF EXISTS "profiles_insert" ON public.profiles;
 DROP POLICY IF EXISTS "profiles_select" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update" ON public.profiles;
 CREATE POLICY "profiles_insert" ON public.profiles FOR INSERT WITH CHECK (true);
 CREATE POLICY "profiles_select" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "profiles_update" ON public.profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 
 -- ORDERS
 DROP POLICY IF EXISTS "orders_all" ON public.orders;

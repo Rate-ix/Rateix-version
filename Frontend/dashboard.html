@@ -229,6 +229,15 @@
                 </div>
 
 
+                <!-- SMART ALERTS PANEL -->
+                <div id="smartAlertsContainer" style="display: none; margin-bottom: 24px; background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: var(--radius-md); padding: 16px 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span style="font-size: 1.1rem;">⚠️</span>
+                        <h4 style="margin: 0; font-family: var(--font-title); color: #ef4444; font-size: 0.95rem;">Smart Alerts</h4>
+                    </div>
+                    <ul id="alertList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem;"></ul>
+                </div>
+
                 <div class="services-grid">
                     <div class="service-card" onclick="nav('orders')">
                         <div class="service-card-header">
@@ -329,6 +338,59 @@
                             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M9 5l7 7-7 7" />
                             </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOLD ITEMS SECTION (RECENT SALES) -->
+                <div style="margin-top: 32px;">
+                    <div class="sec-head" style="margin-bottom: 16px;">
+                        <span class="sec-title" style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                            <span>📦 Sold Items (Recent Sales)</span>
+                        </span>
+                    </div>
+                    <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Product Details</th>
+                                    <th>Customer</th>
+                                    <th>Qty Sold</th>
+                                    <th>Rate</th>
+                                    <th>Total Value</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sold-items-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-muted);">
+                                        No items sold yet. Start selling to see them here!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TOTALS SUMMARY BAR -->
+                <div class="totals-summary-bar" style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="background: rgba(99, 102, 241, 0.04); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
+                        <div style="background: rgba(99, 102, 241, 0.1); color: var(--color-brand); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            📥
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Stock Value (Added Items)</div>
+                            <div id="overview-total-stock-val" style="font-size: 1.4rem; font-weight: 800; color: var(--color-text); margin-top: 4px;">₹0.00</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
+                        <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            📤
+                        </div>
+                        <div>
+                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Sold Value (From Shop)</div>
+                            <div id="overview-total-sold-val" style="font-size: 1.4rem; font-weight: 800; color: #10b981; margin-top: 4px;">₹0.00</div>
                         </div>
                     </div>
                 </div>
@@ -882,6 +944,32 @@
                                 2. Goods once sold will not be taken back or Exchanged. Goods mentioned above received
                                 in proper Condition. Subject to local Jurisdiction only.
                             </div>
+                            
+                            <!-- GST BREAKDOWN TABLE -->
+                            <div id="invGstBreakdown" style="margin-top: 8px; font-size: 0.62rem; display: none; max-width: 320px;">
+                                <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; text-align: right; font-family: inherit;">
+                                    <tr style="border-bottom: 1px solid #000; background: #f8fafc; font-weight: bold;">
+                                        <td style="padding: 2px 4px; text-align: left;">Taxable Value</td>
+                                        <td style="padding: 2px 4px;" id="invTaxableVal">₹0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px dashed #000;">
+                                        <td style="padding: 2px 4px; text-align: left;">CGST</td>
+                                        <td style="padding: 2px 4px;" id="invCgstVal">₹0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px dashed #000;">
+                                        <td style="padding: 2px 4px; text-align: left;">SGST</td>
+                                        <td style="padding: 2px 4px;" id="invSgstVal">₹0.00</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px dashed #000; display: none;" id="rowInvIgst">
+                                        <td style="padding: 2px 4px; text-align: left;">IGST (18%)</td>
+                                        <td style="padding: 2px 4px;" id="invIgstVal">₹0.00</td>
+                                    </tr>
+                                    <tr style="font-weight: bold; border-top: 1px solid #000;">
+                                        <td style="padding: 2px 4px; text-align: left;">Total GST</td>
+                                        <td style="padding: 2px 4px;" id="invTotalGstVal">₹0.00</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                         <div style="text-align: right;">
                             <div class="inv-total-display"
@@ -971,9 +1059,17 @@
                 <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Add a new customer order with items</p>
             </div>
             <form onsubmit="submitOrder(event)" style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="form-row" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px;">
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Customer Name *</label>
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Type *</label>
+                        <select id="o-type" onchange="toggleOrderTypeLabel()"
+                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
+                            <option value="Sale">Sale (Outflow)</option>
+                            <option value="Purchase">Purchase (Inflow)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="lbl-o-dist" style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Customer Name *</label>
                         <input id="o-dist" list="inv-distributors-datalist" placeholder="e.g. Sharma Kirana Store"
                             required
                             style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">

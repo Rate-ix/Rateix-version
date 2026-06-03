@@ -2,7 +2,7 @@ const CACHE_NAME = 'retix-v1';
 const ASSETS = [
     './',
     './index.html',
-    './styles.css',
+    './style.css',
     './app.js',
     './dashboard.html',
     './dashboard.css',
