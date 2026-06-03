@@ -66,12 +66,12 @@ function nav(section) {
     document.getElementById('sec-' + section).classList.add('active');
     document.getElementById('nav-' + section).classList.add('active');
     const titles = {
-        overview: ['Overview', 'Real-time enterprise metrics & analytics'],
-        orders: ['Orders Ledger', 'Manage your verified B2B orders'],
-        inventory: ['Smart Inventory', 'Real-time stock controls & warnings'],
-        distributors: ['Distributors Directory', 'Manage supply partner channels'],
-        khata: ['Khata Ledger', 'Record direct cash inflow & outflow records'],
-        vision: ['AI Smart Vision', 'Real-time AI behavioral scanning & anti-theft protection']
+        overview: ['Overview', "Your shop's summary and daily metrics"],
+        orders: ['Orders Ledger', 'Track bills and delivery status'],
+        inventory: ['Stock Items', 'Track stock levels, low-stock alerts, and pricing'],
+        distributors: ['Suppliers Directory', 'Manage suppliers and balances'],
+        khata: ['Khata Book', 'Record cash coming in and going out'],
+        vision: ['AI Smart Camera', 'Real-time camera view and theft detection']
     };
     const t = titles[section];
     document.getElementById('pageTitle').textContent = t[0];
@@ -140,21 +140,21 @@ async function loadOverview() {
         }
     });
 
-    // Detect outstanding customer/distributor balances (negative balance is due money)
+    // Detect outstanding customer/supplier balances (negative balance is due money)
     const ddata = distributorsRes.data || [];
     ddata.forEach(dist => {
         if (dist.balance < 0) {
             const debtVal = Math.abs(dist.balance);
-            const message = `Hi ${dist.name}, this is a gentle reminder from Retix regarding an outstanding credit balance of Rs. ${debtVal}. Please process this settlement as soon as possible. Thank you!`;
+            const message = `Hi ${dist.name}, this is a gentle reminder regarding the outstanding balance of Rs. ${debtVal}. Please settle it when you can. Thank you!`;
             const waLink = `https://wa.me/91${dist.phone}?text=${encodeURIComponent(message)}`;
-            alerts.push(`💸 Outstanding Credit: <strong>${dist.name}</strong> owes you <strong>${fmt(debtVal)}</strong>. <a href="${waLink}" target="_blank" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Send WhatsApp Nudge</a>`);
+            alerts.push(`💸 Pending Balance: <strong>${dist.name}</strong> owes you <strong>${fmt(debtVal)}</strong>. <a href="${waLink}" target="_blank" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Send WhatsApp Reminder</a>`);
         }
     });
 
     // C. Profile Check Alert
     const { data: profile } = await sb.from('profiles').select('shop_name, shop_address').eq('id', uid).single();
     if (!profile?.shop_name || !profile?.shop_address || profile?.shop_name === "YOUR SHOP NAME" || profile?.shop_address.includes("Near M2K Cinemas")) {
-        alerts.push(`⚙️ <strong>Invoice Setup:</strong> Please customize your own shop details so printed duplicate invoices fully fit you! <a href="#" onclick="openShopProfileModal(); return false;" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Set Up Your Shop Profile</a>`);
+        alerts.push(`⚙️ <strong>Shop Setup:</strong> Please customize your own shop details so printed bills show your name! <a href="#" onclick="openShopProfileModal(); return false;" style="color: var(--color-brand); font-weight: 700; text-decoration: underline; margin-left: 8px;">Set Up Your Shop Profile</a>`);
     }
 
     // 2. Render warning panel in DOM
@@ -236,10 +236,10 @@ async function submitInventory(e) {
         selling_price
     });
 
-    if (btn) { btn.textContent = 'Register Product'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Add Product'; btn.disabled = false; }
 
     if (error) { toast('Error', error.message, true); return; }
-    toast('Product Registered ✅', `${product_name} added to smart inventory.`);
+    toast('Product Added ✅', `${product_name} added to stock.`);
     closeModal('modal-inv');
     e.target.reset();
     loadInventory(); loadOverview();
@@ -248,7 +248,7 @@ async function submitInventory(e) {
 async function submitDistributor(e) {
     e.preventDefault();
     const name = document.getElementById('d-name').value.trim();
-    if (!name) { toast('Error', 'Distributor name is required.', true); return; }
+    if (!name) { toast('Error', 'Supplier name is required.', true); return; }
 
     const btn = e.target.querySelector('.btn-save');
     if (btn) { btn.textContent = 'Processing...'; btn.disabled = true; }
@@ -263,10 +263,10 @@ async function submitDistributor(e) {
         notes: document.getElementById('d-notes')?.value.trim() || ''
     });
 
-    if (btn) { btn.textContent = 'Verify & Save Partner'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Save Supplier'; btn.disabled = false; }
 
     if (error) { toast('Error', error.message, true); return; }
-    toast('Distributor Registered ✅', `${name} added to your network.`);
+    toast('Supplier Added ✅', `${name} added to your suppliers list.`);
     closeModal('modal-dist');
     e.target.reset();
     loadDistributors(); loadOverview();
@@ -276,7 +276,7 @@ async function submitKhata(e) {
     e.preventDefault();
     const party_name = document.getElementById('k-party').value.trim();
     const amount = parseFloat(document.getElementById('k-amount').value);
-    if (!party_name) { toast('Error', 'Associate name is required.', true); return; }
+    if (!party_name) { toast('Error', 'Customer / Supplier name is required.', true); return; }
     if (isNaN(amount) || amount <= 0) { toast('Error', 'Enter a valid amount.', true); return; }
 
     const btn = e.target.querySelector('.btn-save');
@@ -291,10 +291,10 @@ async function submitKhata(e) {
         entry_date: document.getElementById('k-date')?.value || new Date().toISOString().split('T')[0]
     });
 
-    if (btn) { btn.textContent = 'Save Cash Entry'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Save Entry'; btn.disabled = false; }
 
     if (error) { toast('Error', error.message, true); return; }
-    toast('Khata Entry Saved ✅', `${party_name} transaction recorded.`);
+    toast('Khata Entry Saved ✅', `${party_name} payment recorded.`);
     closeModal('modal-khata');
     e.target.reset();
     loadKhata(); loadOverview();
@@ -446,22 +446,22 @@ async function addOrder(e) {
         notes: notesPayload
     });
 
-    btn.textContent = 'Save Order Entry'; btn.disabled = false;
+    btn.textContent = 'Save Order'; btn.disabled = false;
 
     if (error) {
         toast('Error', error.message, true);
         return;
     }
 
-    toast('Order Recorded! 🎉', `Distribution of ${items.length} items logged successfully.`);
+    toast('Order Recorded! 🎉', `Order with ${items.length} items saved successfully.`);
     closeModal('modal-order');
     loadOrders();
     loadOverview();
 }
 async function delOrder(id) {
-    if (!confirm('Permanently remove this order transaction record?')) return;
+    if (!confirm('Are you sure you want to delete this order?')) return;
     await sb.from('orders').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Record Removed', 'The order entry has been deleted.');
+    toast('Order Removed', 'The order has been removed.');
     loadOrders(); loadOverview();
 }
 
@@ -470,9 +470,9 @@ async function loadInventory() {
     const tbody = document.getElementById('inv-body');
     if (!tbody) return;
     const { data: items, error } = await sb.from('inventory').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-    if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#ef4444">Error loading inventory.</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#ef4444">Error loading stock.</td></tr>`; return; }
     if (!items || items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#64748b">No inventory yet. Add your first stock item!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#64748b">No stock items yet. Add your first stock item!</td></tr>`;
         return;
     }
     tbody.innerHTML = items.map(item => `
@@ -491,7 +491,7 @@ async function loadInventory() {
 async function deleteInventoryItem(id) {
     if (!confirm('Are you sure you want to delete this item?')) return;
     await sb.from('inventory').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Item Deleted', 'The product has been removed from inventory.', false);
+    toast('Item Deleted', 'The product has been removed from stock.', false);
     loadInventory();
 }
 // ═══════════════════════════════
@@ -499,7 +499,7 @@ async function deleteInventoryItem(id) {
 // ═══════════════════════════════
 async function runAIInventoryAnalysis() {
     try {
-        toast('AI Analysis', 'Analyzing your inventory, please wait...', false);
+        toast('AI Analysis', 'Analyzing stock, please wait...', false);
 
         const { data: items } = await sb
             .from('inventory')
@@ -507,7 +507,7 @@ async function runAIInventoryAnalysis() {
             .eq('user_id', currentUser.id);
 
         if (!items || items.length === 0) {
-            toast('No Items', 'Please add some items to inventory first!', true);
+            toast('No Items', 'Please add some items to stock first!', true);
             return;
         }
 
@@ -599,7 +599,7 @@ async function runAIBillScan() {
         const bill = result.data;
         toast('Bill Scanned! ✅', `Found ${bill.items.length} items from ${bill.store_name}`, false);
 
-        const addToInventory = confirm(`Found ${bill.items.length} items!\nDo you want to add them to inventory?`);
+        const addToInventory = confirm(`Found ${bill.items.length} items!\nDo you want to add them to stock?`);
 
         if (addToInventory) {
             for (const item of bill.items) {
@@ -613,7 +613,7 @@ async function runAIBillScan() {
                     reorder_level: 10
                 });
             }
-            toast('Items Added! ✅', 'All items have been added to your inventory.', false);
+            toast('Items Added! ✅', 'All items have been added to your stock.', false);
             loadInventory();
         }
     };
@@ -664,17 +664,17 @@ async function addInventory(e) {
         buying_price,
         selling_price
     });
-    btn.textContent = 'Register Product'; btn.disabled = false;
+    btn.textContent = 'Add Product'; btn.disabled = false;
     if (error) { toast('Error', error.message, true); return; }
-    toast('Product Registered', 'Added to smart stock tracking.');
+    toast('Product Added', 'Added to stock tracking.');
     closeModal('modal-inv');
     e.target.reset();
     loadInventory(); loadOverview();
 }
 async function delInv(id) {
-    if (!confirm('Permanently delete product from smart inventory?')) return;
+    if (!confirm('Are you sure you want to delete this product?')) return;
     await sb.from('inventory').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Product Removed', 'Inventory listing updated.');
+    toast('Product Removed', 'Stock list updated.');
     loadInventory(); loadOverview();
 }
 
@@ -683,9 +683,9 @@ async function loadDistributors() {
     const tbody = document.getElementById('dist-body');
     if (!tbody) return;
     const { data: dists, error } = await sb.from('distributors').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-    if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading distributors.</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading suppliers.</td></tr>`; return; }
     if (!dists || dists.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No distributors yet. Register your first supply partner!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No suppliers yet. Add your first supplier details!</td></tr>`;
         return;
     }
     tbody.innerHTML = dists.map(d => `
@@ -701,9 +701,9 @@ async function loadDistributors() {
 }
 
 async function deleteDistributor(id) {
-    if (!confirm('Are you sure you want to delete this distributor?')) return;
+    if (!confirm('Are you sure you want to delete this supplier?')) return;
     await sb.from('distributors').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Distributor Deleted', 'The distributor has been removed.', false);
+    toast('Supplier Deleted', 'The supplier has been removed.', false);
     loadDistributors();
 }
 
@@ -712,7 +712,7 @@ async function loadKhata() {
     const tbody = document.getElementById('khata-body');
     if (!tbody) return;
     const { data: entries, error } = await sb.from('khata').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-    if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading khata.</td></tr>`; return; }
+    if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading khata entries.</td></tr>`; return; }
 
     // Update summary totals
     let totalCredit = 0, totalDebit = 0;
@@ -726,7 +726,7 @@ async function loadKhata() {
     if (kDebit) kDebit.textContent = fmt(totalDebit);
 
     if (!entries || entries.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No khata entries yet. Record your first transaction!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No khata entries yet. Record your first entry!</td></tr>`;
         return;
     }
     tbody.innerHTML = entries.map(e => `
@@ -748,15 +748,15 @@ async function deleteKhataEntry(id) {
     loadKhata();
 }
 async function delKhata(id) {
-    if (!confirm('Permanently remove this khata entry?')) return;
+    if (!confirm('Are you sure you want to delete this entry?')) return;
     await sb.from('khata').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Entry Removed', 'Khata entry deleted.');
+    toast('Entry Removed', 'Entry deleted.');
     loadKhata(); loadOverview();
 }
 async function delDist(id) {
-    if (!confirm('Permanently remove this distributor?')) return;
+    if (!confirm('Are you sure you want to delete this supplier?')) return;
     await sb.from('distributors').delete().eq('id', id).eq('user_id', currentUser.id);
-    toast('Distributor Removed', 'Distributor deleted.');
+    toast('Supplier Removed', 'Supplier deleted.');
     loadDistributors(); loadOverview();
 }
 // ═══════════════════════════════
@@ -764,7 +764,7 @@ async function delDist(id) {
 // ═══════════════════════════════
 async function runAIKhataAnalysis() {
     try {
-        toast('AI Khata', 'Analyzing your cash book, please wait...', false);
+        toast('AI Khata', 'Analyzing your khata book, please wait...', false);
 
         const { data: entries } = await sb
             .from('khata')
@@ -772,7 +772,7 @@ async function runAIKhataAnalysis() {
             .eq('user_id', currentUser.id);
 
         if (!entries || entries.length === 0) {
-            toast('No Entries', 'Please add some transactions to the cash book first!', true);
+            toast('No Entries', 'Please add some entries to the khata book first!', true);
             return;
         }
 
@@ -1057,7 +1057,7 @@ async function sendWhatsAppInvoice() {
     const targetPhone = custPhone.replace(/\+/g, '').replace(/[^0-9]/g, '');
 
     if (!targetPhone) {
-        toast('Missing Contact', 'Distributor phone number is missing in directory. Please update settings first.', true);
+        toast('Missing Contact', 'Supplier phone number is missing in directory. Please update settings first.', true);
         return;
     }
 
@@ -1077,7 +1077,7 @@ async function sendWhatsAppInvoice() {
     const upiPayLink = `upi://pay?pa=${merchantUpi}&pn=${encodeURIComponent(shopName)}&am=${order.amount}&tn=RX-${cleanId}`;
 
     text += `⚡ *Scan QR on bill or Pay directly via UPI:* \n${upiPayLink}\n\n`;
-    text += `🍃 _Thank you for your business! Sent via Retix Carbon-Free Invoicing._`;
+    text += `🍃 _Thank you for your business! Sent via Rateix Invoicing._`;
 
     const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
@@ -1339,9 +1339,9 @@ async function toggleCamera() {
         }
 
         isCameraActive = true;
-        addVisionLog("AI Camera Activated. Calibrating edge lenses...", "info");
+        addVisionLog("AI Camera Activated. Calibrating...", "info");
         setTimeout(() => {
-            addVisionLog("Spatial scanner calibrated successfully. Shelf Zone A online.", "success");
+            addVisionLog("Scanner calibrated successfully. Shelf Zone A online.", "success");
             document.getElementById('vision-tracked-count').textContent = "2";
         }, 1000);
 
@@ -1366,9 +1366,9 @@ async function toggleCamera() {
             toggleBtn.querySelector('span').textContent = 'Deactivate Scanner';
         }
         isCameraActive = true;
-        addVisionLog("AI Smart Engine initiated. Simulating edge scanning matrix.", "info");
+        addVisionLog("AI Engine initiated. Simulating scanning...", "info");
         setTimeout(() => {
-            addVisionLog("Virtual bounding matrices active. Tracking Zone A.", "success");
+            addVisionLog("Virtual tracking active. Monitoring Zone A.", "success");
             document.getElementById('vision-tracked-count').textContent = "2";
         }, 1000);
         startVisionRenderingLoop();
@@ -1472,9 +1472,9 @@ function startVisionRenderingLoop() {
             ctx.fillStyle = "#fff";
             ctx.font = "bold 11px sans-serif";
 
-            let stateLabel = obj.pickedItem ? `Carting: ${obj.pickedItem}` : "Inspecting Shelf";
+            let stateLabel = obj.pickedItem ? `Picking: ${obj.pickedItem}` : "Inspecting Shelf";
             if (obj.color === "#ef4444") {
-                stateLabel = "⚠️ SUSPICIOUS BEHAVIOR FLAG";
+                stateLabel = "⚠️ SUSPICIOUS BEHAVIOR";
             }
             ctx.fillText(`${obj.label} | ${stateLabel}`, obj.x + 6, obj.y - 5);
 
@@ -1482,14 +1482,14 @@ function startVisionRenderingLoop() {
             if (Math.random() < 0.005 && isCameraActive && obj.color !== "#ef4444") {
                 const prod = productsList[Math.floor(Math.random() * productsList.length)];
                 obj.pickedItem = prod;
-                addVisionLog(`<strong>${obj.label}</strong> picked up <strong>${prod}</strong>. AI checked pose trajectory: Approved.`, "success");
+                addVisionLog(`<strong>${obj.label}</strong> picked up <strong>${prod}</strong>. AI check: Approved.`, "success");
             }
 
             // Random warning decay back to normal
             if (obj.color === "#ef4444" && Math.random() < 0.008) {
                 obj.color = "#6366f1";
                 obj.pickedItem = null;
-                addVisionLog(`<strong>${obj.label}</strong> suspicious flag resolved. Re-assigned status: Normal.`, "info");
+                addVisionLog(`<strong>${obj.label}</strong> status back to Normal.`, "info");
             }
         });
 
@@ -1504,7 +1504,7 @@ function triggerMockAlert() {
     target.color = "#ef4444";
     target.pickedItem = item;
 
-    addVisionLog(`🚨 <strong>THEFT SHIELD:</strong> <strong>${target.label}</strong> grabbed <strong>${item}</strong> with rapid velocity. Area monitoring triggered!`, "danger");
+    addVisionLog(`🚨 <strong>THEFT ALERT:</strong> <strong>${target.label}</strong> grabbed <strong>${item}</strong>. Area monitoring triggered!`, "danger");
     toast("Theft Alert 🚨", `Camera detected: ${target.label} picked up ${item} suspiciously.`, true);
 }
 
@@ -1515,7 +1515,7 @@ function loadVision() {
     }
     if (isCameraActive) {
         document.getElementById('vision-tracked-count').textContent = "2";
-        addVisionLog("AI Camera calibrated and monitoring actively.", "success");
+        addVisionLog("AI Camera calibrated and monitoring.", "success");
     } else {
         document.getElementById('vision-tracked-count').textContent = "0";
     }
@@ -1573,20 +1573,20 @@ function queryCommandPalette() {
 
     // 1. Navigation items matches
     const navItems = [
-        { title: 'Overview Analytics', action: () => { closeModal('modal-command-palette'); nav('overview'); }, icon: '📊', type: 'Navigation' },
+        { title: 'Overview Summary', action: () => { closeModal('modal-command-palette'); nav('overview'); }, icon: '📊', type: 'Navigation' },
         { title: 'Orders Ledger', action: () => { closeModal('modal-command-palette'); nav('orders'); }, icon: '📋', type: 'Navigation' },
-        { title: 'Smart Warehouse Inventory', action: () => { closeModal('modal-command-palette'); nav('inventory'); }, icon: '📦', type: 'Navigation' },
-        { title: 'Distributors Directory', action: () => { closeModal('modal-command-palette'); nav('distributors'); }, icon: '🤝', type: 'Navigation' },
-        { title: 'Khata Cash Ledger', action: () => { closeModal('modal-command-palette'); nav('khata'); }, icon: '📓', type: 'Navigation' },
-        { title: 'AI Smart Vision Shield', action: () => { closeModal('modal-command-palette'); nav('vision'); }, icon: '🛡️', type: 'Navigation' },
+        { title: 'Stock Items', action: () => { closeModal('modal-command-palette'); nav('inventory'); }, icon: '📦', type: 'Navigation' },
+        { title: 'Suppliers Directory', action: () => { closeModal('modal-command-palette'); nav('distributors'); }, icon: '🤝', type: 'Navigation' },
+        { title: 'Khata Book', action: () => { closeModal('modal-command-palette'); nav('khata'); }, icon: '📓', type: 'Navigation' },
+        { title: 'AI Smart Camera', action: () => { closeModal('modal-command-palette'); nav('vision'); }, icon: '🛡️', type: 'Navigation' },
     ];
 
     // 2. Action items matches
     const actionItems = [
-        { title: 'Record New Multi-Item Order', action: () => { closeModal('modal-command-palette'); openNewOrderModal(); }, icon: '➕', type: 'Action' },
-        { title: 'Add Warehouse Product', action: () => { closeModal('modal-command-palette'); openModal('modal-inv'); }, icon: '📥', type: 'Action' },
-        { title: 'Register Supply Partner', action: () => { closeModal('modal-command-palette'); openModal('modal-dist'); }, icon: '👤', type: 'Action' },
-        { title: 'Record Cash Book Entry', action: () => { closeModal('modal-command-palette'); openModal('modal-khata'); }, icon: '💸', type: 'Action' },
+        { title: 'Add New Order', action: () => { closeModal('modal-command-palette'); openNewOrderModal(); }, icon: '➕', type: 'Action' },
+        { title: 'Add Stock Item', action: () => { closeModal('modal-command-palette'); openModal('modal-inv'); }, icon: '📥', type: 'Action' },
+        { title: 'Add Supplier', action: () => { closeModal('modal-command-palette'); openModal('modal-dist'); }, icon: '👤', type: 'Action' },
+        { title: 'Add Khata Entry', action: () => { closeModal('modal-command-palette'); openModal('modal-khata'); }, icon: '💸', type: 'Action' },
         { title: 'Setup Shop Details', action: () => { closeModal('modal-command-palette'); openShopProfileModal(); }, icon: '⚙️', type: 'Action' }
     ];
 
@@ -1617,7 +1617,7 @@ function queryCommandPalette() {
                     toast('Product Queried 📦', `${p.product_name} is priced at ₹${p.selling_price}.`);
                 },
                 icon: '📦',
-                type: 'Inventory Item'
+                type: 'Stock Item'
             });
         }
     });
@@ -1630,10 +1630,10 @@ function queryCommandPalette() {
                 action: () => {
                     closeModal('modal-command-palette');
                     nav('distributors');
-                    toast('Partner Queried 🤝', `${d.name} balance is ₹${d.balance}.`);
+                    toast('Supplier Queried 🤝', `${d.name} balance is ₹${d.balance}.`);
                 },
                 icon: '👤',
-                type: 'Distributor'
+                type: 'Supplier'
             });
         }
     });

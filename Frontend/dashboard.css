@@ -2,32 +2,26 @@
     --font-main: 'Plus Jakarta Sans', sans-serif;
     --font-title: 'Outfit', sans-serif;
 
-    /* Growly Premium Color Theme with elegant Indian Accents */
-    --color-brand: #E8590C;
-    /* Rich premium Saffron */
-    --color-brand-hover: #C84705;
-    --color-brand-glow: rgba(232, 89, 12, 0.12);
+    /* Elegant Indigo Premium Color Theme matching Landing Page */
+    --color-brand: #4F46E5;
+    --color-brand-hover: #4338CA;
+    --color-brand-glow: rgba(79, 70, 229, 0.12);
 
-    --color-success: #059669;
-    /* Royal Emerald */
-    --color-success-bg: rgba(5, 150, 105, 0.08);
+    --color-success: #10B981;
+    --color-success-bg: rgba(16, 185, 129, 0.08);
 
-    --color-warning: #D97706;
-    /* Indian Ochre/Amber */
-    --color-warning-bg: rgba(217, 119, 6, 0.08);
+    --color-warning: #F59E0B;
+    --color-warning-bg: rgba(245, 158, 11, 0.08);
 
-    --color-danger: #DC2626;
-    /* Deep Alizarin Red */
-    --color-danger-bg: rgba(220, 38, 38, 0.08);
+    --color-danger: #EF4444;
+    --color-danger-bg: rgba(239, 68, 68, 0.08);
 
-    --color-navy: #0B0F19;
-    /* Sidebar Deep Space Navy */
-    --color-navy-light: #161B26;
-    --color-navy-border: rgba(255, 255, 255, 0.08);
+    --color-navy: rgba(255, 255, 255, 0.35);
+    --color-navy-light: rgba(79, 70, 229, 0.06);
+    --color-navy-border: rgba(255, 255, 255, 0.3);
 
-    --color-bg: #F8FAFC;
-    /* Crisp cool slate light grey */
-    --color-card: #FFFFFF;
+    --color-bg: #EEF2F6;
+    --color-card: rgba(255, 255, 255, 0.55);
 
     --color-text: #0F172A;
     /* Slate 900 for modern high contrast readability */
@@ -57,7 +51,7 @@
 
 body {
     font-family: var(--font-main);
-    background-color: var(--color-bg);
+    background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 35%, #F5F3FF 70%, #FDF2F8 100%);
     color: var(--color-text);
     min-height: 100vh;
     display: flex;
@@ -69,6 +63,8 @@ body {
 .sidebar {
     width: 260px;
     background-color: var(--color-navy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     min-height: 100vh;
     position: fixed;
     top: 0;
@@ -108,7 +104,7 @@ body {
     font-family: var(--font-title);
     font-size: 1.25rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-text);
     letter-spacing: -0.5px;
 }
 
@@ -132,7 +128,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-brand), var(--color-warning));
+    background: linear-gradient(135deg, var(--color-brand), #8b5cf6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -151,7 +147,7 @@ body {
 .sb-uname {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--color-text);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -171,7 +167,7 @@ body {
 .sb-label {
     font-size: 0.65rem;
     font-weight: 700;
-    color: #475569;
+    color: var(--color-muted);
     letter-spacing: 1.5px;
     text-transform: uppercase;
     padding: 0 12px 12px;
@@ -184,7 +180,7 @@ body {
     padding: 12px 14px;
     border-radius: var(--radius-md);
     cursor: pointer;
-    color: #94a3b8;
+    color: var(--color-muted);
     font-size: 0.88rem;
     font-weight: 500;
     transition: var(--transition);
@@ -198,7 +194,7 @@ body {
 
 .nav-item:hover {
     background-color: var(--color-navy-light);
-    color: #f1f5f9;
+    color: var(--color-brand);
 }
 
 .nav-item.active {
@@ -255,7 +251,9 @@ body {
 }
 
 .topbar {
-    background-color: var(--color-card);
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--color-border);
     padding: 20px 32px;
     display: flex;
@@ -281,7 +279,9 @@ body {
 }
 
 .greeting-pill {
-    background-color: #fff;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     border: 1px solid var(--color-border);
     padding: 8px 16px;
     border-radius: 50px;
@@ -305,17 +305,17 @@ body {
 @keyframes pulse-ring {
     0% {
         transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(232, 89, 12, 0.5);
+        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5);
     }
 
     70% {
         transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(232, 89, 12, 0);
+        box-shadow: 0 0 0 6px rgba(79, 70, 229, 0);
     }
 
     100% {
         transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(232, 89, 12, 0);
+        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
     }
 }
 
@@ -336,7 +336,9 @@ body {
 }
 
 .stat-card {
-    background-color: var(--color-card);
+    background: var(--color-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 24px;

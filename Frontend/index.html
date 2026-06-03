@@ -4,59 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Retix - Smart inventory, stock management, and distribution intelligence app built for Indian wholesale and retail businesses. Scale your business, manage udhari, automate GST invoicing.">
-    <title>Retix — Smart Inventory & Distribution Intelligence</title>
-
-    <!-- Google Fonts -->
+    <title>Ratix — Simple Kirana Ledger & Stock Manager</title>
+    <meta name="description" content="Manage your local shop credit ledger, send friendly reminders on WhatsApp, and keep track of your stock levels.">
+    
+    <!-- Google Fonts: Outfit (Display) & Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <!-- Stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- Grid Overlay Background -->
-    <div class="grid-overlay"></div>
-    <div class="glow-orb glow-orb-1"></div>
-    <div class="glow-orb glow-orb-2"></div>
-
-    <!-- Navigation -->
+    <!-- Navigation System -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">
-                <span class="logo-dot"></span>
-                Retix
-            </a>
-            <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#how-it-works" class="nav-link">How it Works</a>
-                <div id="unauthNavGroup" style="display: flex; gap: 16px;">
-                    <button class="btn btn-login nav-auth-btn" id="loginBtn">Login</button>
-                    <button class="btn btn-signup nav-auth-btn" id="signupBtn">Sign Up</button>
-                </div>
-                <div id="authNavGroup" style="display: none; align-items: center; gap: 16px;">
-                    <div class="user-badge"
-                        style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600;">
-                        <div class="user-avatar" id="navUserInitials"
-                            style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent-orange); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800;">
-                            U</div>
-                        <span class="user-greeting">Hello, <span id="navUserName"
-                                style="color: var(--accent-orange);">User</span></span>
-                    </div>
-                    <button class="btn btn-login nav-auth-btn" id="logoutBtn"
-                        style="padding: 8px 16px; border: 1px solid var(--border-medium);">Logout</button>
-                </div>
-            </div>
-            <!-- Mobile Menu Toggle -->
+            <a href="#" class="nav-logo">RATIX</a>
+            
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#" class="nav-link" id="navLinkLogin">Sign In</a></li>
+                <li><a href="#" class="nav-link btn-nav-auth" id="navLinkRegister">Register Shop</a></li>
+            </ul>
+
             <button class="mobile-menu-btn" aria-label="Toggle Menu">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </button>
         </div>
     </nav>
@@ -64,826 +38,368 @@
     <!-- Mobile Navigation Drawer -->
     <div class="mobile-nav">
         <a href="#features" class="mobile-nav-link">Features</a>
-        <a href="#how-it-works" class="mobile-nav-link">How it Works</a>
-
-        <div id="unauthMobileGroup"
-            style="display: flex; flex-direction: column; width: 100%; gap: 12px; margin-top: 10px;">
-            <button class="btn btn-login mobile-auth-btn" id="mobileLoginBtn">Login</button>
-            <button class="btn btn-signup mobile-auth-btn" id="mobileSignupBtn">Sign Up</button>
-        </div>
-
-        <div id="authMobileGroup"
-            style="display: none; flex-direction: column; width: 100%; gap: 12px; margin-top: 10px;">
-            <div class="user-badge"
-                style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.1rem; font-weight: 600; margin-bottom: 10px;">
-                <span class="user-greeting">Hello, <span id="mobileUserName"
-                        style="color: var(--accent-orange);">User</span></span>
-            </div>
-            <button class="btn btn-login mobile-auth-btn" id="mobileLogoutBtn">Logout</button>
-        </div>
+        <a href="#" class="mobile-nav-link" id="mobileLinkLogin">Sign In</a>
+        <a href="#" class="mobile-nav-link mobile-auth-btn" id="mobileLinkRegister">Register Shop</a>
     </div>
 
-    <!-- Hero Section -->
+    <!-- Hero Section (Flowora-Inspired Landscape & Floating Glass Cards) -->
     <section class="hero-section">
-        <!-- Background Video -->
-        <div class="hero-video-bg">
-            <video autoplay muted loop playsinline class="video-element">
-                <source src="backgr.mp4" type="video/mp4">
-            </video>
-            <div class="video-overlay"></div>
+        <!-- SVG Rolling Mountains Background with Gradient Sky -->
+        <div class="hero-bg-container">
+            <svg class="hero-svg-bg" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+                <!-- Sky Gradient -->
+                <rect width="1440" height="900" fill="url(#skyGradient)" />
+                
+                <!-- Sun/Glow Source -->
+                <circle cx="720" cy="450" r="400" fill="url(#sunGlow)" opacity="0.6" />
+                
+                <!-- Back Mountains -->
+                <path d="M-100 900 L250 550 L600 750 L1000 480 L1400 780 L1600 900 Z" fill="url(#mountainBack)" opacity="0.8" />
+                
+                <!-- Mid Mountains -->
+                <path d="M-50 900 L350 620 L800 800 L1150 540 L1500 820 L1550 900 Z" fill="url(#mountainMid)" opacity="0.9" />
+                
+                <!-- Front Hills -->
+                <path d="M0 900 L200 750 L550 850 L950 680 L1300 820 L1440 760 L1440 900 Z" fill="url(#mountainFront)" />
+                
+                <!-- Gradients Definitions -->
+                <defs>
+                    <linearGradient id="skyGradient" x1="720" y1="0" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#EEF2F6" />
+                        <stop offset="35%" stop-color="#E0E7FF" />
+                        <stop offset="70%" stop-color="#F5F3FF" />
+                        <stop offset="100%" stop-color="#FDF2F8" />
+                    </linearGradient>
+                    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FDA4AF" stop-opacity="0.3" />
+                        <stop offset="100%" stop-color="#F5F3FF" stop-opacity="0" />
+                    </radialGradient>
+                    <linearGradient id="mountainBack" x1="720" y1="480" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#E9D5FF" />
+                        <stop offset="100%" stop-color="#C084FC" />
+                    </linearGradient>
+                    <linearGradient id="mountainMid" x1="720" y1="540" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#C7D2FE" />
+                        <stop offset="100%" stop-color="#818CF8" />
+                    </linearGradient>
+                    <linearGradient id="mountainFront" x1="720" y1="680" x2="720" y2="900" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#DDD6FE" />
+                        <stop offset="100%" stop-color="#A78BFA" />
+                    </linearGradient>
+                </defs>
+            </svg>
         </div>
+
         <div class="hero-container">
+            <!-- Center Hero Content -->
             <div class="hero-content">
-                <div class="badge-group fade-in">
-                    <div class="badge">
-                        <span class="badge-dot"></span>
-                        Now in Private Beta
-                    </div>
-                    <div class="badge badge-india">
-                        <svg class="india-mini-flag" viewBox="0 0 3 2" width="16" height="11"
-                            style="display:inline-block; border-radius:1px; margin-right:6px; vertical-align:middle; box-shadow:0 1px 2px rgba(0,0,0,0.15)">
-                            <rect width="3" height="2" fill="#059669" />
-                            <rect width="3" height="1.33" fill="#FFF" />
-                            <rect width="3" height="0.67" fill="#FF6B2B" />
-                            <circle cx="1.5" cy="1" r="0.2" fill="#000080" />
-                        </svg>
-                        Made in India
-                    </div>
-                </div>
-                <h1 class="hero-title fade-in">
-                    Your entire distribution network, <span class="highlight">in one screen.</span>
-                </h1>
-                <p class="hero-subtitle fade-in">
-                    Retix empowers Indian wholesalers, distributors, and retailers with smart real-time stock
-                    intelligence, integrated Khata/Udhari tracking, and automated distribution routes.
-                </p>
-                <div class="hero-cta fade-in">
-                    <button class="btn btn-primary btn-large hero-signup-btn" id="heroSignupBtn">Get Started
-                        Now</button>
-                    <span class="cta-note">Premium B2B platform. No credit card required.</span>
+                <h1 class="hero-title">Manage your shop and credit<br>on your <span class="gradient-text">mobile.</span></h1>
+                <p class="hero-subtitle">Ratix makes it easy to keep track of your stock, manage customer credit (Udhari), and send quick digital bills on WhatsApp.</p>
+                
+                <div class="hero-actions-row">
+                    <button class="btn btn-hero-primary" id="heroGetStartedBtn">Get Started Free</button>
                 </div>
             </div>
 
-            <!-- Hero Live Terminal Mockup -->
-            <div class="hero-visual fade-in">
-                <div class="dashboard-terminal">
-                    <div class="terminal-header">
-                        <div class="mockup-dots">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                        <div class="terminal-title">Retix — Terminal Hub</div>
-                        <div class="terminal-status">
-                            <span class="status-pulse"></span>
-                            <span class="status-text">Live Operations</span>
-                        </div>
+            <!-- Floating Glassmorphic Cards (Positioned Absolutely) -->
+            <!-- Card 1: Left Ledger Card -->
+            <div class="float-card card-ledger animate-float-slow">
+                <div class="card-header-row">
+                    <span class="card-icon-box purple-bg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4>Udhari Balance</h4>
+                        <p class="card-sub">Sharma General Store</p>
                     </div>
-                    <div class="terminal-body">
-                        <!-- Dual-Pane Layout -->
-                        <div class="terminal-split">
-                            <!-- Left Pane: Live Dispatch Intelligence -->
-                            <div class="pane-dispatch">
-                                <div class="pane-header">
-                                    <div class="pane-title">Real-Time Transit Log</div>
-                                    <span class="pane-badge">3 Drivers Active</span>
-                                </div>
-                                <div class="dispatch-map-wrap">
-                                    <div class="dispatch-map-grid"></div>
-                                    <div class="dispatch-nodes">
-                                        <div class="map-node node-hub">
-                                            <div class="pulse-ring"></div>
-                                        </div>
-                                        <div class="map-node node-delivery-1"></div>
-                                        <div class="map-node node-delivery-2"></div>
-                                    </div>
-                                    <svg class="dispatch-routes">
-                                        <path d="M 30,120 Q 90,60 180,100" stroke="rgba(255,107,43,0.4)"
-                                            stroke-width="2" fill="none" stroke-dasharray="4,4" class="route-line-1" />
-                                        <path d="M 180,100 Q 230,140 280,60" stroke="rgba(16,185,129,0.4)"
-                                            stroke-width="2" fill="none" stroke-dasharray="4,4" class="route-line-2" />
-                                    </svg>
-                                    <div class="delivery-overlay">
-                                        <div class="vehicle-indicator"></div>
-                                        <div class="delivery-text">
-                                            <span class="vehicle-id">Tempo TS-04</span>
-                                            <span class="vehicle-status">En-route to West Chowk</span>
-                                        </div>
-                                        <div class="delivery-time">ETA 8m</div>
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+                <div class="card-metric-row">
+                    <span class="metric-val">₹18,500</span>
+                    <span class="metric-status success-tag">Sent</span>
+                </div>
+                <div class="card-footer-lbl">WhatsApp reminder sent successfully.</div>
+            </div>
 
-                            <!-- Right Pane: Smart Stock Terminal -->
-                            <div class="pane-stock">
-                                <div class="pane-header">
-                                    <div class="pane-title">Smart Stock Monitor</div>
-                                    <div class="search-micro">
-                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2">
-                                            <circle cx="11" cy="11" r="8"></circle>
-                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                        </svg>
-                                        <span>Search...</span>
-                                    </div>
-                                </div>
-
-                                <div class="stock-terminal-list">
-                                    <!-- Stock Card 1: Fortune Mustard Oil -->
-                                    <div class="terminal-stock-item">
-                                        <div class="item-main">
-                                            <div class="item-details">
-                                                <div class="item-name">Fortune Mustard Oil (1L)</div>
-                                                <div class="item-meta">SKU: FM-104 &bull; Main Rack</div>
-                                            </div>
-                                            <span class="item-badge success">Optimal</span>
-                                        </div>
-                                        <div class="item-progress-wrap">
-                                            <div class="progress-bar-track">
-                                                <div class="progress-bar-fill fill-optimal" style="width: 85%;"></div>
-                                            </div>
-                                            <div class="item-qty">170 / 200 tins</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Stock Card 2: Tata Salt Lite -->
-                                    <div class="terminal-stock-item warning-pulse">
-                                        <div class="item-main">
-                                            <div class="item-details">
-                                                <div class="item-name">Tata Salt Lite (1kg)</div>
-                                                <div class="item-meta">SKU: TS-088 &bull; Low Stock Alert</div>
-                                            </div>
-                                            <span class="item-badge danger">Reorder</span>
-                                        </div>
-                                        <div class="item-progress-wrap">
-                                            <div class="progress-bar-track">
-                                                <div class="progress-bar-fill fill-danger" style="width: 15%;"></div>
-                                            </div>
-                                            <div class="item-qty danger-text">12 / 150 bags</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Stock Card 3: Ashirvaad Atta -->
-                                    <div class="terminal-stock-item">
-                                        <div class="item-main">
-                                            <div class="item-details">
-                                                <div class="item-name">Ashirvaad Atta (5kg)</div>
-                                                <div class="item-meta">SKU: AA-902 &bull; Central Hub</div>
-                                            </div>
-                                            <span class="item-badge warning">Medium</span>
-                                        </div>
-                                        <div class="item-progress-wrap">
-                                            <div class="progress-bar-track">
-                                                <div class="progress-bar-fill fill-warning" style="width: 60%;"></div>
-                                            </div>
-                                            <div class="item-qty">90 / 150 bags</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Card 2: Center Bottom Today's Plan Ledger -->
+            <div class="float-card card-plan animate-float-medium">
+                <div class="card-header-row">
+                    <h4>Today's Orders</h4>
+                </div>
+                <ul class="task-list">
+                    <li class="task-item checked">
+                        <span class="checkbox-box">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <div class="task-desc">
+                            <span>Tata Salt (50 Bags)</span>
+                            <span class="task-time">10:00 AM</span>
                         </div>
+                    </li>
+                    <li class="task-item checked">
+                        <span class="checkbox-box">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <div class="task-desc">
+                            <span>Fortune Oil (10 Cases)</span>
+                            <span class="task-time">12:30 PM</span>
+                        </div>
+                    </li>
+                    <li class="task-item">
+                        <span class="checkbox-box"></span>
+                        <div class="task-desc">
+                            <span>Basmati Rice (20 Bags)</span>
+                            <span class="task-time">03:00 PM</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 3: Right Inventory Progress Card -->
+            <div class="float-card card-stock animate-float-fast">
+                <div class="card-header-row">
+                    <h4>Stock Levels</h4>
+                    <span class="folder-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </span>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-lbl-row">
+                        <span>Oil Stock</span>
+                        <span>82%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar purple-bar" style="width: 82%;"></div>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-lbl-row">
+                        <span>Atta Reserves</span>
+                        <span>35%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar orange-bar" style="width: 35%;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Strip -->
+    <!-- Bento Box Features Grid -->
     <section id="features" class="features-section">
-        <div class="section-container">
+        <div class="container">
             <div class="section-header">
-                <span class="section-sub">Features designed for scale</span>
-                <h2 class="section-title">Built for Indian Kirana & Wholesale Networks</h2>
-                <p class="section-desc">Empower your team with lightning-fast tools designed specifically for local
-                    distribution complexities and quick ledger operations.</p>
+                <span class="sub-title">Dukaan Management</span>
+                <h2 class="section-title">Everything you need for your shop</h2>
+                <p class="section-desc">Easily manage your everyday sales, ledger books, stock alerts, and billing in one simple application.</p>
             </div>
 
-            <div class="features-bento">
-                <!-- Bento 1: Stock Tracking (Large) -->
-                <div class="bento-card bento-large animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
-                            </svg>
-                        </div>
-                        <h3>Real-time Stock Velocity</h3>
-                        <p>Real-time item status with automatic re-order triggers when stock drops below custom safety
-                            margins.</p>
+            <div class="features-grid">
+                <!-- Card 1: Khata Ledger -->
+                <div class="feature-card">
+                    <div class="feature-icon-box orange-tint">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
                     </div>
-                    <div class="bento-visual bento-visual-chart">
-                        <div class="micro-chart-header">
-                            <span>Stock Turnover Rate</span>
-                            <span class="trend-indicator success">
-                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="3">
-                                    <polyline points="18 15 12 9 6 15"></polyline>
-                                </svg>
-                                +24%
-                            </span>
-                        </div>
-                        <div class="micro-bars">
-                            <div class="micro-bar-col">
-                                <div class="micro-bar-fill optimal" style="height: 85%;"></div>
-                                <span class="micro-bar-label">Oil</span>
-                            </div>
-                            <div class="micro-bar-col">
-                                <div class="micro-bar-fill danger-pulse" style="height: 15%;"></div>
-                                <span class="micro-bar-label warning-text">Salt</span>
-                            </div>
-                            <div class="micro-bar-col">
-                                <div class="micro-bar-fill warning" style="height: 60%;"></div>
-                                <span class="micro-bar-label">Atta</span>
-                            </div>
-                            <div class="micro-bar-col">
-                                <div class="micro-bar-fill optimal" style="height: 90%;"></div>
-                                <span class="micro-bar-label">Spices</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
+                    <h3>Digital Khata (Udhari Book)</h3>
+                    <p>Record customer credit (Udhari) easily. Send friendly payment reminders on WhatsApp with direct UPI payment links so you get paid faster.</p>
+                    <div class="card-pill">Udhari Book</div>
                 </div>
 
-                <!-- Bento 2: Udhari/Khata (Medium) -->
-                <div class="bento-card bento-medium animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                            </svg>
-                        </div>
-                        <h3>Automated Udhari Khata</h3>
-                        <p>Track store credits and nudge retailers via automatic, professional WhatsApp ledgers.</p>
+                <!-- Card 2: Smart Inventory -->
+                <div class="feature-card">
+                    <div class="feature-icon-box purple-tint">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        </svg>
                     </div>
-                    <div class="bento-visual bento-visual-ledger">
-                        <div class="ledger-due-card">
-                            <div class="ledger-row">
-                                <span class="ledger-retailer">Gole Market Store</span>
-                                <span class="ledger-amt danger-text">₹18,500</span>
-                            </div>
-                            <div class="ledger-nudge-btn">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
-                                </svg>
-                                <span>WhatsApp Nudge</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
+                    <h3>Stock Tracker</h3>
+                    <p>See your stock levels in real time. Get alerted when popular items like oil, Atta, rice, or sugar are running low, so you can reorder in time.</p>
+                    <div class="card-pill">Stock Alerts</div>
                 </div>
 
-                <!-- Bento 3: GST Invoicing (Medium) -->
-                <div class="bento-card bento-medium animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                            </svg>
-                        </div>
-                        <h3>E-Way Bill & GST</h3>
-                        <p>Generate compliant GST e-way bills and professional invoice slips automatically on dispatch.
-                        </p>
+                <!-- Card 3: 1-Tap Billing -->
+                <div class="feature-card">
+                    <div class="feature-icon-box teal-tint">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
                     </div>
-                    <div class="bento-visual bento-visual-invoice">
-                        <div class="invoice-micro">
-                            <div class="invoice-header">
-                                <span class="invoice-num">#INV-2026-992</span>
-                                <span class="invoice-status-tag">E-Way Active</span>
-                            </div>
-                            <div class="invoice-line"></div>
-                            <div class="invoice-calc-row">
-                                <span>CGST/SGST 18%</span>
-                                <span>₹2,160.00</span>
-                            </div>
-                            <div class="invoice-calc-row total">
-                                <span>Total</span>
-                                <span>₹14,160.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
+                    <h3>Quick GST Billing</h3>
+                    <p>Create simple bills for your customers in seconds. Calculate discounts and GST automatically. Share digital bills directly on WhatsApp or SMS.</p>
+                    <div class="card-pill">Digital Bills</div>
                 </div>
 
-                <!-- Bento 4: Smartphone Barcode (Large) -->
-                <div class="bento-card bento-large animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M3 5v14M21 5v14M7 5v14M17 5v14M12 5v14"></path>
-                            </svg>
-                        </div>
-                        <h3>Smartphone Scanning</h3>
-                        <p>Ditch expensive laser hardware. Scan barcodes, record batch entries, and dispatch stocks via
-                            any phone camera.</p>
+                <!-- Card 4: Voice Kirana -->
+                <div class="feature-card">
+                    <div class="feature-icon-box blue-tint">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"></path>
+                        </svg>
                     </div>
-                    <div class="bento-visual bento-visual-scan">
-                        <div class="scanner-frame">
-                            <div class="scanner-viewfinder">
-                                <div class="scanner-laser"></div>
-                                <div class="scanner-target-box">
-                                    <span class="sku-detect-text">UPC: 89010580023</span>
-                                    <span class="sku-detect-name">Tata Salt Lite</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
+                    <h3>Speak to Add Items</h3>
+                    <p>Add items to bills just by speaking. Dictate in simple voice commands like *"Fortune Oil 10 tins, Ashirvaad Atta 25 bags"* and watch it auto-fill.</p>
+                    <div class="card-pill">Voice Billing</div>
                 </div>
 
-                <!-- Bento 5: Area Demand Insights (Large) -->
-                <div class="bento-card bento-large animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                                <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                            </svg>
-                        </div>
-                        <h3>Area Demand Insights</h3>
-                        <p>Track geographic turnover spikes. Allocate inventory to godowns matching fastest retail
-                            turnover rates.</p>
+                <!-- Card 5: AI Dukaan Eye -->
+                <div class="feature-card">
+                    <div class="feature-icon-box red-tint">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
                     </div>
-                    <div class="bento-visual bento-visual-insights">
-                        <div class="heatmap-matrix">
-                            <div class="heatmap-grid-small"></div>
-                            <div class="heat-point hp-1 active-glow"></div>
-                            <div class="heat-point hp-2"></div>
-                            <div class="heat-point hp-3 active-glow"></div>
-                            <div class="heat-point hp-4"></div>
-                            <div class="insights-indicator">
-                                <span class="insights-loc">West Chowk Godown</span>
-                                <span class="insights-val">High Demand Spikes</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
-                </div>
-
-                <!-- Bento 6: Distributor Flow (Medium) -->
-                <div class="bento-card bento-medium animate-scroll">
-                    <div class="bento-info">
-                        <div class="feature-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <h3>Distributor Transit Flow</h3>
-                        <p>Sync central warehouse items with local delivery tempos, agents, and local store managers
-                            seamlessly.</p>
-                    </div>
-                    <div class="bento-visual bento-visual-transit">
-                        <div class="transit-tracker-timeline">
-                            <div class="timeline-track"></div>
-                            <div class="timeline-step done">
-                                <div class="step-circle">✓</div>
-                                <span class="step-lbl">Dispatched</span>
-                            </div>
-                            <div class="timeline-step active">
-                                <div class="step-circle">2</div>
-                                <span class="step-lbl">In Transit</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature-hover-glow"></div>
+                    <h3>Shop CCTV Alerts</h3>
+                    <p>Keep your shop safe. Connect your security cameras to get instant phone alerts if any item is misplaced or if someone takes stock without scanning.</p>
+                    <div class="card-pill">Shop Security</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="how-section">
-        <div class="section-container">
-            <div class="section-header">
-                <span class="section-sub">Simple, fast onboarding</span>
-                <h2 class="section-title">Digitizing Your Operations in 3 Steps</h2>
-                <p class="section-desc">Transitioning to digital inventory shouldn't feel like a chore. Retix is built
-                    to feel intuitive, powerful, and ultra-fast from day one.</p>
-            </div>
-
-            <!-- State-of-the-Art Interactive Stepper Grid -->
-            <div class="how-interactive-grid">
-                <!-- Left Side: Custom Stepper List -->
-                <div class="stepper-list">
-                    <div class="stepper-track-bg">
-                        <div class="stepper-track-fill"></div>
-                    </div>
-
-                    <!-- Step 1 -->
-                    <div class="stepper-item active" data-step="1">
-                        <div class="step-badge">01</div>
-                        <div class="step-text">
-                            <h4>Rapid Inventory Import</h4>
-                            <p>Upload a wholesale product spreadsheet or use rapid barcode scanning to list all items
-                                under 10 minutes.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="stepper-item" data-step="2">
-                        <div class="step-badge">02</div>
-                        <div class="step-text">
-                            <h4>Monitor Real-Time Logistics</h4>
-                            <p>Watch delivery tempo routes in transit, view geographic demand spikes, and inspect Udhari
-                                balances.</p>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="stepper-item" data-step="3">
-                        <div class="step-badge">03</div>
-                        <div class="step-text">
-                            <h4>Take Action & Fulfill</h4>
-                            <p>Fulfill dispatch orders, trigger automatic WhatsApp payment nudges, and receive direct
-                                UPI clearances.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Side: Dynamic Preview Canvas -->
-                <div class="stepper-preview-container">
-                    <div class="stepper-preview-card">
-                        <!-- Preview Panel 1: Import Visual -->
-                        <div class="step-preview preview-1 active">
-                            <div class="preview-header-micro">
-                                <span class="dot-green"></span>
-                                <span>CSV Spreadsheet Importer</span>
-                            </div>
-                            <div class="import-preview-box">
-                                <div class="import-item success">
-                                    <div class="import-name-wrap">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2.5">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Fortune Mustard Oil (1L)</span>
-                                    </div>
-                                    <span class="import-status">200 Tins Added</span>
-                                </div>
-                                <div class="import-item success delay-1">
-                                    <div class="import-name-wrap">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2.5">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                        <span>Tata Salt Lite (1kg)</span>
-                                    </div>
-                                    <span class="import-status">150 Bags Added</span>
-                                </div>
-                                <div class="import-drag-zone">
-                                    <svg class="cloud-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                                    </svg>
-                                    <span>Drag more wholesale sheets here</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Preview Panel 2: Live Insights Visual -->
-                        <div class="step-preview preview-2">
-                            <div class="preview-header-micro">
-                                <span class="dot-orange"></span>
-                                <span>Logistics Dispatch Monitor</span>
-                            </div>
-                            <div class="insights-preview-box">
-                                <div class="insights-top-row">
-                                    <div class="stat-mini">
-                                        <span class="lbl">Active Dispatches</span>
-                                        <span class="val success-text">4 Tempos</span>
-                                    </div>
-                                    <div class="stat-mini">
-                                        <span class="lbl">Outstanding Udhari</span>
-                                        <span class="val danger-text">₹48,250</span>
-                                    </div>
-                                </div>
-                                <div class="mini-route-progress">
-                                    <div class="route-header">
-                                        <span>Tempo TS-04 &rarr; West Chowk</span>
-                                        <span class="eta-tag">ETA 8 mins</span>
-                                    </div>
-                                    <div class="route-bar-track">
-                                        <div class="route-bar-fill" style="width: 70%;"></div>
-                                        <div class="route-bar-truck"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Preview Panel 3: Fulfill Visual -->
-                        <div class="step-preview preview-3">
-                            <div class="preview-header-micro">
-                                <span class="dot-emerald"></span>
-                                <span>Immediate Settlements</span>
-                            </div>
-                            <div class="settle-preview-box">
-                                <div class="payment-success-card">
-                                    <div class="success-ring-pulse">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="3">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </div>
-                                    <div class="success-details">
-                                        <h4>UPI Payment Cleared</h4>
-                                        <p>Gole Market Store Ledger Updated</p>
-                                        <span class="amt-highlight">+₹18,500.00</span>
-                                    </div>
-                                </div>
-                                <div class="whatsapp-badge-confirm">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                        <path
-                                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
-                                    </svg>
-                                    <span>WhatsApp ledger statement sent</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
+    <!-- Footer Area -->
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <a href="#" class="logo">
-                        <span class="logo-dot"></span>
-                        Retix
-                    </a>
-                    <p class="footer-tagline">Fintech meets Kirana Store intelligence. Empowering Indian distribution
-                        networks to scale confidently and eliminate inventory blackouts.</p>
-                    <div class="made-in-india-footer">
-                        <svg class="india-mini-flag" viewBox="0 0 3 2" width="16" height="11"
-                            style="display:inline-block; border-radius:1px; margin-right:6px; vertical-align:middle; box-shadow:0 1px 2px rgba(0,0,0,0.15)">
-                            <rect width="3" height="2" fill="#059669" />
-                            <rect width="3" height="1.33" fill="#FFF" />
-                            <rect width="3" height="0.67" fill="#FF6B2B" />
-                            <circle cx="1.5" cy="1" r="0.2" fill="#000080" />
-                        </svg>
-                        <span>Made in India</span>
-                    </div>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand-col">
+                    <a href="#" class="footer-logo">RATIX</a>
+                    <p class="footer-desc font-small">Digitizing the backbone of Indian retail with simple ledgers, speech tools, and stock alerts.</p>
                 </div>
-                <div class="footer-links-group">
-                    <div class="footer-col">
-                        <h4>Product</h4>
-                        <a href="#features">Features</a>
-                        <a href="#how-it-works">How it Works</a>
-                        <a href="#" class="footer-login-trigger" id="footerLoginTrigger">Login / Signup</a>
-                    </div>
-                    <div class="footer-col">
-                        <h4>Legal</h4>
-                        <a href="#" id="privacyLink">Privacy Policy</a>
-                        <a href="#" id="termsLink">Terms of Service</a>
-                    </div>
-                    <div class="footer-col">
-                        <h4>Contact</h4>
-                        <a href="mailto:hello@retix.in">hello@retix.in</a>
-                        <span class="contact-location" style="font-size: 0.82rem; color: var(--primary-light);">New
-                            Delhi, India</span>
-                    </div>
+                <div class="footer-links-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h4>Security</h4>
+                    <ul>
+                        <li><a href="#" id="privacyPolicyBtn">Privacy Policy</a></li>
+                        <li><a href="#" id="termsOfServiceBtn">Terms of Service</a></li>
+                    </ul>
                 </div>
             </div>
-
+            
             <div class="footer-bottom">
-                <p class="copyright">&copy; 2026 Retix. All rights reserved.</p>
-                <div class="social-icons">
-                    <a href="#" aria-label="Twitter">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path
-                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-                            </path>
-                        </svg>
-                    </a>
-                    <a href="#" aria-label="LinkedIn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z">
-                            </path>
-                            <rect x="2" y="9" width="4" height="12"></rect>
-                            <circle cx="4" cy="4" r="2"></circle>
-                        </svg>
-                    </a>
-                </div>
+                <p>&copy; 2026 Ratix Technologies Private Limited. All rights reserved.</p>
+                <p class="font-small text-gray">Built for local retailers and distributors nationwide.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Authentication Modal Overlay (Google, Phone) -->
-    <div class="auth-modal-overlay" id="authModal">
-        <div class="auth-modal-card" style="max-height: 90vh; overflow-y: auto;">
-            <button class="auth-modal-close" id="authCloseBtn" aria-label="Close">&times;</button>
-            <div class="auth-modal-header">
-                <div class="india-emblem-large" style="display:flex; justify-content:center; margin-bottom:16px;">
-                    <svg viewBox="0 0 100 100" width="48" height="48"
-                        style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1))">
-                        <circle cx="50" cy="50" r="48" fill="#FFF" stroke="#E2E8F0" stroke-width="2" />
-                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#FF6B2B" transform="rotate(-150 50 50)" />
-                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#059669" transform="rotate(90 50 50)" />
-                        <path d="M50,2 A48,48 0 0,1 98,50 L50,50 Z" fill="#FFF" transform="rotate(-30 50 50)" />
-                        <circle cx="50" cy="50" r="10" fill="none" stroke="#000080" stroke-width="1.5" />
-                        <line x1="50" y1="40" x2="50" y2="60" stroke="#000080" stroke-width="1" />
-                        <line x1="40" y1="50" x2="60" y2="50" stroke="#000080" stroke-width="1" />
-                        <line x1="43" y1="43" x2="57" y2="57" stroke="#000080" stroke-width="0.8" />
-                        <line x1="43" y1="57" x2="57" y2="43" stroke="#000080" stroke-width="0.8" />
-                    </svg>
+    <!-- Interactive Auth Modal (Frosted Glass Popup) -->
+    <div id="authModal" class="auth-modal-overlay">
+        <div class="auth-modal-card glass-modal">
+            <button class="auth-modal-close" id="closeAuthModalBtn">&times;</button>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tabSignup">Register Shop</button>
+                <button class="auth-tab-btn" id="tabLogin">Sign In</button>
+            </div>
+
+            <!-- Sign Up Form -->
+            <form class="auth-form active" id="signupForm">
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="signupStoreName">Shop / Wholesaler Name</label>
+                        <input type="text" id="signupStoreName" placeholder="e.g., Balaji Kirana Store" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupOwnerName">Owner Full Name</label>
+                        <input type="text" id="signupOwnerName" placeholder="e.g., Ramesh Kumar" required>
+                    </div>
                 </div>
-                <h3 id="authModalTitle">Welcome to Retix</h3>
-                <p id="authModalSubtitle">Enterprise Distribution Platform</p>
-            </div>
 
-            <!-- Functional Database Auth Forms -->
-            <div class="db-auth-forms" id="dbAuthFormsContainer">
-
-                <!-- Registration Form -->
-                <form id="dbRegisterForm" class="db-form" style="display:none; flex-direction:column; gap:12px;">
+                <div class="form-row-2">
                     <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Full
-                            Name</label>
-                        <input type="text" id="regName" placeholder="Enter your full name" required
-                            style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        <label for="signupEmail">Your Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="e.g., name@gmail.com" required>
                     </div>
-                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Shop /
-                                Business Name</label>
-                            <input type="text" id="regShopName" placeholder="e.g. Gupta Wholesale Kirana" required
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">GSTIN (GST
-                                Number)</label>
-                            <input type="text" id="regGstin" placeholder="e.g. 07AAAAA1111A1Z1" maxlength="15"
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; text-transform: uppercase;">
-                        </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Minimum 6 characters" required>
                     </div>
-                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Email
-                                Address</label>
-                            <input type="email" id="regEmail" placeholder="business@example.com" required
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
-                        </div>
-                        <div class="form-group">
-                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Mobile
-                                Number</label>
-                            <input type="tel" id="regPhone" placeholder="10-digit mobile number" maxlength="10" required
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
-                        </div>
-                    </div>
-                    <div class="form-row-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="form-group">
-                            <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Business
-                                Type</label>
-                            <select id="regBusinessType" required
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; background: white;">
-                                <option value="Retailer">Retailer (Kirana Store)</option>
-                                <option value="Wholesaler">Wholesaler / Trader</option>
-                                <option value="Distributor">Distributor / Logistics</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label
-                                style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Password</label>
-                            <input type="password" id="regPassword" placeholder="Create secure password" required
-                                minlength="6"
-                                style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="signupPhone">WhatsApp Number</label>
+                        <div class="phone-input-row">
+                            <span class="prefix">+91</span>
+                            <input type="tel" id="signupPhone" placeholder="10-digit number" pattern="[0-9]{10}" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Shop
-                            Address</label>
-                        <textarea id="regShopAddress" placeholder="Enter complete business location address" required
-                            style="width: 100%; padding: 10px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box; resize: vertical; min-height: 50px;"></textarea>
+                        <label for="signupGSTIN">GST Number (GSTIN)</label>
+                        <input type="text" id="signupGSTIN" placeholder="e.g., 07AAAAA0000A1Z5" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" title="Enter a valid 15-character GSTIN format" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"
-                        style="width: 100%; padding: 12px; margin-top: 4px;">Create Account</button>
-                    <p style="text-align: center; font-size: 0.82rem; margin-top: 10px; color: var(--primary-light);">
-                        Already have an account? <a href="#" id="switchToLogin"
-                            style="color: var(--accent-orange); font-weight: 700; text-decoration: none;">Login here</a>
-                    </p>
-                </form>
+                </div>
 
-                <!-- Login Form -->
-                <form id="dbLoginForm" class="db-form" style="display:flex; flex-direction:column; gap:14px;">
+                <div class="form-row-2">
                     <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Email
-                            Address</label>
-                        <input type="email" id="loginIdentifier" placeholder="your@email.com" required
-                            style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        <label for="signupAddress">Shop Address</label>
+                        <input type="text" id="signupAddress" placeholder="Shop No., Market Area" required>
                     </div>
                     <div class="form-group">
-                        <label
-                            style="font-size: 0.8rem; font-weight: 700; color: var(--primary-light);">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required
-                            style="width: 100%; padding: 12px; border: 1px solid rgba(15,23,42,0.1); border-radius: 8px; outline: none; font-family: var(--font-body); margin-top: 4px; box-sizing: border-box;">
+                        <label for="signupPinCode">PIN Code</label>
+                        <input type="text" id="signupPinCode" placeholder="6-digit PIN" pattern="[0-9]{6}" required>
                     </div>
-                    <div style="text-align: right; margin-top: -6px;">
-                        <a href="#" id="forgotPasswordLink"
-                            style="font-size: 0.8rem; color: var(--accent-orange); font-weight: 600; text-decoration: none;">Forgot
-                            Password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary"
-                        style="width: 100%; padding: 14px; margin-top: 4px;">Secure Login</button>
-                    <p style="text-align: center; font-size: 0.85rem; margin-top: 12px; color: var(--primary-light);">
-                        Don't have an account? <a href="#" id="switchToRegister"
-                            style="color: var(--accent-orange); font-weight: 700; text-decoration: none;">Register
-                            here</a></p>
-                </form>
-            </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Create Free Account</button>
+            </form>
 
-            <div class="auth-modal-footer">
-                <p>&copy; 2026 Retix App. Secure B2B Single Sign-On.</p>
+            <!-- Log In Form -->
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Your Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="e.g., name@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Your Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Log In to Shop</button>
+            </form>
+
+            <div id="authStatusMessage" class="auth-status-panel"></div>
+        </div>
+    </div>
+
+    <!-- Legal Terms Modals -->
+    <div id="legalModal" class="legal-modal-overlay">
+        <div class="legal-modal-card">
+            <button class="legal-modal-close" id="closeLegalModalBtn">&times;</button>
+            <div id="legalModalContent" class="legal-modal-inner">
+                <!-- Dynamic Legal Content Loaded Here -->
             </div>
         </div>
     </div>
 
-    <!-- Legal Modal (Privacy & Terms) -->
-    <div class="auth-modal-overlay" id="legalModal">
-        <div class="auth-modal-card" style="max-width: 520px; max-height: 85vh; overflow-y: auto;">
-            <button class="auth-modal-close" id="legalCloseBtn" aria-label="Close">&times;</button>
-            <div class="auth-modal-header" style="text-align: left; margin-bottom: 20px;">
-                <h3 id="legalModalTitle">Privacy Policy</h3>
-                <p id="legalModalSubtitle" style="font-size: 0.8rem; color: var(--primary-light);">Last updated: May
-                    2026</p>
-            </div>
-            <div id="legalModalContent"
-                style="font-size: 0.9rem; color: var(--primary-dark); line-height: 1.6; display: flex; flex-direction: column; gap: 16px; text-align: left;">
-                <!-- Content will be injected dynamically -->
-            </div>
-            <div
-                style="margin-top: 24px; text-align: right; border-top: 1px dashed var(--border-medium); padding-top: 16px;">
-                <button class="btn btn-primary" id="legalCloseBtnSecondary"
-                    style="padding: 10px 22px; font-size: 0.9rem; border-radius: 10px;">I Understand</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Simulated Floating WhatsApp Push Notification Toast -->
-    <div class="simulated-whatsapp-toast" id="whatsappToast">
-        <div class="wa-toast-header">
-            <div class="wa-app-info">
-                <svg class="wa-logo-icon" viewBox="0 0 24 24" width="16" height="16" fill="#25D366">
-                    <path
-                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
-                </svg>
-                <span class="wa-app-name">WhatsApp Business</span>
-            </div>
-            <span class="wa-time">now</span>
-        </div>
-        <div class="wa-toast-body">
-            <span class="wa-sender">Retix OTP Verification</span>
-            <p class="wa-message">Your WhatsApp verification code is: <strong class="wa-otp-highlight"
-                    id="waOtpVal">1234</strong>. Enter this code to verify.</p>
-        </div>
-    </div>
-
-
-    <!-- Toast Notification for Auth feedback -->
-    <div class="toast" id="toast">
-        <div class="toast-content">
-            <svg class="toast-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <div class="toast-message">
-                <span class="toast-title" id="toastTitle">Verification Notification</span>
-                <span class="toast-desc" id="toastDesc">Processing...</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Supabase UMD Bundle (loads synchronously before app.js) -->
+    <!-- Supabase UMD Bundle (loads before app.js) -->
     <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-
-    <!-- App Script -->
+    
+    <!-- App Control JavaScript -->
     <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA Service Worker registered successfully!', reg.scope))
-                    .catch(err => console.error('Service Worker registration failed:', err));
-            });
-        }
-    </script>
 </body>
 
 </html>
