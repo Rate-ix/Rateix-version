@@ -456,6 +456,115 @@ async function submitDistributor(e) {
     loadDistributors(); loadOverview();
 }
 
+// ═══════════════════════════════
+// NEARBY SUPPLIERS FETCH
+// ═══════════════════════════════
+
+function openNearbySuppliersModal() {
+    document.getElementById('nearby-query').value = 'wholesale suppliers';
+    document.getElementById('nearby-results-body').innerHTML = `
+        <tr>
+            <td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-muted);">
+                Click "Search Area" to find suppliers near you.
+            </td>
+        </tr>
+    `;
+    openModal('modal-nearby-suppliers');
+}
+
+function triggerFetchNearbySuppliers() {
+    const tbody = document.getElementById('nearby-results-body');
+    const query = document.getElementById('nearby-query').value.trim() || 'wholesale suppliers';
+    const city = document.getElementById('nearby-city').value.trim();
+    
+    tbody.innerHTML = `<tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><span>Finding suppliers...</span></div></td></tr>`;
+    
+    if (city) {
+        // If city is provided, we can fetch without geolocation
+        aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(city)}&query=${encodeURIComponent(query)}`)
+            .then(res => {
+                if (res.success && res.data && res.data.length > 0) {
+                    renderNearbySuppliers(res.data);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No suppliers found for this search.</td></tr>`;
+                }
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch suppliers.</td></tr>`;
+                console.error(err);
+            });
+    } else {
+        if (!navigator.geolocation) {
+            toast('Error', 'Geolocation is not supported by your browser', true);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            try {
+                const res = await aiCall(`/distributors/${currentUser.id}/nearby?lat=${lat}&lng=${lng}&query=${encodeURIComponent(query)}`);
+                if (res.success && res.data && res.data.length > 0) {
+                    renderNearbySuppliers(res.data);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No nearby suppliers found for this search.</td></tr>`;
+                }
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch nearby suppliers.</td></tr>`;
+                console.error(err);
+            }
+        }, (error) => {
+            toast('Location Error', 'Please allow location access to find nearby suppliers.', true);
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Location access denied.</td></tr>`;
+        });
+    }
+}
+
+function renderNearbySuppliers(suppliers) {
+    const tbody = document.getElementById('nearby-results-body');
+    tbody.innerHTML = suppliers.map((s, index) => {
+        return `
+        <tr>
+            <td><strong>${s.name}</strong><br><small style="color:var(--color-muted);">${s.phone || 'No phone provided'}</small></td>
+            <td>${(s.distance_meters / 1000).toFixed(1)} km</td>
+            <td>${s.location}<br><span class="badge" style="background:#e0e7ff; color:#4f46e5; margin-top:4px;">${s.territory}</span></td>
+            <td style="text-align: center;">
+                <button onclick="addNearbySupplier(this, '${s.name.replace(/'/g, "\\'")}', '${(s.phone || '').replace(/'/g, "\\'")}', '${s.location.replace(/'/g, "\\'")}', '${s.territory.replace(/'/g, "\\'")}')" class="btn-add" style="background: var(--color-brand); border: none; padding: 6px 12px; border-radius: 4px; color: white; cursor: pointer; font-size: 0.75rem;">+ Add</button>
+            </td>
+        </tr>
+    `}).join('');
+}
+
+async function addNearbySupplier(btn, name, phone, location, territory) {
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+    
+    const { error } = await sb.from('distributors').insert({
+        user_id: currentUser.id,
+        name: name,
+        phone: phone || '',
+        location: location || '',
+        territory: territory || '',
+        balance: 0,
+        notes: 'Added from Nearby Search'
+    });
+
+    if (error) { 
+        toast('Error', error.message, true); 
+        btn.textContent = '+ Add';
+        btn.disabled = false;
+        return; 
+    }
+    
+    toast('Supplier Added ✅', `${name} added to your directory.`);
+    btn.textContent = 'Added';
+    btn.style.background = '#10b981';
+    
+    loadDistributors();
+    loadOverview();
+}
+
 async function submitKhata(e) {
     e.preventDefault();
     const party_name = document.getElementById('k-party').value.trim();
@@ -792,36 +901,36 @@ async function runAIInventoryAnalysis() {
             <div style="padding: 1rem;">
                 ${analysis.shortages && analysis.shortages.length > 0 ? `
                     <div style="margin-bottom: 1rem;">
-                        <h4 style="color: #ef4444; margin-bottom: 0.5rem;">⚠️ Shortage Items (${analysis.shortages.length})</h4>
+                        <h4 style="color: var(--color-danger); margin-bottom: 0.5rem;">⚠️ Shortage Items (${analysis.shortages.length})</h4>
                         ${analysis.shortages.map(s => `
-                            <div style="background: #1a1a2e; border: 1px solid #ef4444; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;">
+                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
                                 <strong>${s.product}</strong> —
-                                <span style="color: ${s.status === 'CRITICAL' ? '#ef4444' : '#eab308'}">${s.status}</span>
-                                 <br><small>Current stock: ${s.current_stock} | Need to restock: ${s.restock_amount} more units</small>
+                                <span style="color: ${s.status === 'CRITICAL' ? 'var(--color-danger)' : 'var(--color-warning)'}">${s.status}</span>
+                                 <br><small style="color: var(--color-muted);">Current stock: ${s.current_stock} | Need to restock: ${s.restock_amount} more units</small>
                             </div>
                         `).join('')}
                     </div>
-                ` : '<p style="color: #22c55e;">✅ All stock levels are healthy!</p>'}
+                ` : '<p style="color: var(--color-success); font-weight: 500;">✅ All stock levels are healthy!</p>'}
 
                 ${analysis.healthy_stock && analysis.healthy_stock.length > 0 ? `
                     <div style="margin-bottom: 1rem;">
-                        <h4 style="color: #22c55e; margin-bottom: 0.5rem;">✅ Healthy Stock</h4>
-                        <p>${analysis.healthy_stock.join(', ')}</p>
+                        <h4 style="color: var(--color-success); margin-bottom: 0.5rem;">✅ Healthy Stock</h4>
+                        <p style="color: var(--color-text);">${analysis.healthy_stock.join(', ')}</p>
                     </div>
                 ` : ''}
 
                 <div style="margin-bottom: 1rem;">
-                    <h4 style="color: #6366f1; margin-bottom: 0.5rem;">💡 AI Recommendations</h4>
+                    <h4 style="color: var(--color-brand); margin-bottom: 0.5rem;">💡 AI Recommendations</h4>
                     ${(analysis.recommendations || []).map(r => `
-                        <div style="background: #1a1a2e; border-left: 3px solid #6366f1; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; border-radius: 0 8px 8px 0;">
+                        <div style="background: rgba(79, 70, 229, 0.05); border-left: 3px solid var(--color-brand); border: 1px solid rgba(79, 70, 229, 0.15); border-left-width: 3px; padding: 0.5rem 0.75rem; margin-bottom: 0.5rem; border-radius: 0 8px 8px 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--color-text);">
                             ${r}
                         </div>
                     `).join('')}
                 </div>
 
                 <div>
-                    <h4 style="color: #f59e0b; margin-bottom: 0.5rem;">🚨 Urgent Restock</h4>
-                    <p style="color: #f59e0b;">${(analysis.urgent_restock || []).join(', ') || '—'}</p>
+                    <h4 style="color: var(--color-warning); margin-bottom: 0.5rem;">🚨 Urgent Restock</h4>
+                    <p style="color: var(--color-warning); font-weight: 500;">${(analysis.urgent_restock || []).join(', ') || '—'}</p>
                 </div>
             </div>
         `;

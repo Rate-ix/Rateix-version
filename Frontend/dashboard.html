@@ -231,12 +231,16 @@
 
 
                 <!-- SMART ALERTS PANEL -->
-                <div id="smartAlertsContainer" style="display: none; margin-bottom: 24px; background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: var(--radius-md); padding: 16px 20px;">
+                <div id="smartAlertsContainer"
+                    style="display: none; margin-bottom: 24px; background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: var(--radius-md); padding: 16px 20px;">
                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
                         <span style="font-size: 1.1rem;">⚠️</span>
-                        <h4 style="margin: 0; font-family: var(--font-title); color: #ef4444; font-size: 0.95rem;">Smart Alerts</h4>
+                        <h4 style="margin: 0; font-family: var(--font-title); color: #ef4444; font-size: 0.95rem;">Smart
+                            Alerts</h4>
                     </div>
-                    <ul id="alertList" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem;"></ul>
+                    <ul id="alertList"
+                        style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem;">
+                    </ul>
                 </div>
 
                 <div class="services-grid">
@@ -348,7 +352,8 @@
                 <!-- SOLD ITEMS SECTION (RECENT SALES) -->
                 <div style="margin-top: 32px;">
                     <div class="sec-head" style="margin-bottom: 16px;">
-                        <span class="sec-title" style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <span class="sec-title"
+                            style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
                             <span>📦 Sold Items (Recent Sales)</span>
                         </span>
                     </div>
@@ -366,7 +371,8 @@
                             </thead>
                             <tbody id="sold-items-body">
                                 <tr>
-                                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-muted);">
+                                    <td colspan="6"
+                                        style="text-align: center; padding: 2rem; color: var(--color-muted);">
                                         No items sold yet. Start selling to see them here!
                                     </td>
                                 </tr>
@@ -376,24 +382,35 @@
                 </div>
 
                 <!-- TOTALS SUMMARY BAR -->
-                <div class="totals-summary-bar" style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div style="background: rgba(99, 102, 241, 0.04); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
-                        <div style="background: rgba(99, 102, 241, 0.1); color: var(--color-brand); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <div class="totals-summary-bar"
+                    style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div
+                        style="background: rgba(99, 102, 241, 0.04); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
+                        <div
+                            style="background: rgba(99, 102, 241, 0.1); color: var(--color-brand); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
                             📥
                         </div>
                         <div>
-                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Stock Value (Added Items)</div>
-                            <div id="overview-total-stock-val" style="font-size: 1.4rem; font-weight: 800; color: var(--color-text); margin-top: 4px;">₹0.00</div>
+                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Stock
+                                Value (Added Items)</div>
+                            <div id="overview-total-stock-val"
+                                style="font-size: 1.4rem; font-weight: 800; color: var(--color-text); margin-top: 4px;">
+                                ₹0.00</div>
                         </div>
                     </div>
-                    
-                    <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
-                        <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+
+                    <div
+                        style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 20px; display: flex; align-items: center; gap: 16px;">
+                        <div
+                            style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
                             📤
                         </div>
                         <div>
-                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Sold Value (From Shop)</div>
-                            <div id="overview-total-sold-val" style="font-size: 1.4rem; font-weight: 800; color: #10b981; margin-top: 4px;">₹0.00</div>
+                            <div style="font-size: 0.8rem; color: var(--color-muted); font-weight: 500;">Total Sold
+                                Value (From Shop)</div>
+                            <div id="overview-total-sold-val"
+                                style="font-size: 1.4rem; font-weight: 800; color: #10b981; margin-top: 4px;">₹0.00
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -443,21 +460,28 @@
                 <div class="sec-head">
                     <span class="sec-title">Stock Items</span>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-add" onclick="runAIBillScan()" style="background: #7c3aed; border: none; cursor: pointer;">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <button class="btn-add" onclick="runAIBillScan()"
+                            style="background: #7c3aed; border: none; cursor: pointer;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
+                                <path
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                                 <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             <span>Scan Bill</span>
                         </button>
-                        <button class="btn-add" onclick="runAIInventoryAnalysis()" style="background: #6366f1; border: none; cursor: pointer;">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        <button class="btn-add" onclick="runAIInventoryAnalysis()"
+                            style="background: #6366f1; border: none; cursor: pointer;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
+                                <path
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
                             <span>AI Analysis</span>
                         </button>
                         <button class="btn-add" onclick="openModal('modal-inv')">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
                                 <path d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                             <span>Add New Item</span>
@@ -495,13 +519,20 @@
             <div class="section" id="sec-distributors">
                 <div class="sec-head">
                     <span class="sec-title">Suppliers Directory</span>
-                    <button class="btn-add" onclick="openModal('modal-dist')">
-                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
-                            height="16">
-                            <path d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        <span>Add Supplier</span>
-                    </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-add" onclick="openNearbySuppliersModal()"
+                            style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer;">
+                            <span style="font-size: 0.9rem; margin-right: 4px;">📍</span>
+                            <span>Find Nearby</span>
+                        </button>
+                        <button class="btn-add" onclick="openModal('modal-dist')">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
+                                <path d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            <span>Add Supplier</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table class="tbl">
@@ -534,12 +565,14 @@
                 <div class="sec-head">
                     <span class="sec-title">Khata Book</span>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-add" onclick="runAIKhataAnalysis()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; cursor: pointer;">
+                        <button class="btn-add" onclick="runAIKhataAnalysis()"
+                            style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; cursor: pointer;">
                             <span style="font-size: 1rem;">🤖</span>
                             <span>AI Analysis</span>
                         </button>
                         <button class="btn-add" onclick="openModal('modal-khata')">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
                                 <path d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                             <span>Add Entry</span>
@@ -555,7 +588,7 @@
                             </svg>
                         </div>
                         <div class="k-sum-meta">
-                            <span class="k-sum-lbl">Cash In (Received)</span>
+                            <span class="k-sum-lbl">Receivable</span>
                             <div class="k-sum-val credit" id="k-credit">₹0</div>
                         </div>
                     </div>
@@ -567,7 +600,7 @@
                             </svg>
                         </div>
                         <div class="k-sum-meta">
-                            <span class="k-sum-lbl">Cash Out (Paid)</span>
+                            <span class="k-sum-lbl">Payable</span>
                             <div class="k-sum-val debit" id="k-debit">₹0</div>
                         </div>
                     </div>
@@ -601,12 +634,17 @@
 
             <!-- AI KHATA MODAL -->
             <div class="modal-bg" id="aiKhataModal" onclick="if(event.target===this)closeModal('aiKhataModal')">
-                <div class="modal-card" style="max-width: 600px; background: #0f172a; color: #e2e8f0; border: 1px solid rgba(99,102,241,0.3);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <h3 style="margin: 0; font-family: var(--font-title); color: #a5b4fc; display: flex; align-items: center; gap: 8px;">
+                <div class="modal-card"
+                    style="max-width: 600px; background: #0f172a; color: #e2e8f0; border: 1px solid rgba(99,102,241,0.3);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <h3
+                            style="margin: 0; font-family: var(--font-title); color: #a5b4fc; display: flex; align-items: center; gap: 8px;">
                             📒 AI Khata Analysis
                         </h3>
-                        <button onclick="closeModal('aiKhataModal')" class="btn-del" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 12px; border-radius: 6px; cursor: pointer;">✕ Close</button>
+                        <button onclick="closeModal('aiKhataModal')" class="btn-del"
+                            style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 12px; border-radius: 6px; cursor: pointer;">✕
+                            Close</button>
                     </div>
                     <div id="aiKhataContent" style="max-height: 70vh; overflow-y: auto; color: #e2e8f0;">
                         <div style="text-align: center; padding: 2rem; color: #64748b;">Loading analysis...</div>
@@ -615,20 +653,38 @@
             </div>
 
             <!-- BILLING SPREADSHEET SECTION -->
-            <div class="section" id="sec-sheet" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+            <div class="section" id="sec-sheet"
+                style="padding: 0; background: transparent; border: none; box-shadow: none;">
 
                 <!-- Section Header -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 28px 28px 20px 28px;">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 28px 28px 20px 28px;">
                     <div>
-                        <h2 style="font-family: var(--font-title); font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.4px;">Billing Spreadsheet</h2>
-                        <p style="font-size: 0.9rem; color: var(--color-muted); margin: 5px 0 0 0;">Enter items, auto-fill prices, update rates, and generate bills</p>
+                        <h2
+                            style="font-family: var(--font-title); font-size: 1.6rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.4px;">
+                            Billing Spreadsheet</h2>
+                        <p style="font-size: 0.9rem; color: var(--color-muted); margin: 5px 0 0 0;">Enter items,
+                            auto-fill prices, update rates, and generate bills</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <button onclick="addSpreadsheetRow()" style="display:flex; align-items:center; gap:8px; padding:11px 22px; background:var(--color-brand); color:#fff; border:none; border-radius:12px; font-size:0.92rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; box-shadow: 0 3px 10px rgba(79,70,229,0.25);" onmouseover="this.style.background='var(--color-brand-hover)'" onmouseout="this.style.background='var(--color-brand)'">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16"><path d="M12 4.5v15m7.5-7.5h-15"/></svg> Add Row
+                        <button onclick="addSpreadsheetRow()"
+                            style="display:flex; align-items:center; gap:8px; padding:11px 22px; background:var(--color-brand); color:#fff; border:none; border-radius:12px; font-size:0.92rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; box-shadow: 0 3px 10px rgba(79,70,229,0.25);"
+                            onmouseover="this.style.background='var(--color-brand-hover)'"
+                            onmouseout="this.style.background='var(--color-brand)'">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                height="16">
+                                <path d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg> Add Row
                         </button>
-                        <button onclick="clearSpreadsheet()" style="display:flex; align-items:center; gap:8px; padding:11px 18px; background:transparent; color:#64748b; border:1px solid #e2e8f0; border-radius:12px; font-size:0.92rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Clear
+                        <button onclick="clearSpreadsheet()"
+                            style="display:flex; align-items:center; gap:8px; padding:11px 18px; background:transparent; color:#64748b; border:1px solid #e2e8f0; border-radius:12px; font-size:0.92rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;"
+                            onmouseover="this.style.background='#f8fafc'"
+                            onmouseout="this.style.background='transparent'">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16"
+                                height="16">
+                                <path
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg> Clear
                         </button>
                     </div>
                 </div>
@@ -636,19 +692,32 @@
                 <!-- Controls Bar -->
                 <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 16px; padding: 0 28px 20px 28px;">
                     <div>
-                        <label style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Party Name *</label>
-                        <input id="sheet-cust-name" list="inv-distributors-datalist" placeholder="e.g. Sharma Kirana Store" style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; transition:border 0.15s; background:#fff; box-sizing:border-box;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                        <label
+                            style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Party
+                            Name *</label>
+                        <input id="sheet-cust-name" list="inv-distributors-datalist"
+                            placeholder="e.g. Sharma Kirana Store"
+                            style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; transition:border 0.15s; background:#fff; box-sizing:border-box;"
+                            onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
                     </div>
                     <div>
-                        <label style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Transaction Type</label>
-                        <select id="sheet-bill-type" onchange="toggleSheetLabels()" style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; background:#fff; box-sizing:border-box; cursor:pointer; transition:border 0.15s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                        <label
+                            style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Transaction
+                            Type</label>
+                        <select id="sheet-bill-type" onchange="toggleSheetLabels()"
+                            style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; background:#fff; box-sizing:border-box; cursor:pointer; transition:border 0.15s;"
+                            onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
                             <option value="Sale">Sale — Customer Outflow</option>
                             <option value="Purchase">Purchase — Supplier Inflow</option>
                         </select>
                     </div>
                     <div>
-                        <label style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Fulfillment Status</label>
-                        <select id="sheet-bill-status" style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; background:#fff; box-sizing:border-box; cursor:pointer; transition:border 0.15s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                        <label
+                            style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Fulfillment
+                            Status</label>
+                        <select id="sheet-bill-status"
+                            style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; background:#fff; box-sizing:border-box; cursor:pointer; transition:border 0.15s;"
+                            onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
                             <option>Delivered</option>
                             <option>Pending</option>
                             <option>In Transit</option>
@@ -658,37 +727,56 @@
                 </div>
 
                 <!-- Grid Card -->
-                <div style="margin: 0 28px; background:#fff; border:1.5px solid #e2e8f0; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(15,23,42,0.06);">
+                <div
+                    style="margin: 0 28px; background:#fff; border:1.5px solid #e2e8f0; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(15,23,42,0.06);">
                     <div style="overflow-x:auto; max-height:550px; overflow-y:auto;">
-                        <table style="width:100%; border-collapse:collapse; min-width:850px; font-family:var(--font-main); font-size:0.95rem;">
+                        <table
+                            style="width:100%; border-collapse:collapse; min-width:850px; font-family:var(--font-main); font-size:0.95rem;">
                             <thead>
-                                <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; position:sticky; top:0; z-index:5;">
-                                    <th style="width:55px; padding:16px 0; text-align:center; color:#94a3b8; font-size:0.8rem; font-weight:600; border-right:1px solid #f1f5f9;">#</th>
-                                    <th style="padding:16px 18px; text-align:left; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:34%;">
+                                <tr
+                                    style="background:#f8fafc; border-bottom:2px solid #e2e8f0; position:sticky; top:0; z-index:5;">
+                                    <th
+                                        style="width:55px; padding:16px 0; text-align:center; color:#94a3b8; font-size:0.8rem; font-weight:600; border-right:1px solid #f1f5f9;">
+                                        #</th>
+                                    <th
+                                        style="padding:16px 18px; text-align:left; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:34%;">
                                         ITEM NAME
-                                        <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:6px;">A</span>
+                                        <span
+                                            style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:6px;">A</span>
                                     </th>
-                                    <th style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:11%;">
+                                    <th
+                                        style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:11%;">
                                         STOCK
-                                        <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">B</span>
+                                        <span
+                                            style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">B</span>
                                     </th>
-                                    <th style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:9%;">
+                                    <th
+                                        style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:9%;">
                                         QTY
-                                        <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">C</span>
+                                        <span
+                                            style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">C</span>
                                     </th>
-                                    <th id="sheet-th-rate" style="padding:16px 12px; text-align:right; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:13%;">
+                                    <th id="sheet-th-rate"
+                                        style="padding:16px 12px; text-align:right; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:13%;">
                                         PRICE (₹)
-                                        <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">D</span>
+                                        <span
+                                            style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">D</span>
                                     </th>
-                                    <th style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:12%;" title="Auto-update this product's price in inventory when generating the bill">
+                                    <th style="padding:16px 12px; text-align:center; color:#374151; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:12%;"
+                                        title="Auto-update this product's price in inventory when generating the bill">
                                         SYNC PRICE
-                                        <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">E</span>
+                                        <span
+                                            style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">E</span>
                                     </th>
-                                    <th style="padding:16px 18px; text-align:right; color:#4f46e5; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:13%; background:#f5f3ff;">
+                                    <th
+                                        style="padding:16px 18px; text-align:right; color:#4f46e5; font-size:0.85rem; font-weight:700; letter-spacing:0.4px; border-right:1px solid #f1f5f9; width:13%; background:#f5f3ff;">
                                         TOTAL
-                                        <span style="color:#a78bfa; font-weight:600; font-size:0.75rem; margin-left:5px;">F=C×D</span>
+                                        <span
+                                            style="color:#a78bfa; font-weight:600; font-size:0.75rem; margin-left:5px;">F=C×D</span>
                                     </th>
-                                    <th style="padding:16px 8px; text-align:center; color:#cbd5e1; font-size:0.8rem; font-weight:600; width:5%;">DEL</th>
+                                    <th
+                                        style="padding:16px 8px; text-align:center; color:#cbd5e1; font-size:0.8rem; font-weight:600; width:5%;">
+                                        DEL</th>
                                 </tr>
                             </thead>
                             <tbody id="spreadsheetBody">
@@ -697,23 +785,38 @@
                     </div>
 
                     <!-- Footer Bar inside card -->
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-top:1.5px solid #f1f5f9; background:#fafafa; flex-wrap:wrap; gap:16px;">
+                    <div
+                        style="display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-top:1.5px solid #f1f5f9; background:#fafafa; flex-wrap:wrap; gap:16px;">
                         <div style="display:flex; align-items:center; gap:10px;">
                             <span style="font-size:0.9rem; font-weight:600; color:#64748b;">Notes:</span>
-                            <input id="sheet-notes" placeholder="Optional bill notes..." style="border:none; outline:none; background:transparent; font-size:0.95rem; font-family:inherit; color:#374151; min-width:320px;">
+                            <input id="sheet-notes" placeholder="Optional bill notes..."
+                                style="border:none; outline:none; background:transparent; font-size:0.95rem; font-family:inherit; color:#374151; min-width:320px;">
                         </div>
                         <div style="display:flex; align-items:center; gap:28px;">
                             <div style="text-align:right;">
-                                <div style="font-size:0.8rem; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Items</div>
-                                <div id="sheet-total-items" style="font-size:1.25rem; font-weight:800; color:#0f172a; margin-top:2px;">0</div>
+                                <div
+                                    style="font-size:0.8rem; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+                                    Items</div>
+                                <div id="sheet-total-items"
+                                    style="font-size:1.25rem; font-weight:800; color:#0f172a; margin-top:2px;">0</div>
                             </div>
                             <div style="width:1px; height:40px; background:#e2e8f0;"></div>
                             <div style="text-align:right;">
-                                <div style="font-size:0.8rem; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Grand Total</div>
-                                <div id="sheet-grand-total" style="font-size:1.45rem; font-weight:800; color:var(--color-brand); margin-top:2px;">₹0.00</div>
+                                <div
+                                    style="font-size:0.8rem; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+                                    Grand Total</div>
+                                <div id="sheet-grand-total"
+                                    style="font-size:1.45rem; font-weight:800; color:var(--color-brand); margin-top:2px;">
+                                    ₹0.00</div>
                             </div>
-                            <button onclick="generateSheetBill()" style="display:flex; align-items:center; gap:9px; padding:14px 30px; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; border:none; border-radius:12px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(79,70,229,0.3); transition:all 0.2s; white-space:nowrap;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(79,70,229,0.38)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(79,70,229,0.3)'">
-                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="18" height="18"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <button onclick="generateSheetBill()"
+                                style="display:flex; align-items:center; gap:9px; padding:14px 30px; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; border:none; border-radius:12px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(79,70,229,0.3); transition:all 0.2s; white-space:nowrap;"
+                                onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(79,70,229,0.38)'"
+                                onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(79,70,229,0.3)'">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="18"
+                                    height="18">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                                 Generate Bill &amp; Update Stock
                             </button>
                         </div>
@@ -723,618 +826,780 @@
                 <div style="height: 24px;"></div>
             </div>
 
-    <!-- AI ANALYSIS MODAL -->
-    <div class="modal-bg" id="aiAnalysisModal" onclick="if(event.target===this)closeModal('aiAnalysisModal')">
-        <div class="modal-card" style="max-width: 600px; background: #0f172a; color: #e2e8f0; border: 1px solid rgba(99,102,241,0.3);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <h3 style="margin: 0; font-family: var(--font-title); color: #a5b4fc; display: flex; align-items: center; gap: 8px;">
-                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20" height="20"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                    AI Inventory Analysis
-                </h3>
-                <button onclick="closeModal('aiAnalysisModal')" class="btn-del" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 4px 12px; border-radius: 6px; cursor: pointer;">Close</button>
-            </div>
-            <div id="aiAnalysisContent" style="max-height: 70vh; overflow-y: auto; color: #e2e8f0;">
-                <div style="text-align: center; padding: 2rem; color: #64748b;">Loading analysis...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALS -->
-
-    <!-- Invoice Modal -->
-    <div class="modal-bg" id="modal-invoice" onclick="if(event.target===this)closeModal('modal-invoice')">
-        <div class="modal-card" style="max-width: 650px; background: #f8fafc; padding: 20px;">
-
-            <!-- Invoice Actions Bar (Not Printed) -->
-            <div class="invoice-actions"
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="margin: 0; font-family: var(--font-title); font-size: 1.1rem; color: var(--color-navy);">
-                    Customer Bill</h3>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn-eco" onclick="toggleInkSaver()" class="btn-add"
-                        style="background: #10b981; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;"
-                        title="Reduces border weights and collapses empty rows to save up to 45% printer ink/ribbon.">
-                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
-                            height="16" style="display: inline-block; vertical-align: middle;">
-                            <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span id="inkSaverTxt" style="vertical-align: middle;">Eco Ink Saver: OFF</span>
-                    </button>
-                    <button onclick="window.print()" class="btn-add"
-                        style="background: var(--color-brand); border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
-                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
-                            height="16" style="display: inline-block; vertical-align: middle;">
-                            <path
-                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                        </svg>
-                        <span style="vertical-align: middle;">Print / Download</span>
-                    </button>
-                    <button onclick="sendWhatsAppInvoice()" class="btn-add"
-                        style="background: #059669; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; color: #fff;"
-                        title="Sends the full itemized invoice list and credit link directly to the customer over WhatsApp.">
-                        <svg fill="currentColor" viewBox="0 0 24 24" width="16" height="16"
-                            style="display: inline-block; vertical-align: middle;">
-                            <path
-                                d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
-                        </svg>
-                        <span style="vertical-align: middle;">WhatsApp Bill</span>
-                    </button>
-                    <button onclick="closeModal('modal-invoice')" class="btn-del"
-                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; font-size: 0.8rem; border-radius: var(--radius-sm); cursor: pointer;">Close</button>
+            <!-- AI ANALYSIS MODAL -->
+            <div class="modal-bg" id="aiAnalysisModal" onclick="if(event.target===this)closeModal('aiAnalysisModal')">
+                <div class="modal-card"
+                    style="max-width: 600px; background: rgba(255, 255, 255, 0.75); color: var(--color-text); border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border);">
+                        <h3
+                            style="margin: 0; font-family: var(--font-title); color: var(--color-brand); display: flex; align-items: center; gap: 8px;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20"
+                                height="20">
+                                <path
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                            AI Inventory Analysis
+                        </h3>
+                        <button onclick="closeModal('aiAnalysisModal')" class="btn-del"
+                            style="background: rgba(255, 255, 255, 0.5); border: 1px solid var(--color-border); color: var(--color-text); padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Close</button>
+                    </div>
+                    <div id="aiAnalysisContent" style="max-height: 70vh; overflow-y: auto; color: var(--color-text);">
+                        <div style="text-align: center; padding: 2rem; color: var(--color-muted);">Loading analysis...
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- The actual Carbon Bill Pad Card -->
-            <div id="invoiceCarbonPaper"
-                style="background: #ffffff; border: 2px solid #000000; padding: 24px; font-family: 'Courier New', Courier, monospace; color: #000000; box-shadow: var(--shadow-sm); position: relative; border-radius: 2px;">
-
-                <!-- Grid Border Styling -->
-                <div class="inv-inner-border" style="border: 1px double #000000; padding: 12px;">
-
-                    <!-- Header -->
-                    <div class="inv-header-block"
-                        style="display: grid; grid-template-columns: 1.8fr 1fr; border-bottom: 2px solid #000; padding-bottom: 12px; align-items: start;">
-                        <div>
-                            <h1 id="invShopName"
-                                style="font-family: 'Georgia', serif; font-size: 1.6rem; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                                YOUR SHOP NAME</h1>
-                            <p id="invShopAddress"
-                                style="font-size: 0.72rem; margin: 4px 0; line-height: 1.3; max-width: 320px;">Near M2K
-                                Cinemas E 115 Ground Floor Sector8 Rohini New Delhi 110085</p>
-                            <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Email:</strong> <span
-                                    id="invShopEmail">sauravkumaryadav@gmail.com</span></p>
-                            <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Reg No (GSTIN):</strong> <span
-                                    id="invShopGstin" style="text-transform: uppercase;">012345678900012</span></p>
-                        </div>
-                        <div style="text-align: right; font-size: 0.72rem; line-height: 1.5;">
-                            <p style="margin: 0;"><strong>Prop:</strong> <span id="invProprietor">Shaurav Yadav</span>
-                            </p>
-                            <p style="margin: 0;"><strong>Mob:</strong> <span id="invShopPhone">+91 0000000000</span>
-                            </p>
-                            <div class="inv-no-box"
-                                style="margin-top: 12px; border: 1px solid #000; padding: 4px; display: inline-block; text-align: left; background: #fff;">
-                                <p style="margin: 0; font-size: 0.7rem;"><strong>Invoice No:</strong> <span
-                                        id="invNo">00 2489</span></p>
-                                <p style="margin: 0; font-size: 0.7rem;"><strong>Date:</strong> <span
-                                        id="invDate">26-05-2026</span></p>
-                            </div>
-                        </div>
+            <!-- NEARBY SUPPLIERS MODAL -->
+            <div class="modal-bg" id="nearbySuppliersModal"
+                onclick="if(event.target===this)closeModal('nearbySuppliersModal')">
+                <div class="modal-card"
+                    style="max-width: 750px; background: rgba(255, 255, 255, 0.75); color: var(--color-text); border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border);">
+                        <h3
+                            style="margin: 0; font-family: var(--font-title); color: var(--color-brand); display: flex; align-items: center; gap: 8px;">
+                            <span>📍</span> Find Nearby Suppliers
+                        </h3>
+                        <button onclick="closeModal('nearbySuppliersModal')" class="btn-del"
+                            style="background: rgba(255, 255, 255, 0.5); border: 1px solid var(--color-border); color: var(--color-text); padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Close</button>
                     </div>
 
-                    <div class="inv-title-banner eco-hide"
-                        style="text-align: center; margin: 10px 0; border: 3px double #000; padding: 4px 0; font-weight: 900; letter-spacing: 2px; font-size: 0.95rem; font-family: 'Georgia', serif;">
-                        BILL BOOK
+                    <div
+                        style="margin-bottom: 1.5rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; background: rgba(255, 255, 255, 0.4); padding: 16px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.3);">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <label for="nearbySearchQuery"
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--color-text);">Supplier
+                                Category</label>
+                            <select id="nearbySearchQuery"
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; outline: none; background: #fff; cursor: pointer;">
+                                <option value="wholesale, distributor, supplier">All Distributors & Wholesalers</option>
+                                <option value="groceries wholesale">Groceries Wholesalers</option>
+                                <option value="clothing, textiles wholesale">Clothing & Textiles Wholesalers</option>
+                                <option value="electronics wholesale">Electronics Wholesalers</option>
+                                <option value="pharmaceuticals wholesale">Pharmacy / Medical Suppliers</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <label for="nearbySearchRadius"
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--color-text);">Search
+                                Radius</label>
+                            <select id="nearbySearchRadius"
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; outline: none; background: #fff; cursor: pointer;">
+                                <option value="1000">1 Kilometer</option>
+                                <option value="2000" selected>2 Kilometers</option>
+                                <option value="5000">5 Kilometers</option>
+                                <option value="10000">10 Kilometers</option>
+                            </select>
+                        </div>
+                        <button onclick="fetchNearbySuppliers()" class="btn-add"
+                            style="background: var(--color-brand); border: none; cursor: pointer; padding: 10px 20px; border-radius: 8px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                            Fetch Suppliers
+                        </button>
                     </div>
 
-                    <!-- Customer Info Box -->
-                    <div class="inv-cust-box"
-                        style="display: grid; grid-template-columns: 1fr; border: 1px solid #000; font-size: 0.75rem; margin-bottom: 12px; background: #fff;">
-                        <div class="inv-cust-row"
-                            style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
-                            <strong>Name :</strong>
-                            <span id="invCustName" style="border-bottom: 1px dotted #000; padding-left: 6px;">Sharma Store</span>
-                        </div>
+                    <div id="nearbySuppliersContent" style="max-height: 50vh; overflow-y: auto; padding-right: 4px;">
                         <div
-                            style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
-                            <strong>Address :</strong>
-                            <span style="border-bottom: 1px dotted #000; padding-left: 6px;">As Registered in Suppliers List</span>
+                            style="text-align: center; padding: 3rem; color: var(--color-muted); background: rgba(255,255,255,0.2); border-radius: var(--radius-md); border: 1px dashed var(--color-border);">
+                            <p style="font-size: 2rem; margin-bottom: 12px; margin-top: 0;">📍</p>
+                            <p
+                                style="font-weight: 600; font-size: 0.9rem; color: var(--color-text); margin-bottom: 4px;">
+                                Search Local Suppliers</p>
+                            <p style="font-size: 0.8rem; max-width: 380px; margin: 0 auto;">Click "Fetch Suppliers" to
+                                request your location and discover nearby wholesale distributors in real-time.</p>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 4px 8px;">
-                            <div
-                                style="display: grid; grid-template-columns: 80px 1fr; border-right: 1px solid #000; padding-right: 6px;">
-                                <strong>Phone No:</strong>
-                                <span id="invCustPhone"
-                                    style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 80px 1fr; padding-left: 6px;">
-                                <strong>Pan No:</strong>
-                                <span style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
-                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODALS -->
+
+            <!-- Invoice Modal -->
+            <div class="modal-bg" id="modal-invoice" onclick="if(event.target===this)closeModal('modal-invoice')">
+                <div class="modal-card" style="max-width: 650px; background: #f8fafc; padding: 20px;">
+
+                    <!-- Invoice Actions Bar (Not Printed) -->
+                    <div class="invoice-actions"
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3
+                            style="margin: 0; font-family: var(--font-title); font-size: 1.1rem; color: var(--color-navy);">
+                            Customer Bill</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="btn-eco" onclick="toggleInkSaver()" class="btn-add"
+                                style="background: #10b981; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;"
+                                title="Reduces border weights and collapses empty rows to save up to 45% printer ink/ribbon.">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                    height="16" style="display: inline-block; vertical-align: middle;">
+                                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span id="inkSaverTxt" style="vertical-align: middle;">Eco Ink Saver: OFF</span>
+                            </button>
+                            <button onclick="window.print()" class="btn-add"
+                                style="background: var(--color-brand); border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
+                                    height="16" style="display: inline-block; vertical-align: middle;">
+                                    <path
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                                <span style="vertical-align: middle;">Print / Download</span>
+                            </button>
+                            <button onclick="sendWhatsAppInvoice()" class="btn-add"
+                                style="background: #059669; border: none; cursor: pointer; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; color: #fff;"
+                                title="Sends the full itemized invoice list and credit link directly to the customer over WhatsApp.">
+                                <svg fill="currentColor" viewBox="0 0 24 24" width="16" height="16"
+                                    style="display: inline-block; vertical-align: middle;">
+                                    <path
+                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.247 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-2.64-1.03-5.122-2.903-6.994-1.872-1.873-4.355-2.902-6.99-2.902-5.45 0-9.886 4.434-9.889 9.885-.001 2.224.628 4.093 1.72 5.923l-.98 3.58 3.761-.989z" />
+                                </svg>
+                                <span style="vertical-align: middle;">WhatsApp Bill</span>
+                            </button>
+                            <button onclick="closeModal('modal-invoice')" class="btn-del"
+                                style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; font-size: 0.8rem; border-radius: var(--radius-sm); cursor: pointer;">Close</button>
                         </div>
                     </div>
 
-                    <!-- Invoice Table Grid -->
-                    <div class="inv-table-outer" style="border: 1px solid #000; background: #fff; margin-bottom: 12px;">
-                        <table
-                            style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left; font-family: 'Courier New', Courier, monospace;">
-                            <thead>
-                                <tr style="border-bottom: 2px solid #000; background: #f1f5f9;">
-                                    <th class="eco-hide"
-                                        style="width: 8%; border-right: 1px solid #000; padding: 6px; text-align: center;">
-                                        Srl N.</th>
-                                    <th style="width: 50%; border-right: 1px solid #000; padding: 6px;">Description of
-                                        Goods</th>
-                                    <th class="eco-hide"
-                                        style="width: 12%; border-right: 1px solid #000; padding: 6px; text-align: center;">
-                                        HSN</th>
-                                    <th
-                                        style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: center;">
-                                        Qty.</th>
-                                    <th
-                                        style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: right;">
-                                        Rate</th>
-                                    <th style="width: 10%; padding: 6px; text-align: right;">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody id="invoiceTableBody">
-                                <!-- Dynamically populated rows (1 filled, remaining 9 blank) -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <!-- The actual Carbon Bill Pad Card -->
+                    <div id="invoiceCarbonPaper"
+                        style="background: #ffffff; border: 2px solid #000000; padding: 24px; font-family: 'Courier New', Courier, monospace; color: #000000; box-shadow: var(--shadow-sm); position: relative; border-radius: 2px;">
 
-                    <!-- Footer terms and Signatures -->
-                    <div class="inv-footer-sec"
-                        style="display: grid; grid-template-columns: 1.6fr 1fr; font-size: 0.7rem; align-items: end; border-top: 1px solid #000; padding-top: 10px;">
-                        <div>
-                            <p style="margin: 0 0 6px 0;"><strong>Rupees in Words :</strong> <span id="invRupeesWords"
-                                    style="text-decoration: underline; font-weight: 700;">Zero Rupees Only</span></p>
-                            <div id="invQRParent"
-                                style="margin-top: 6px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
-                                <img id="invQRCode" src=""
-                                    style="width: 70px; height: 70px; border: 1px solid #000; padding: 2px; background: #fff;"
-                                    alt="UPI QR Code">
+                        <!-- Grid Border Styling -->
+                        <div class="inv-inner-border" style="border: 1px double #000000; padding: 12px;">
+
+                            <!-- Header -->
+                            <div class="inv-header-block"
+                                style="display: grid; grid-template-columns: 1.8fr 1fr; border-bottom: 2px solid #000; padding-bottom: 12px; align-items: start;">
                                 <div>
-                                    <p
-                                        style="margin: 0; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;">
-                                        Scan to Pay UPI</p>
-                                    <p
-                                        style="margin: 2px 0 0 0; font-size: 0.58rem; line-height: 1.2; max-width: 200px;">
-                                        GPay / Paytm / PhonePe. Scan to settle bill instantly.</p>
+                                    <h1 id="invShopName"
+                                        style="font-family: 'Georgia', serif; font-size: 1.6rem; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                                        YOUR SHOP NAME</h1>
+                                    <p id="invShopAddress"
+                                        style="font-size: 0.72rem; margin: 4px 0; line-height: 1.3; max-width: 320px;">
+                                        Near M2K
+                                        Cinemas E 115 Ground Floor Sector8 Rohini New Delhi 110085</p>
+                                    <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Email:</strong> <span
+                                            id="invShopEmail">sauravkumaryadav@gmail.com</span></p>
+                                    <p style="font-size: 0.72rem; margin: 2px 0;"><strong>Reg No (GSTIN):</strong> <span
+                                            id="invShopGstin" style="text-transform: uppercase;">012345678900012</span>
+                                    </p>
+                                </div>
+                                <div style="text-align: right; font-size: 0.72rem; line-height: 1.5;">
+                                    <p style="margin: 0;"><strong>Prop:</strong> <span id="invProprietor">Shaurav
+                                            Yadav</span>
+                                    </p>
+                                    <p style="margin: 0;"><strong>Mob:</strong> <span id="invShopPhone">+91
+                                            0000000000</span>
+                                    </p>
+                                    <div class="inv-no-box"
+                                        style="margin-top: 12px; border: 1px solid #000; padding: 4px; display: inline-block; text-align: left; background: #fff;">
+                                        <p style="margin: 0; font-size: 0.7rem;"><strong>Invoice No:</strong> <span
+                                                id="invNo">00 2489</span></p>
+                                        <p style="margin: 0; font-size: 0.7rem;"><strong>Date:</strong> <span
+                                                id="invDate">26-05-2026</span></p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="eco-hide"
-                                style="border: 1px solid #000; padding: 6px; font-size: 0.65rem; background: #fff; max-width: 320px; line-height: 1.3;">
-                                <strong>Terms & Conditions :</strong><br>
-                                1. Warranty & Guarantee will be Provided by the Authorised Company Service.<br>
-                                2. Goods once sold will not be taken back or Exchanged. Goods mentioned above received
-                                in proper Condition. Subject to local Jurisdiction only.
+
+                            <div class="inv-title-banner eco-hide"
+                                style="text-align: center; margin: 10px 0; border: 3px double #000; padding: 4px 0; font-weight: 900; letter-spacing: 2px; font-size: 0.95rem; font-family: 'Georgia', serif;">
+                                BILL BOOK
                             </div>
-                            
-                            <!-- GST BREAKDOWN TABLE -->
-                            <div id="invGstBreakdown" style="margin-top: 8px; font-size: 0.62rem; display: none; max-width: 320px;">
-                                <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; text-align: right; font-family: inherit;">
-                                    <tr style="border-bottom: 1px solid #000; background: #f8fafc; font-weight: bold;">
-                                        <td style="padding: 2px 4px; text-align: left;">Taxable Value</td>
-                                        <td style="padding: 2px 4px;" id="invTaxableVal">₹0.00</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px dashed #000;">
-                                        <td style="padding: 2px 4px; text-align: left;">CGST</td>
-                                        <td style="padding: 2px 4px;" id="invCgstVal">₹0.00</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px dashed #000;">
-                                        <td style="padding: 2px 4px; text-align: left;">SGST</td>
-                                        <td style="padding: 2px 4px;" id="invSgstVal">₹0.00</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px dashed #000; display: none;" id="rowInvIgst">
-                                        <td style="padding: 2px 4px; text-align: left;">IGST (18%)</td>
-                                        <td style="padding: 2px 4px;" id="invIgstVal">₹0.00</td>
-                                    </tr>
-                                    <tr style="font-weight: bold; border-top: 1px solid #000;">
-                                        <td style="padding: 2px 4px; text-align: left;">Total GST</td>
-                                        <td style="padding: 2px 4px;" id="invTotalGstVal">₹0.00</td>
-                                    </tr>
+
+                            <!-- Customer Info Box -->
+                            <div class="inv-cust-box"
+                                style="display: grid; grid-template-columns: 1fr; border: 1px solid #000; font-size: 0.75rem; margin-bottom: 12px; background: #fff;">
+                                <div class="inv-cust-row"
+                                    style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
+                                    <strong>Name :</strong>
+                                    <span id="invCustName"
+                                        style="border-bottom: 1px dotted #000; padding-left: 6px;">Sharma Store</span>
+                                </div>
+                                <div
+                                    style="display: grid; grid-template-columns: 80px 1fr; border-bottom: 1px solid #000; padding: 4px 8px;">
+                                    <strong>Address :</strong>
+                                    <span style="border-bottom: 1px dotted #000; padding-left: 6px;">As Registered in
+                                        Suppliers List</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; padding: 4px 8px;">
+                                    <div
+                                        style="display: grid; grid-template-columns: 80px 1fr; border-right: 1px solid #000; padding-right: 6px;">
+                                        <strong>Phone No:</strong>
+                                        <span id="invCustPhone"
+                                            style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 80px 1fr; padding-left: 6px;">
+                                        <strong>Pan No:</strong>
+                                        <span style="border-bottom: 1px dotted #000; padding-left: 6px;">—</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Invoice Table Grid -->
+                            <div class="inv-table-outer"
+                                style="border: 1px solid #000; background: #fff; margin-bottom: 12px;">
+                                <table
+                                    style="width: 100%; border-collapse: collapse; font-size: 0.72rem; text-align: left; font-family: 'Courier New', Courier, monospace;">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid #000; background: #f1f5f9;">
+                                            <th class="eco-hide"
+                                                style="width: 8%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                                Srl N.</th>
+                                            <th style="width: 50%; border-right: 1px solid #000; padding: 6px;">
+                                                Description of
+                                                Goods</th>
+                                            <th class="eco-hide"
+                                                style="width: 12%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                                HSN</th>
+                                            <th
+                                                style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: center;">
+                                                Qty.</th>
+                                            <th
+                                                style="width: 10%; border-right: 1px solid #000; padding: 6px; text-align: right;">
+                                                Rate</th>
+                                            <th style="width: 10%; padding: 6px; text-align: right;">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoiceTableBody">
+                                        <!-- Dynamically populated rows (1 filled, remaining 9 blank) -->
+                                    </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div class="inv-total-display"
-                                style="font-size: 0.85rem; font-weight: 800; border: 2px solid #000; padding: 6px; display: inline-block; margin-bottom: 24px; background: #f8fafc; font-family: 'Courier New', monospace; min-width: 120px;">
-                                TOTAL: <span id="invTotalAmt" style="color: #000;">₹0</span>
+
+                            <!-- Footer terms and Signatures -->
+                            <div class="inv-footer-sec"
+                                style="display: grid; grid-template-columns: 1.6fr 1fr; font-size: 0.7rem; align-items: end; border-top: 1px solid #000; padding-top: 10px;">
+                                <div>
+                                    <p style="margin: 0 0 6px 0;"><strong>Rupees in Words :</strong> <span
+                                            id="invRupeesWords"
+                                            style="text-decoration: underline; font-weight: 700;">Zero Rupees
+                                            Only</span></p>
+                                    <div id="invQRParent"
+                                        style="margin-top: 6px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+                                        <img id="invQRCode" src=""
+                                            style="width: 70px; height: 70px; border: 1px solid #000; padding: 2px; background: #fff;"
+                                            alt="UPI QR Code">
+                                        <div>
+                                            <p
+                                                style="margin: 0; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;">
+                                                Scan to Pay UPI</p>
+                                            <p
+                                                style="margin: 2px 0 0 0; font-size: 0.58rem; line-height: 1.2; max-width: 200px;">
+                                                GPay / Paytm / PhonePe. Scan to settle bill instantly.</p>
+                                        </div>
+                                    </div>
+                                    <div class="eco-hide"
+                                        style="border: 1px solid #000; padding: 6px; font-size: 0.65rem; background: #fff; max-width: 320px; line-height: 1.3;">
+                                        <strong>Terms & Conditions :</strong><br>
+                                        1. Warranty & Guarantee will be Provided by the Authorised Company Service.<br>
+                                        2. Goods once sold will not be taken back or Exchanged. Goods mentioned above
+                                        received
+                                        in proper Condition. Subject to local Jurisdiction only.
+                                    </div>
+
+                                    <!-- GST BREAKDOWN TABLE -->
+                                    <div id="invGstBreakdown"
+                                        style="margin-top: 8px; font-size: 0.62rem; display: none; max-width: 320px;">
+                                        <table
+                                            style="width: 100%; border-collapse: collapse; border: 1px solid #000; text-align: right; font-family: inherit;">
+                                            <tr
+                                                style="border-bottom: 1px solid #000; background: #f8fafc; font-weight: bold;">
+                                                <td style="padding: 2px 4px; text-align: left;">Taxable Value</td>
+                                                <td style="padding: 2px 4px;" id="invTaxableVal">₹0.00</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px dashed #000;">
+                                                <td style="padding: 2px 4px; text-align: left;">CGST</td>
+                                                <td style="padding: 2px 4px;" id="invCgstVal">₹0.00</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px dashed #000;">
+                                                <td style="padding: 2px 4px; text-align: left;">SGST</td>
+                                                <td style="padding: 2px 4px;" id="invSgstVal">₹0.00</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px dashed #000; display: none;" id="rowInvIgst">
+                                                <td style="padding: 2px 4px; text-align: left;">IGST (18%)</td>
+                                                <td style="padding: 2px 4px;" id="invIgstVal">₹0.00</td>
+                                            </tr>
+                                            <tr style="font-weight: bold; border-top: 1px solid #000;">
+                                                <td style="padding: 2px 4px; text-align: left;">Total GST</td>
+                                                <td style="padding: 2px 4px;" id="invTotalGstVal">₹0.00</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="inv-total-display"
+                                        style="font-size: 0.85rem; font-weight: 800; border: 2px solid #000; padding: 6px; display: inline-block; margin-bottom: 24px; background: #f8fafc; font-family: 'Courier New', monospace; min-width: 120px;">
+                                        TOTAL: <span id="invTotalAmt" style="color: #000;">₹0</span>
+                                    </div>
+                                    <div class="eco-hide" style="text-align: center; margin-top: 10px;">
+                                        <span id="invAuthSigName"
+                                            style="font-family: 'Georgia', cursive, serif; font-style: italic; font-weight: 800; font-size: 0.9rem; text-decoration: underline;">Shaurav
+                                            Yadav</span>
+                                        <p
+                                            style="margin: 4px 0 0 0; font-size: 0.65rem; border-top: 1px solid #000; display: inline-block; padding-top: 2px; width: 130px;">
+                                            Auth. Signature</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="eco-hide" style="text-align: center; margin-top: 10px;">
-                                <span id="invAuthSigName"
-                                    style="font-family: 'Georgia', cursive, serif; font-style: italic; font-weight: 800; font-size: 0.9rem; text-decoration: underline;">Shaurav
-                                    Yadav</span>
-                                <p
-                                    style="margin: 4px 0 0 0; font-size: 0.65rem; border-top: 1px solid #000; display: inline-block; padding-top: 2px; width: 130px;">
-                                    Auth. Signature</p>
-                            </div>
+
                         </div>
                     </div>
 
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- Shop Profile Settings Modal -->
-    <div class="modal-bg" id="modal-shop-profile" onclick="if(event.target===this)closeModal('modal-shop-profile')">
-        <div class="modal-card"
-            style="max-width: 480px; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
-            <div class="modal-header" style="margin-bottom: 18px;">
-                <h2
-                    style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 6px 0;">
-                    Configure Shop Profile</h2>
-                <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Set details for printed shop bills</p>
+            <!-- Shop Profile Settings Modal -->
+            <div class="modal-bg" id="modal-shop-profile"
+                onclick="if(event.target===this)closeModal('modal-shop-profile')">
+                <div class="modal-card"
+                    style="max-width: 480px; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
+                    <div class="modal-header" style="margin-bottom: 18px;">
+                        <h2
+                            style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 6px 0;">
+                            Configure Shop Profile</h2>
+                        <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Set details for printed shop
+                            bills</p>
+                    </div>
+                    <form onsubmit="saveShopProfile(event)" style="display: flex; flex-direction: column; gap: 14px;">
+                        <div class="form-group">
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop /
+                                Business Name
+                                *</label>
+                            <input id="sp-shop-name" placeholder="e.g. Gupta Wholesale Store" required
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">GSTIN (GST
+                                Number)</label>
+                            <input id="sp-gstin" placeholder="e.g. 07AAAAA1111A1Z1" maxlength="15"
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; text-transform: uppercase; font-family: inherit;">
+                        </div>
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="form-group">
+                                <label
+                                    style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Proprietor
+                                    Name
+                                    *</label>
+                                <input id="sp-prop-name" placeholder="e.g. Lucky Anish" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Mobile
+                                    Number
+                                    *</label>
+                                <input id="sp-phone" placeholder="e.g. 9304277935" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop Address
+                                *</label>
+                            <textarea id="sp-address" placeholder="Enter complete billing address" required
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; min-height: 70px; resize: vertical; font-family: inherit;"></textarea>
+                        </div>
+                        <div
+                            style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
+                            <button type="button" onclick="closeModal('modal-shop-profile')" class="btn-del"
+                                style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Cancel</button>
+                            <button type="submit" class="btn-add"
+                                style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save
+                                Profile</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form onsubmit="saveShopProfile(event)" style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="form-group">
-                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop / Business Name
-                        *</label>
-                    <input id="sp-shop-name" placeholder="e.g. Gupta Wholesale Store" required
-                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
-                </div>
-                <div class="form-group">
-                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">GSTIN (GST
-                        Number)</label>
-                    <input id="sp-gstin" placeholder="e.g. 07AAAAA1111A1Z1" maxlength="15"
-                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; text-transform: uppercase; font-family: inherit;">
-                </div>
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="form-group">
-                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Proprietor Name
-                            *</label>
-                        <input id="sp-prop-name" placeholder="e.g. Lucky Anish" required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
-                    </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Mobile Number
-                            *</label>
-                        <input id="sp-phone" placeholder="e.g. 9304277935" required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Shop Address
-                        *</label>
-                    <textarea id="sp-address" placeholder="Enter complete billing address" required
-                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; min-height: 70px; resize: vertical; font-family: inherit;"></textarea>
-                </div>
-                <div
-                    style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
-                    <button type="button" onclick="closeModal('modal-shop-profile')" class="btn-del"
-                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Cancel</button>
-                    <button type="submit" class="btn-add"
-                        style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save
-                        Profile</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- Order Modal -->
-    <div class="modal-bg" id="modal-order" onclick="if(event.target===this)closeModal('modal-order')">
-        <div class="modal-card"
-            style="max-width: 680px; width: 90%; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
-            <div class="modal-header" style="margin-bottom: 16px;">
-                <h2
-                    style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 4px 0;">
-                    Add New Order</h2>
-                <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Add a new customer order with items</p>
+            <!-- Order Modal -->
+            <div class="modal-bg" id="modal-order" onclick="if(event.target===this)closeModal('modal-order')">
+                <div class="modal-card"
+                    style="max-width: 680px; width: 90%; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
+                    <div class="modal-header" style="margin-bottom: 16px;">
+                        <h2
+                            style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 4px 0;">
+                            Add New Order</h2>
+                        <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Add a new customer order
+                            with items</p>
+                    </div>
+                    <form onsubmit="submitOrder(event)" style="display: flex; flex-direction: column; gap: 14px;">
+                        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Type
+                                    *</label>
+                                <select id="o-type" onchange="toggleOrderTypeLabel()"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
+                                    <option value="Sale">Sale (Outflow)</option>
+                                    <option value="Purchase">Purchase (Inflow)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label id="lbl-o-dist"
+                                    style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Customer
+                                    Name *</label>
+                                <input id="o-dist" list="inv-distributors-datalist"
+                                    placeholder="e.g. Sharma Kirana Store" required
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Fulfillment
+                                    Status</label>
+                                <select id="o-status"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
+                                    <option>Pending</option>
+                                    <option>In Transit</option>
+                                    <option>Delivered</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Multi-Item Basket Grid -->
+                        <div
+                            style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4
+                                    style="margin: 0; font-family: var(--font-title); color: var(--color-navy); font-size: 0.88rem; font-weight: 700;">
+                                    Items List</h4>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <button id="btn-voice-dictate" type="button" onclick="toggleVoiceRecognition()"
+                                        style="padding: 4px 10px; font-size: 0.75rem; background: #ef4444; border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                                        <svg fill="currentColor" viewBox="0 0 24 24" width="12" height="12"
+                                            id="voice-mic-icon" style="display: inline-block;">
+                                            <path
+                                                d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+                                        </svg>
+                                        <span id="voice-dictate-txt">Voice Type</span>
+                                    </button>
+                                    <button type="button" onclick="addBasketItemRow()" class="btn-add"
+                                        style="padding: 4px 10px; font-size: 0.75rem; background: var(--color-brand); border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                        <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"
+                                            width="12" height="12">
+                                            <path d="M12 4.5v15m7.5-7.5h-15" />
+                                        </svg> Add Item
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div
+                                style="max-height: 160px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+                                <table
+                                    style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; font-family: inherit;">
+                                    <thead>
+                                        <tr
+                                            style="border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.75rem; background: #f1f5f9;">
+                                            <th style="padding: 8px; width: 45%;">Product Name *</th>
+                                            <th style="padding: 8px; width: 20%; text-align: center;">Qty *</th>
+                                            <th style="padding: 8px; width: 25%; text-align: right;">Unit Rate (₹) *
+                                            </th>
+                                            <th style="padding: 8px; width: 10%; text-align: center;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderBasketBody">
+                                        <!-- Dynamically populated rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 8px; font-weight: 700; color: var(--color-navy); font-size: 0.88rem;">
+                                <span>Basket Subtotal:</span>
+                                <span id="basketGrandTotal" style="color: var(--color-brand);">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Delivery &
+                                Payment Notes</label>
+                            <textarea id="o-notes" rows="2" placeholder="Describe delivery, payment, or other notes…"
+                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
+                        </div>
+
+                        <div class="modal-actions"
+                            style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
+                            <button type="button" class="btn-cancel" onclick="closeModal('modal-order')"
+                                style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Discard</button>
+                            <button type="submit" class="btn-save"
+                                style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save
+                                Order</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form onsubmit="submitOrder(event)" style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 16px;">
-                    <div class="form-group">
-                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Type *</label>
-                        <select id="o-type" onchange="toggleOrderTypeLabel()"
-                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
-                            <option value="Sale">Sale (Outflow)</option>
-                            <option value="Purchase">Purchase (Inflow)</option>
-                        </select>
+
+            <!-- Inventory Modal -->
+            <div class="modal-bg" id="modal-inv" onclick="if(event.target===this)closeModal('modal-inv')">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h2>Add Stock Item</h2>
+                        <p>Add new item to stock</p>
                     </div>
-                    <div class="form-group">
-                        <label id="lbl-o-dist" style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Customer Name *</label>
-                        <input id="o-dist" list="inv-distributors-datalist" placeholder="e.g. Sharma Kirana Store"
-                            required
-                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit;">
+                    <form onsubmit="submitInventory(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Name *</label>
+                                <input id="i-name" placeholder="e.g. Fortune Mustard Oil 5L" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Item Code</label>
+                                <input id="i-sku" placeholder="e.g. MUST-5L-003">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <input id="i-cat" placeholder="e.g. Kitchen Supplies">
+                            </div>
+                            <div class="form-group">
+                                <label>Unit (e.g. Kg, Box, Pac)</label>
+                                <input id="i-unit" placeholder="units / liters / pouches" value="units">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Quantity *</label>
+                                <input id="i-qty" type="number" min="0" placeholder="250" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Low Stock Warning Limit</label>
+                                <input id="i-reorder" type="number" min="0" placeholder="15" value="15">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Buying Price per Unit (INR)</label>
+                                <input id="i-buy" type="number" step="0.01" placeholder="480">
+                            </div>
+                            <div class="form-group">
+                                <label>Selling Price per Unit (INR)</label>
+                                <input id="i-sell" type="number" step="0.01" placeholder="520">
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="btn-save">Add Product</button>
+                            <button type="button" class="btn-cancel" onclick="closeModal('modal-inv')">Discard</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Nearby Suppliers Modal -->
+            <div class="modal-bg" id="modal-nearby-suppliers"
+                onclick="if(event.target===this)closeModal('modal-nearby-suppliers')">
+                <div class="modal-card"
+                    style="max-width: 700px; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
+                    <div class="modal-header" style="margin-bottom: 16px;">
+                        <h2
+                            style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 4px 0;">
+                            Find Nearby Suppliers</h2>
+                        <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Search for local wholesale
+                            distributors using GPS</p>
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Fulfillment
-                            Status</label>
-                        <select id="o-status"
-                            style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; font-family: inherit; height: 38px;">
-                            <option>Pending</option>
-                            <option>In Transit</option>
-                            <option>Delivered</option>
-                            <option>Cancelled</option>
-                        </select>
+                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                        <input id="nearby-query" placeholder="e.g. wholesale, groceries, clothing"
+                            value="wholesale suppliers"
+                            style="flex: 1.5; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit;">
+                        <input id="nearby-city" placeholder="City (e.g. Jaipur) - Optional"
+                            style="flex: 1; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit;"
+                            title="Leave empty to use current location">
+                        <button onclick="triggerFetchNearbySuppliers()" class="btn-add"
+                            style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer; padding: 10px 16px; border-radius: var(--radius-sm); color: white; white-space: nowrap;">
+                            <span style="font-size: 0.9rem; margin-right: 4px;">📍</span> Search
+                        </button>
+                    </div>
+                    <div
+                        style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div
+                            style="max-height: 300px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
+                            <table
+                                style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; font-family: inherit;">
+                                <thead>
+                                    <tr
+                                        style="border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.75rem; background: #f1f5f9;">
+                                        <th style="padding: 8px; width: 35%;">Supplier Name</th>
+                                        <th style="padding: 8px; width: 15%;">Distance</th>
+                                        <th style="padding: 8px; width: 35%;">Address / Territory</th>
+                                        <th style="padding: 8px; width: 15%; text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="nearby-results-body">
+                                    <tr>
+                                        <td colspan="4"
+                                            style="text-align: center; padding: 2rem; color: var(--color-muted);">
+                                            Click "Search Area" to find suppliers near you.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-actions" style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn-cancel" onclick="closeModal('modal-nearby-suppliers')"
+                            style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Close</button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Multi-Item Basket Grid -->
-                <div
-                    style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4
-                            style="margin: 0; font-family: var(--font-title); color: var(--color-navy); font-size: 0.88rem; font-weight: 700;">
-                            Items List</h4>
-                        <div style="display: flex; gap: 8px; align-items: center;">
-                            <button id="btn-voice-dictate" type="button" onclick="toggleVoiceRecognition()"
-                                style="padding: 4px 10px; font-size: 0.75rem; background: #ef4444; border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
-                                <svg fill="currentColor" viewBox="0 0 24 24" width="12" height="12" id="voice-mic-icon"
-                                    style="display: inline-block;">
+            <!-- Distributor Modal -->
+            <div class="modal-bg" id="modal-dist" onclick="if(event.target===this)closeModal('modal-dist')">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h2>Add Supplier</h2>
+                        <p>Add supplier details</p>
+                    </div>
+                    <form onsubmit="submitDistributor(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Supplier Name *</label>
+                                <input id="d-name" placeholder="e.g. Krishna Enterprises" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Phone *</label>
+                                <input id="d-phone" placeholder="98765xxxxx" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Location / Address</label>
+                                <input id="d-loc" placeholder="e.g. Okhla Phase 3, New Delhi">
+                            </div>
+                            <div class="form-group">
+                                <label>Area / Territory</label>
+                                <input id="d-territory" placeholder="e.g. South Delhi Region">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Outstanding Advance Balance (INR)</label>
+                            <input id="d-balance" type="number" step="0.01" placeholder="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Supplier Notes</label>
+                            <textarea id="d-notes" rows="2" placeholder="Specify terms or notes…"></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="btn-save">Save Supplier</button>
+                            <button type="button" class="btn-cancel" onclick="closeModal('modal-dist')">Discard</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Khata Modal -->
+            <div class="modal-bg" id="modal-khata" onclick="if(event.target===this)closeModal('modal-khata')">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h2>Add Khata Entry</h2>
+                        <p>Record credit given or payment received</p>
+                    </div>
+                    <form onsubmit="submitKhata(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Party Name *</label>
+                                <input id="k-party" list="khata-parties-datalist" placeholder="e.g. Ramesh Chandra"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label>Type *</label>
+                                <select id="k-type">
+                                    <option>Credit</option>
+                                    <option>Debit</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Amount (₹) *</label>
+                                <input id="k-amount" type="number" step="0.01" placeholder="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input id="k-date" type="date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="display:flex; align-items:center; gap:6px;">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"
+                                    height="14" style="color:#25d366">
                                     <path
-                                        d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+                                        d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 5.18 2 2 0 015 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 10.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18v-.08z" />
                                 </svg>
-                                <span id="voice-dictate-txt">Voice Type</span>
-                            </button>
-                            <button type="button" onclick="addBasketItemRow()" class="btn-add"
-                                style="padding: 4px 10px; font-size: 0.75rem; background: var(--color-brand); border: none; color: #fff; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                                <svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" width="12"
-                                    height="12">
-                                    <path d="M12 4.5v15m7.5-7.5h-15" />
-                                </svg> Add Item
-                            </button>
+                                WhatsApp Number
+                                <span style="font-weight:400; color:#94a3b8; font-size:0.75rem;">(optional — for direct
+                                    reminders)</span>
+                            </label>
+                            <input id="k-phone" type="tel" placeholder="e.g. 9876543210" maxlength="10"
+                                style="letter-spacing:1px;" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="k-desc" rows="2" placeholder="Bill number, item details, etc."></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="submit" class="btn-save">Save Entry</button>
+                            <button type="button" class="btn-cancel"
+                                onclick="closeModal('modal-khata')">Discard</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
+            <!-- Datalist Autocompletes -->
+            <datalist id="inv-products-datalist"></datalist>
+            <datalist id="inv-distributors-datalist"></datalist>
+            <datalist id="khata-parties-datalist"></datalist>
+
+            <!-- Command Palette Modal -->
+            <div class="modal-bg" id="modal-command-palette"
+                onclick="if(event.target===this)closeModal('modal-command-palette')">
+                <div class="modal-card"
+                    style="max-width: 520px; width: 90%; background: #ffffff; padding: 20px; border-radius: var(--radius-lg); position: relative; margin-top: 60px;">
                     <div
-                        style="max-height: 160px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
-                        <table
-                            style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; font-family: inherit;">
-                            <thead>
-                                <tr
-                                    style="border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.75rem; background: #f1f5f9;">
-                                    <th style="padding: 8px; width: 45%;">Product Name *</th>
-                                    <th style="padding: 8px; width: 20%; text-align: center;">Qty *</th>
-                                    <th style="padding: 8px; width: 25%; text-align: right;">Unit Rate (₹) *</th>
-                                    <th style="padding: 8px; width: 10%; text-align: center;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orderBasketBody">
-                                <!-- Dynamically populated rows -->
-                            </tbody>
-                        </table>
+                        style="display: flex; align-items: center; border-bottom: 2px solid var(--color-border); padding-bottom: 10px; margin-bottom: 14px; gap: 10px;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20"
+                            height="20" style="color: var(--color-brand);">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input id="cmdSearchInput" oninput="queryCommandPalette()"
+                            placeholder="Search anything (e.g. Products, Khata, Nav sections...)"
+                            style="border: none; width: 100%; font-size: 1rem; outline: none; font-family: inherit; color: var(--color-navy);">
+                        <span
+                            style="font-size: 0.65rem; background: #e2e8f0; color: #64748b; padding: 3px 8px; border-radius: 4px; font-weight: 700; white-space: nowrap; font-family: monospace;">ESC</span>
                     </div>
-
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 8px; font-weight: 700; color: var(--color-navy); font-size: 0.88rem;">
-                        <span>Basket Subtotal:</span>
-                        <span id="basketGrandTotal" style="color: var(--color-brand);">₹0.00</span>
+                    <div id="cmdPaletteResults"
+                        style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                        <!-- Results populated by Javascript -->
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label style="font-size: 0.78rem; font-weight: 700; color: var(--color-text);">Delivery & Payment Notes</label>
-                    <textarea id="o-notes" rows="2" placeholder="Describe delivery, payment, or other notes…"
-                        style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin-top: 4px; box-sizing: border-box; resize: vertical; font-family: inherit;"></textarea>
-                </div>
-
-                <div class="modal-actions"
-                    style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--color-border); padding-top: 14px; margin-top: 6px;">
-                    <button type="button" class="btn-cancel" onclick="closeModal('modal-order')"
-                        style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Discard</button>
-                    <button type="submit" class="btn-save"
-                        style="background: var(--color-brand); border: none; color: white; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Save Order</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Inventory Modal -->
-    <div class="modal-bg" id="modal-inv" onclick="if(event.target===this)closeModal('modal-inv')">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2>Add Stock Item</h2>
-                <p>Add new item to stock</p>
             </div>
-            <form onsubmit="submitInventory(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Product Name *</label>
-                        <input id="i-name" placeholder="e.g. Fortune Mustard Oil 5L" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Item Code</label>
-                        <input id="i-sku" placeholder="e.g. MUST-5L-003">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Category</label>
-                        <input id="i-cat" placeholder="e.g. Kitchen Supplies">
-                    </div>
-                    <div class="form-group">
-                        <label>Unit (e.g. Kg, Box, Pac)</label>
-                        <input id="i-unit" placeholder="units / liters / pouches" value="units">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Quantity *</label>
-                        <input id="i-qty" type="number" min="0" placeholder="250" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Low Stock Warning Limit</label>
-                        <input id="i-reorder" type="number" min="0" placeholder="15" value="15">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Buying Price per Unit (INR)</label>
-                        <input id="i-buy" type="number" step="0.01" placeholder="480">
-                    </div>
-                    <div class="form-group">
-                        <label>Selling Price per Unit (INR)</label>
-                        <input id="i-sell" type="number" step="0.01" placeholder="520">
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-save">Add Product</button>
-                    <button type="button" class="btn-cancel" onclick="closeModal('modal-inv')">Discard</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- Distributor Modal -->
-    <div class="modal-bg" id="modal-dist" onclick="if(event.target===this)closeModal('modal-dist')">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2>Add Supplier</h2>
-                <p>Add supplier details</p>
+            <!-- TOAST notification systems -->
+            <div class="toast" id="toast">
+                <div class="toast-indicator"></div>
+                <div class="toast-content">
+                    <div class="toast-title" id="tTitle">Notification Title</div>
+                    <div class="toast-msg" id="tMsg">Short description message.</div>
+                </div>
             </div>
-            <form onsubmit="submitDistributor(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Supplier Name *</label>
-                        <input id="d-name" placeholder="e.g. Krishna Enterprises" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Primary Phone *</label>
-                        <input id="d-phone" placeholder="98765xxxxx" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Location / Address</label>
-                        <input id="d-loc" placeholder="e.g. Okhla Phase 3, New Delhi">
-                    </div>
-                    <div class="form-group">
-                        <label>Area / Territory</label>
-                        <input id="d-territory" placeholder="e.g. South Delhi Region">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Outstanding Advance Balance (INR)</label>
-                    <input id="d-balance" type="number" step="0.01" placeholder="0" value="0">
-                </div>
-                <div class="form-group">
-                    <label>Supplier Notes</label>
-                    <textarea id="d-notes" rows="2"
-                        placeholder="Specify terms or notes…"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-save">Save Supplier</button>
-                    <button type="button" class="btn-cancel" onclick="closeModal('modal-dist')">Discard</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- Khata Modal -->
-    <div class="modal-bg" id="modal-khata" onclick="if(event.target===this)closeModal('modal-khata')">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2>Add Khata Entry</h2>
-                <p>Record credit given or payment received</p>
-            </div>
-            <form onsubmit="submitKhata(event)">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Party Name *</label>
-                        <input id="k-party" list="khata-parties-datalist" placeholder="e.g. Ramesh Chandra" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Type *</label>
-                        <select id="k-type">
-                            <option>Credit</option>
-                            <option>Debit</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Amount (₹) *</label>
-                        <input id="k-amount" type="number" step="0.01" placeholder="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Date</label>
-                        <input id="k-date" type="date">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label style="display:flex; align-items:center; gap:6px;">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" style="color:#25d366"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 5.18 2 2 0 015 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L9.09 10.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 18v-.08z"/></svg>
-                        WhatsApp Number
-                        <span style="font-weight:400; color:#94a3b8; font-size:0.75rem;">(optional — for direct reminders)</span>
-                    </label>
-                    <input id="k-phone" type="tel" placeholder="e.g. 9876543210" maxlength="10"
-                        style="letter-spacing:1px;"
-                        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                </div>
-                <div class="form-group">
-                    <label>Notes</label>
-                    <textarea id="k-desc" rows="2" placeholder="Bill number, item details, etc."></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="submit" class="btn-save">Save Entry</button>
-                    <button type="button" class="btn-cancel" onclick="closeModal('modal-khata')">Discard</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Datalist Autocompletes -->
-    <datalist id="inv-products-datalist"></datalist>
-    <datalist id="inv-distributors-datalist"></datalist>
-    <datalist id="khata-parties-datalist"></datalist>
-
-    <!-- Command Palette Modal -->
-    <div class="modal-bg" id="modal-command-palette"
-        onclick="if(event.target===this)closeModal('modal-command-palette')">
-        <div class="modal-card"
-            style="max-width: 520px; width: 90%; background: #ffffff; padding: 20px; border-radius: var(--radius-lg); position: relative; margin-top: 60px;">
-            <div
-                style="display: flex; align-items: center; border-bottom: 2px solid var(--color-border); padding-bottom: 10px; margin-bottom: 14px; gap: 10px;">
-                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20" height="20"
-                    style="color: var(--color-brand);">
-                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input id="cmdSearchInput" oninput="queryCommandPalette()"
-                    placeholder="Search anything (e.g. Products, Khata, Nav sections...)"
-                    style="border: none; width: 100%; font-size: 1rem; outline: none; font-family: inherit; color: var(--color-navy);">
-                <span
-                    style="font-size: 0.65rem; background: #e2e8f0; color: #64748b; padding: 3px 8px; border-radius: 4px; font-weight: 700; white-space: nowrap; font-family: monospace;">ESC</span>
-            </div>
-            <div id="cmdPaletteResults"
-                style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
-                <!-- Results populated by Javascript -->
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST notification systems -->
-    <div class="toast" id="toast">
-        <div class="toast-indicator"></div>
-        <div class="toast-content">
-            <div class="toast-title" id="tTitle">Notification Title</div>
-            <div class="toast-msg" id="tMsg">Short description message.</div>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="dashboard.js?v=7"></script>
-    <script>
-        // Force-clear stale service worker caches
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (const reg of registrations) {
-                    reg.unregister();
+            <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+            <script src="dashboard.js?v=7"></script>
+            <script>
+                // Force-clear stale service worker caches
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        for (const reg of registrations) {
+                            reg.unregister();
+                        }
+                    });
+                    caches.keys().then(keys => {
+                        keys.forEach(key => caches.delete(key));
+                    });
+                    // Re-register fresh service worker
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('./sw.js')
+                            .then(reg => console.log('SW registered:', reg.scope))
+                            .catch(err => console.error('SW error:', err));
+                    });
                 }
-            });
-            caches.keys().then(keys => {
-                keys.forEach(key => caches.delete(key));
-            });
-            // Re-register fresh service worker
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered:', reg.scope))
-                    .catch(err => console.error('SW error:', err));
-            });
-        }
-    </script>
+            </script>
 </body>
 
 </html>
