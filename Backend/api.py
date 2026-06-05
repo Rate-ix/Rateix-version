@@ -1,10 +1,13 @@
 from fastapi import FastAPI, HTTPException, Header, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
 import os
 import sys
+import traceback
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -18,20 +21,36 @@ from ai.khata import analyze_khata
 
 app = FastAPI(title="Retix Backend", version="1.0.0")
 
-# CORS
+# CORS Config - Dynamic origins supported in production
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Supabase client
-supabase = create_client(
-    os.getenv("SUPABASE_URL"),
-    os.getenv("SUPABASE_KEY")
-)
+# Supabase client setup with production-grade validation
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+
+if not supabase_url or not supabase_key:
+    print("WARNING: SUPABASE_URL or SUPABASE_KEY environment variables are missing! Database endpoints will fail.")
+    supabase = None
+else:
+    try:
+        supabase = create_client(supabase_url, supabase_key)
+    except Exception as e:
+        print(f"ERROR: Failed to initialize Supabase client: {e}")
+        supabase = None
+
+def check_supabase():
+    if not supabase:
+        raise HTTPException(
+            status_code=503,
+            detail="Database client is not initialized. Please verify SUPABASE_URL and SUPABASE_KEY environment variables."
+        )
 
 # ═══════════════════════════════
 # MODELS
@@ -97,6 +116,10 @@ class GSTRequest(BaseModel):
 
 @app.get("/")
 def root():
+    frontend_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Frontend'))
+    index_file = os.path.join(frontend_dir, 'index.html')
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
     return {"message": "Retix Backend chal raha hai! 🚀"}
 
 @app.get("/health")
@@ -109,14 +132,17 @@ def health():
 
 @app.get("/orders/{user_id}")
 async def get_orders(user_id: str):
+    check_supabase()
     try:
         res = supabase.table("orders").select("*").eq("user_id", user_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/orders/{user_id}")
 async def add_order(user_id: str, order: OrderModel):
+    check_supabase()
     try:
         res = supabase.table("orders").insert({
             "user_id": user_id,
@@ -124,22 +150,27 @@ async def add_order(user_id: str, order: OrderModel):
         }).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/orders/{order_id}/status")
 async def update_order_status(order_id: str, status: str):
+    check_supabase()
     try:
         res = supabase.table("orders").update({"status": status}).eq("id", order_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/orders/{order_id}")
 async def delete_order(order_id: str):
+    check_supabase()
     try:
         res = supabase.table("orders").delete().eq("id", order_id).execute()
         return {"success": True}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # ═══════════════════════════════
@@ -148,14 +179,17 @@ async def delete_order(order_id: str):
 
 @app.get("/inventory/{user_id}")
 async def get_inventory(user_id: str):
+    check_supabase()
     try:
         res = supabase.table("inventory").select("*").eq("user_id", user_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/inventory/{user_id}")
 async def add_inventory(user_id: str, item: InventoryModel):
+    check_supabase()
     try:
         res = supabase.table("inventory").insert({
             "user_id": user_id,
@@ -163,22 +197,27 @@ async def add_inventory(user_id: str, item: InventoryModel):
         }).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/inventory/{item_id}")
 async def update_inventory(item_id: str, item: InventoryModel):
+    check_supabase()
     try:
         res = supabase.table("inventory").update(item.model_dump()).eq("id", item_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/inventory/{item_id}")
 async def delete_inventory(item_id: str):
+    check_supabase()
     try:
         res = supabase.table("inventory").delete().eq("id", item_id).execute()
         return {"success": True}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # ═══════════════════════════════
@@ -187,14 +226,17 @@ async def delete_inventory(item_id: str):
 
 @app.get("/distributors/{user_id}")
 async def get_distributors(user_id: str):
+    check_supabase()
     try:
         res = supabase.table("distributors").select("*").eq("user_id", user_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/distributors/{user_id}")
 async def add_distributor(user_id: str, dist: DistributorModel):
+    check_supabase()
     try:
         res = supabase.table("distributors").insert({
             "user_id": user_id,
@@ -202,14 +244,17 @@ async def add_distributor(user_id: str, dist: DistributorModel):
         }).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/distributors/{dist_id}")
 async def delete_distributor(dist_id: str):
+    check_supabase()
     try:
         res = supabase.table("distributors").delete().eq("id", dist_id).execute()
         return {"success": True}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # ═══════════════════════════════
@@ -218,14 +263,17 @@ async def delete_distributor(dist_id: str):
 
 @app.get("/khata/{user_id}")
 async def get_khata(user_id: str):
+    check_supabase()
     try:
         res = supabase.table("khata").select("*").eq("user_id", user_id).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/khata/{user_id}")
 async def add_khata(user_id: str, entry: KhataModel):
+    check_supabase()
     try:
         res = supabase.table("khata").insert({
             "user_id": user_id,
@@ -233,14 +281,17 @@ async def add_khata(user_id: str, entry: KhataModel):
         }).execute()
         return {"success": True, "data": res.data}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/khata/{entry_id}")
 async def delete_khata(entry_id: str):
+    check_supabase()
     try:
         res = supabase.table("khata").delete().eq("id", entry_id).execute()
         return {"success": True}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # ═══════════════════════════════
@@ -259,6 +310,7 @@ async def ai_analyze_inventory(request: AnalyzeInventoryRequest):
         result = analyze_inventory(request.stock_data)
         return {"success": True, "data": result}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/ai/analyze-khata")
@@ -267,6 +319,7 @@ async def ai_analyze_khata(request: AnalyzeKhataRequest):
         result = analyze_khata({"customers": request.customers})
         return {"success": True, "data": result}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/ai/calculate-gst")
@@ -291,6 +344,7 @@ async def ai_calculate_gst(request: GSTRequest):
         result = calculate_gst(order_data)
         return {"success": True, "data": result}
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/ai/hsn-suggest")
@@ -444,7 +498,15 @@ async def ai_scan_bill(file: UploadFile = File(...)):
     return {"success": True, "data": fallback_data}
 
 # ═══════════════════════════════
-# SERVER START
+# SERVER START & STATIC FILES MOUNT
 # ═══════════════════════════════
+# Mount static files at the end so it doesn't block API routes
+frontend_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Frontend'))
+if os.path.exists(frontend_dir):
+    print(f"Mounting static files from: {frontend_dir}")
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
+else:
+    print(f"Warning: Frontend directory not found at {frontend_dir}. Serving API only.")
+
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

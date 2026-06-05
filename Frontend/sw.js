@@ -1,4 +1,4 @@
-const CACHE_NAME = 'retix-v1';
+const CACHE_NAME = 'retix-v3';
 const ASSETS = [
     './',
     './index.html',
@@ -6,7 +6,7 @@ const ASSETS = [
     './app.js',
     './dashboard.html',
     './dashboard.css',
-    './dashboard.js',
+    './dashboard.js?v=3',
     'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
 ];
 

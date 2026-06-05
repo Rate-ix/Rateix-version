@@ -56,26 +56,36 @@ function toast(title, msg, err = false) {
 }
 
 // MODAL CONTROLS
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    if (id === 'modal-khata') {
+        if (typeof updateKhataPartiesDatalist === 'function') updateKhataPartiesDatalist();
+    }
+}
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // NAVIGATION
 function nav(section) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    document.getElementById('sec-' + section).classList.add('active');
-    document.getElementById('nav-' + section).classList.add('active');
+    const secEl = document.getElementById('sec-' + section);
+    if (secEl) secEl.classList.add('active');
+    const navEl = document.getElementById('nav-' + section);
+    if (navEl) navEl.classList.add('active');
     const titles = {
         overview: ['Overview', "Your shop's summary and daily metrics"],
         orders: ['Orders Ledger', 'Track bills and delivery status'],
         inventory: ['Stock Items', 'Track stock levels, low-stock alerts, and pricing'],
         distributors: ['Suppliers Directory', 'Manage suppliers and balances'],
         khata: ['Khata Book', 'Record cash coming in and going out'],
+        sheet: ['Billing Spreadsheet', 'Quick Excel-style billing pad'],
         vision: ['AI Smart Camera', 'Real-time camera view and theft detection']
     };
-    const t = titles[section];
-    document.getElementById('pageTitle').textContent = t[0];
-    document.getElementById('pageSub').textContent = t[1];
+    const t = titles[section] || [section, ''];
+    const pageTitleEl = document.getElementById('pageTitle');
+    if (pageTitleEl) pageTitleEl.textContent = t[0];
+    const pageSubEl = document.getElementById('pageSub');
+    if (pageSubEl) pageSubEl.textContent = t[1];
 
     // Auto-close mobile sidebar and hide overlay on nav switch
     const sidebar = document.getElementById('dashboardSidebar');
@@ -89,6 +99,7 @@ function nav(section) {
     if (section === 'inventory') loadInventory();
     if (section === 'distributors') loadDistributors();
     if (section === 'khata') loadKhata();
+    if (section === 'sheet') loadSpreadsheet();
     if (section === 'overview') loadOverview();
     if (section === 'vision') loadVision();
 }
@@ -106,14 +117,21 @@ async function loadOverview() {
         sb.from('distributors').select('*', { count: 'exact', head: true }).eq('user_id', uid),
         sb.from('khata').select('*', { count: 'exact', head: true }).eq('user_id', uid),
     ]);
-    document.getElementById('ov-orders').textContent = oc || 0;
-    document.getElementById('ov-inv').textContent = ic || 0;
-    document.getElementById('ov-dist').textContent = dc || 0;
-    document.getElementById('ov-khata').textContent = kc || 0;
+    const ovOrders = document.getElementById('ov-orders');
+    if (ovOrders) ovOrders.textContent = oc || 0;
+    const ovInv = document.getElementById('ov-inv');
+    if (ovInv) ovInv.textContent = ic || 0;
+    const ovDist = document.getElementById('ov-dist');
+    if (ovDist) ovDist.textContent = dc || 0;
+    const ovKhata = document.getElementById('ov-khata');
+    if (ovKhata) ovKhata.textContent = kc || 0;
 
-    document.getElementById('stat-orders').textContent = oc || 0;
-    document.getElementById('stat-inv').textContent = ic || 0;
-    document.getElementById('stat-dist').textContent = dc || 0;
+    const statOrders = document.getElementById('stat-orders');
+    if (statOrders) statOrders.textContent = oc || 0;
+    const statInv = document.getElementById('stat-inv');
+    if (statInv) statInv.textContent = ic || 0;
+    const statDist = document.getElementById('stat-dist');
+    if (statDist) statDist.textContent = dc || 0;
 
     // 1. Fetch relevant columns for active insights
     const [ordersRes, inventoryRes, distributorsRes] = await Promise.all([
@@ -160,7 +178,8 @@ async function loadOverview() {
         }
     });
 
-    document.getElementById('stat-rev').textContent = fmt(totalSalesRevenue);
+    const statRev = document.getElementById('stat-rev');
+    if (statRev) statRev.textContent = fmt(totalSalesRevenue);
     
     // Update Totals Summary Elements
     const totalStockVal = idata.reduce((acc, item) => {
@@ -220,6 +239,8 @@ async function loadOverview() {
 
     // Detect outstanding customer/supplier balances (negative balance is due money)
     const ddata = distributorsRes.data || [];
+    window.currentDistributorsCache = ddata;
+    if (typeof updateKhataPartiesDatalist === 'function') updateKhataPartiesDatalist();
     ddata.forEach(dist => {
         if (dist.balance < 0) {
             const debtVal = Math.abs(dist.balance);
@@ -938,6 +959,8 @@ async function loadDistributors() {
     if (!tbody) return;
     const { data: dists, error } = await sb.from('distributors').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading suppliers.</td></tr>`; return; }
+    window.currentDistributorsCache = dists || [];
+    if (typeof updateKhataPartiesDatalist === 'function') updateKhataPartiesDatalist();
     if (!dists || dists.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No suppliers yet. Add your first supplier details!</td></tr>`;
         return;
@@ -960,6 +983,8 @@ async function loadKhata() {
     if (!tbody) return;
     const { data: entries, error } = await sb.from('khata').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading khata entries.</td></tr>`; return; }
+    window.currentKhataCache = entries || [];
+    if (typeof updateKhataPartiesDatalist === 'function') updateKhataPartiesDatalist();
 
     // Update summary totals
     let totalCredit = 0, totalDebit = 0;
@@ -976,16 +1001,46 @@ async function loadKhata() {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No khata entries yet. Record your first entry!</td></tr>`;
         return;
     }
-    tbody.innerHTML = entries.map(e => `
-        <tr>
-            <td><strong>${e.party_name}</strong></td>
-            <td><span class="badge ${e.type === 'Credit' ? 'credit' : 'debit'}">${e.type}</span></td>
-            <td style="color:${e.type === 'Credit' ? '#059669' : '#dc2626'};font-weight:700">${fmt(e.amount)}</td>
-            <td>${e.description || '—'}</td>
-            <td>${fmtDate(e.entry_date || e.created_at)}</td>
-            <td><button onclick="delKhata('${e.id}')" class="btn-del" style="color:#ef4444;border-color:#ef4444;">Delete</button></td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = entries.map(e => {
+        let phone = '';
+        let cleanDesc = e.description || '';
+        if (cleanDesc && cleanDesc.startsWith('[phone:')) {
+            const m = cleanDesc.match(/^\[phone:(\d+)\]\s*(.*)/);
+            if (m) {
+                phone = m[1];
+                cleanDesc = m[2] || '';
+            }
+        }
+
+        const dateStr = fmtDate(e.entry_date || e.created_at);
+        const showWhatsApp = e.type === 'Credit';
+
+        return `
+            <tr>
+                <td>
+                    <strong>${e.party_name}</strong>
+                    ${phone ? `<br><span style="font-size:0.75rem;color:#64748b;font-weight:500;">📞 ${phone}</span>` : ''}
+                </td>
+                <td><span class="badge ${e.type === 'Credit' ? 'credit' : 'debit'}">${e.type}</span></td>
+                <td style="color:${e.type === 'Credit' ? '#059669' : '#dc2626'};font-weight:700">${fmt(e.amount)}</td>
+                <td>${cleanDesc || '—'}</td>
+                <td>${dateStr}</td>
+                <td>
+                    <div style="display:inline-flex; align-items:center; gap:8px;">
+                        ${showWhatsApp ? `
+                        <button onclick="sendDirectKhataWhatsApp('${e.party_name.replace(/'/g, "\\'")}', ${e.amount}, '${dateStr}', '${phone}')"
+                           style="display:inline-flex; align-items:center; gap:4px; padding:6px 12px; background:#25d366; color:#fff; border-radius:6px; font-size:0.75rem; font-weight:700; border:none; cursor:pointer;"
+                           title="Send payment reminder on WhatsApp">
+                            <svg fill="currentColor" viewBox="0 0 24 24" width="14" height="14" style="vertical-align:middle;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            WhatsApp
+                        </button>
+                        ` : ''}
+                        <button onclick="delKhata('${e.id}')" class="btn-del" style="color:#ef4444;border-color:#ef4444;padding:6px 12px;margin:0;">Delete</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 async function delKhata(id) {
@@ -999,6 +1054,70 @@ async function delDist(id) {
     await sb.from('distributors').delete().eq('id', id).eq('user_id', currentUser.id);
     toast('Supplier Removed', 'Supplier deleted.');
     loadDistributors(); loadOverview();
+}
+
+function sendDirectKhataWhatsApp(name, amount, dateStr, phone) {
+    const reminderMsg = `Dear ${name}, this is a reminder from our shop regarding the pending credit of ₹${amount} on ${dateStr}. Please settle it at your earliest convenience. Thank you!`;
+    
+    if (phone) {
+        let cleanPhone = phone.replace(/[^0-9]/g, '');
+        if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+        const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(reminderMsg)}`;
+        window.open(waLink, '_blank');
+    } else {
+        const p = prompt(`Enter 10-digit WhatsApp number for ${name}:`);
+        if (p && p.trim()) {
+            let cleanPhone = p.replace(/[^0-9]/g, '');
+            if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+            const waLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(reminderMsg)}`;
+            window.open(waLink, '_blank');
+        }
+    }
+}
+
+function updateKhataPartiesDatalist() {
+    const datalist = document.getElementById('khata-parties-datalist');
+    if (!datalist) return;
+
+    const parties = new Set();
+    window.khataPartyPhones = {};
+
+    // 1. Gather from distributors cache
+    (window.currentDistributorsCache || []).forEach(d => {
+        if (d.name) {
+            const nameKey = d.name.trim();
+            parties.add(nameKey);
+            if (d.phone) {
+                const cleanPhone = d.phone.replace(/[^0-9]/g, '').slice(-10);
+                if (cleanPhone.length === 10) {
+                    window.khataPartyPhones[nameKey.toLowerCase()] = cleanPhone;
+                }
+            }
+        }
+    });
+
+    // 2. Gather from khata cache
+    (window.currentKhataCache || []).forEach(e => {
+        if (e.party_name) {
+            const nameKey = e.party_name.trim();
+            parties.add(nameKey);
+            
+            if (e.description && e.description.startsWith('[phone:')) {
+                const m = e.description.match(/^\[phone:(\d+)\]/);
+                if (m) {
+                    const cleanPhone = m[1].replace(/[^0-9]/g, '').slice(-10);
+                    if (cleanPhone.length === 10) {
+                        window.khataPartyPhones[nameKey.toLowerCase()] = cleanPhone;
+                    }
+                }
+            }
+        }
+    });
+
+    // Populate datalist options
+    datalist.innerHTML = Array.from(parties)
+        .map(name => `<option value="${name}"></option>`)
+        .join('');
 }
 // ═══════════════════════════════
 // AI KHATA ANALYSIS
@@ -1699,7 +1818,8 @@ async function toggleCamera() {
         addVisionLog("AI Camera Activated. Calibrating...", "info");
         setTimeout(() => {
             addVisionLog("Scanner calibrated successfully. Shelf Zone A online.", "success");
-            document.getElementById('vision-tracked-count').textContent = "2";
+            const trackedEl = document.getElementById('vision-tracked-count');
+            if (trackedEl) trackedEl.textContent = "2";
         }, 1000);
 
         startVisionRenderingLoop();
@@ -1726,7 +1846,8 @@ async function toggleCamera() {
         addVisionLog("AI Engine initiated. Simulating scanning...", "info");
         setTimeout(() => {
             addVisionLog("Virtual tracking active. Monitoring Zone A.", "success");
-            document.getElementById('vision-tracked-count').textContent = "2";
+            const trackedEl = document.getElementById('vision-tracked-count');
+            if (trackedEl) trackedEl.textContent = "2";
         }, 1000);
         startVisionRenderingLoop();
     }
@@ -1777,7 +1898,8 @@ function stopVisionCamera() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    document.getElementById('vision-tracked-count').textContent = "0";
+    const trackedEl = document.getElementById('vision-tracked-count');
+    if (trackedEl) trackedEl.textContent = "0";
 }
 
 function startVisionRenderingLoop() {
@@ -1870,11 +1992,12 @@ function loadVision() {
     if (logContainer) {
         logContainer.innerHTML = '<div style="color: var(--color-muted); font-style: italic;">No active camera logs...</div>';
     }
+    const trackedEl = document.getElementById('vision-tracked-count');
     if (isCameraActive) {
-        document.getElementById('vision-tracked-count').textContent = "2";
+        if (trackedEl) trackedEl.textContent = "2";
         addVisionLog("AI Camera calibrated and monitoring.", "success");
     } else {
-        document.getElementById('vision-tracked-count').textContent = "0";
+        if (trackedEl) trackedEl.textContent = "0";
     }
 }
 
@@ -2045,6 +2168,301 @@ window.addEventListener('keydown', e => {
     }
 });
 
+// BILLING SPREADSHEET IMPLEMENTATION
+async function loadSpreadsheet() {
+    try {
+        const { data: invList } = await sb.from('inventory').select('*').eq('user_id', currentUser.id);
+        window.currentInventoryCache = invList || [];
+    } catch (e) {
+        console.warn("Failed to update inventory cache:", e);
+    }
+    
+    const tbody = document.getElementById('spreadsheetBody');
+    if (tbody) {
+        tbody.innerHTML = "";
+        for (let i = 0; i < 5; i++) {
+            addSpreadsheetRow();
+        }
+    }
+    
+    const custInput = document.getElementById('sheet-cust-name');
+    if (custInput) custInput.value = "";
+    
+    const notesInput = document.getElementById('sheet-notes');
+    if (notesInput) notesInput.value = "";
+    
+    updateSpreadsheetTotals();
+}
+
+function addSpreadsheetRow(name = "", qty = 1, price = 0, sync = true) {
+    const tbody = document.getElementById('spreadsheetBody');
+    if (!tbody) return;
+
+    const rowId = 'sheet-row-' + Math.random().toString(36).substring(2, 9);
+    const tr = document.createElement('tr');
+    tr.id = rowId;
+    tr.style.borderBottom = '1.5px solid #f1f5f9';
+    tr.style.transition = 'background 0.15s ease';
+    
+    tr.innerHTML = `
+        <td class="sheet-row-idx" style="width:55px; padding:16px 0; text-align:center; color:#94a3b8; font-size:0.8rem; font-weight:600; border-right:1px solid #f1f5f9;">-</td>
+        <td style="padding:8px 12px; border-right:1px solid #f1f5f9; width:34%;">
+            <input class="sheet-item-name" list="inv-products-datalist" placeholder="Search or type product..." onchange="onSheetProductChange(this)" value="${name}" style="width:100%; padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:10px; font-family:inherit; font-size:0.92rem; outline:none; color:#0f172a; box-sizing:border-box; transition:border 0.15s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'" required>
+        </td>
+        <td style="padding:8px 12px; text-align:center; border-right:1px solid #f1f5f9; width:11%;">
+            <span class="sheet-item-stock" style="color:#64748b; font-weight:600; font-size:0.9rem;">—</span>
+        </td>
+        <td style="padding:8px 12px; border-right:1px solid #f1f5f9; width:9%;">
+            <input class="sheet-item-qty" type="number" min="1" value="${qty}" oninput="calculateSheetRowTotal(this)" style="width:100%; padding:10px 8px; border:1.5px solid #e2e8f0; border-radius:10px; font-family:inherit; text-align:center; font-size:0.92rem; outline:none; color:#0f172a; box-sizing:border-box; transition:border 0.15s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'" required>
+        </td>
+        <td style="padding:8px 12px; border-right:1px solid #f1f5f9; width:13%;">
+            <input class="sheet-item-price" type="number" min="0" step="0.01" value="${price.toFixed(2)}" oninput="calculateSheetRowTotal(this)" style="width:100%; padding:10px 12px; border:1.5px solid #e2e8f0; border-radius:10px; font-family:inherit; text-align:right; font-size:0.92rem; outline:none; color:#0f172a; box-sizing:border-box; transition:border 0.15s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'" required>
+        </td>
+        <td style="padding:8px 12px; text-align:center; border-right:1px solid #f1f5f9; width:12%;">
+            <input class="sheet-item-sync" type="checkbox" ${sync ? 'checked' : ''} style="width:18px; height:18px; cursor:pointer; accent-color:var(--color-brand);">
+        </td>
+        <td style="padding:8px 18px; text-align:right; border-right:1px solid #f1f5f9; width:13%; background:#fcfbfe;">
+            <strong class="sheet-item-total" style="color:#5b21b6; font-family:var(--font-main); font-size:0.95rem;">₹${(qty * price).toFixed(2)}</strong>
+        </td>
+        <td style="padding:8px; text-align:center; width:5%;">
+            <button type="button" onclick="deleteSheetRow('${rowId}')" style="background:transparent; border:none; color:#cbd5e1; cursor:pointer; padding:6px; border-radius:8px; transition:all 0.15s;" onmouseover="this.style.color='#ef4444';this.style.background='#fef2f2';" onmouseout="this.style.color='#cbd5e1';this.style.background='transparent';">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+        </td>
+    `;
+    
+    tbody.appendChild(tr);
+    
+    if (name) {
+        const inputEl = tr.querySelector('.sheet-item-name');
+        onSheetProductChange(inputEl);
+    }
+    
+    reindexSpreadsheetRows();
+    updateSpreadsheetTotals();
+}
+
+function reindexSpreadsheetRows() {
+    const rows = document.querySelectorAll('#spreadsheetBody tr');
+    rows.forEach((row, index) => {
+        const idxCell = row.querySelector('.sheet-row-idx');
+        if (idxCell) {
+            idxCell.textContent = index + 1;
+        }
+    });
+}
+
+function deleteSheetRow(rowId) {
+    const row = document.getElementById(rowId);
+    if (row) {
+        row.remove();
+    }
+    reindexSpreadsheetRows();
+    updateSpreadsheetTotals();
+}
+
+function clearSpreadsheet() {
+    if (confirm('Clear all entries in the spreadsheet?')) {
+        const tbody = document.getElementById('spreadsheetBody');
+        if (tbody) {
+            tbody.innerHTML = "";
+            for (let i = 0; i < 5; i++) {
+                addSpreadsheetRow();
+            }
+        }
+        updateSpreadsheetTotals();
+    }
+}
+
+function toggleSheetLabels() {
+    const typeSelect = document.getElementById('sheet-bill-type');
+    const thRate = document.getElementById('sheet-th-rate');
+    if (!typeSelect || !thRate) return;
+    
+    const type = typeSelect.value;
+    if (type === 'Purchase') {
+        thRate.innerHTML = `BUYING PRICE (₹) <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">D</span>`;
+    } else {
+        thRate.innerHTML = `SELLING PRICE (₹) <span style="color:#c4b5fd; font-weight:600; font-size:0.75rem; margin-left:5px;">D</span>`;
+    }
+    
+    const rows = document.querySelectorAll('#spreadsheetBody tr');
+    rows.forEach(row => {
+        const nameInput = row.querySelector('.sheet-item-name');
+        if (nameInput && nameInput.value.trim()) {
+            onSheetProductChange(nameInput);
+        }
+    });
+}
+
+function onSheetProductChange(inputElement) {
+    const row = inputElement.closest('tr');
+    if (!row) return;
+    
+    const selectedValue = inputElement.value.trim().toLowerCase();
+    const stockSpan = row.querySelector('.sheet-item-stock');
+    const priceInput = row.querySelector('.sheet-item-price');
+    
+    const cachedItem = (window.currentInventoryCache || []).find(item => item.product_name.toLowerCase() === selectedValue);
+    
+    if (cachedItem) {
+        if (stockSpan) stockSpan.textContent = cachedItem.quantity || 0;
+        
+        if (priceInput) {
+            const type = document.getElementById('sheet-bill-type')?.value || 'Sale';
+            const priceVal = type === 'Purchase' ? (cachedItem.buying_price || 0) : (cachedItem.selling_price || 0);
+            priceInput.value = priceVal.toFixed(2);
+        }
+    } else {
+        if (stockSpan) stockSpan.textContent = '—';
+    }
+    
+    calculateSheetRowTotal(inputElement);
+}
+
+function calculateSheetRowTotal(element) {
+    const row = element.closest('tr');
+    if (!row) return;
+    
+    const qtyInput = row.querySelector('.sheet-item-qty');
+    const priceInput = row.querySelector('.sheet-item-price');
+    const totalStrong = row.querySelector('.sheet-item-total');
+    
+    const qty = parseInt(qtyInput?.value) || 0;
+    const price = parseFloat(priceInput?.value) || 0;
+    const total = qty * price;
+    
+    if (totalStrong) {
+        totalStrong.textContent = '₹' + total.toFixed(2);
+    }
+    
+    updateSpreadsheetTotals();
+}
+
+function updateSpreadsheetTotals() {
+    const rows = document.querySelectorAll('#spreadsheetBody tr');
+    let totalItemsCount = 0;
+    let grandTotalSum = 0;
+    
+    rows.forEach(row => {
+        const nameVal = row.querySelector('.sheet-item-name')?.value.trim();
+        const qty = parseInt(row.querySelector('.sheet-item-qty')?.value) || 0;
+        const price = parseFloat(row.querySelector('.sheet-item-price')?.value) || 0;
+        
+        if (nameVal) {
+            totalItemsCount += qty;
+            grandTotalSum += qty * price;
+        }
+    });
+    
+    const totalItemsEl = document.getElementById('sheet-total-items');
+    const grandTotalEl = document.getElementById('sheet-grand-total');
+    
+    if (totalItemsEl) totalItemsEl.textContent = totalItemsCount;
+    if (grandTotalEl) grandTotalEl.textContent = '₹' + grandTotalSum.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function generateSheetBill() {
+    const custName = document.getElementById('sheet-cust-name')?.value.trim();
+    if (!custName) {
+        toast('Error', 'Please enter a Customer or Supplier Name.', true);
+        return;
+    }
+    
+    const rows = document.querySelectorAll('#spreadsheetBody tr');
+    const items = [];
+    
+    rows.forEach(row => {
+        const name = row.querySelector('.sheet-item-name')?.value.trim();
+        const qty = parseInt(row.querySelector('.sheet-item-qty')?.value) || 0;
+        const price = parseFloat(row.querySelector('.sheet-item-price')?.value) || 0;
+        const sync = row.querySelector('.sheet-item-sync')?.checked || false;
+        
+        if (name && qty > 0) {
+            items.push({ name, qty, rate: price, amount: qty * price, sync });
+        }
+    });
+    
+    if (items.length === 0) {
+        toast('Error', 'Spreadsheet is empty or has items with 0 quantity.', true);
+        return;
+    }
+    
+    const type = document.getElementById('sheet-bill-type')?.value || 'Sale';
+    const status = document.getElementById('sheet-bill-status')?.value || 'Delivered';
+    const notes = document.getElementById('sheet-notes')?.value.trim() || '';
+    
+    const generateBtn = document.querySelector('button[onclick="generateSheetBill()"]');
+    if (generateBtn) {
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Processing...';
+    }
+    
+    try {
+        const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
+        const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+        const primaryItem = items[0];
+        
+        const notesPayload = JSON.stringify({
+            items: items.map(i => ({ name: i.name, qty: i.qty, rate: i.rate, amount: i.amount })),
+            userNotes: notes,
+            type: type
+        });
+        
+        const { data: newOrder, error: orderError } = await sb.from('orders').insert({
+            user_id: currentUser.id,
+            product_name: items.length > 1 ? `${primaryItem.name} (+${items.length - 1} items)` : primaryItem.name,
+            distributor: custName,
+            quantity: totalQty,
+            unit: 'units',
+            amount: grandTotal,
+            status: status,
+            notes: notesPayload
+        }).select();
+        
+        if (orderError) throw orderError;
+        if (!newOrder || newOrder.length === 0) throw new Error("Order creation failed");
+        
+        const createdOrderId = newOrder[0].id;
+        
+        for (const item of items) {
+            const qtyDelta = type === 'Purchase' ? item.qty : -item.qty;
+            const buyingPrice = type === 'Purchase' && item.sync ? item.rate : null;
+            const sellingPrice = type === 'Sale' && item.sync ? item.rate : null;
+            
+            await updateOrCreateInventoryItem(
+                item.name,
+                qtyDelta,
+                buyingPrice,
+                sellingPrice
+            );
+        }
+        
+        toast('Bill Generated! 🧾', `Fulfillment logged successfully. Invoice generated.`);
+        
+        const tbody = document.getElementById('spreadsheetBody');
+        if (tbody) {
+            tbody.innerHTML = "";
+            for (let i = 0; i < 5; i++) {
+                addSpreadsheetRow();
+            }
+        }
+        const notesInput = document.getElementById('sheet-notes');
+        if (notesInput) notesInput.value = "";
+        updateSpreadsheetTotals();
+        
+        viewInvoice(createdOrderId);
+        
+    } catch (err) {
+        toast('Error', err.message, true);
+    } finally {
+        if (generateBtn) {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = `<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="18" height="18"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Generate Bill & Update Stock`;
+        }
+    }
+}
+
 // INITIALIZATION
 window.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await sb.auth.getSession();
@@ -2088,5 +2506,17 @@ window.addEventListener('DOMContentLoaded', async () => {
         await sb.auth.signOut();
         window.location.href = 'index.html';
     });
+    // Auto-autofill phone in Add Khata Modal
+    const kPartyInput = document.getElementById('k-party');
+    if (kPartyInput) {
+        kPartyInput.addEventListener('input', function(e) {
+            const name = e.target.value.trim().toLowerCase();
+            const phoneInput = document.getElementById('k-phone');
+            if (phoneInput && window.khataPartyPhones && window.khataPartyPhones[name]) {
+                phoneInput.value = window.khataPartyPhones[name];
+            }
+        });
+    }
+
     nav('overview');
 });
