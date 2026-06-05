@@ -1393,17 +1393,36 @@
                         <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Search for local wholesale
                             distributors using GPS</p>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-                        <input id="nearby-query" placeholder="e.g. wholesale, groceries, clothing"
-                            value="wholesale suppliers"
-                            style="flex: 1.5; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit;">
-                        <input id="nearby-city" placeholder="City (e.g. Jaipur) - Optional"
-                            style="flex: 1; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit;"
-                            title="Leave empty to use current location">
-                        <button onclick="triggerFetchNearbySuppliers()" class="btn-add"
-                            style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer; padding: 10px 16px; border-radius: var(--radius-sm); color: white; white-space: nowrap;">
-                            <span style="font-size: 0.9rem; margin-right: 4px;">📍</span> Search
-                        </button>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Search Type</label>
+                                <select id="nearby-source" onchange="toggleNearbySourceView()"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; color: var(--color-text); font-weight: 600; cursor: pointer; background: #fff; outline: none; height: 40px;">
+                                    <option value="local" style="color: var(--color-text);">📍 Local Search (Nearby GPS)</option>
+                                    <option value="indiamart" style="color: var(--color-text);">🇮🇳 IndiaMART (Indian Wholesalers)</option>
+                                    <option value="alibaba" style="color: var(--color-text);">🇨🇳 Alibaba Global B2B (Imports)</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label id="nearby-city-label" style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Target City</label>
+                                <input id="nearby-city" placeholder="City (e.g. Jaipur) - Optional"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; height: 40px; box-sizing: border-box; color: var(--color-text);"
+                                    title="Leave empty to use current location">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+                            <div style="flex: 2; min-width: 280px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Keyword / Product</label>
+                                <input id="nearby-query" placeholder="e.g. wholesale, groceries, clothing"
+                                    value="wholesale suppliers"
+                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; height: 40px; box-sizing: border-box; color: var(--color-text);">
+                            </div>
+                            <button onclick="triggerFetchNearbySuppliers()" class="btn-add"
+                                style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer; padding: 10px 24px; border-radius: var(--radius-sm); color: white; white-space: nowrap; height: 40px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <span>🔍</span> Search Suppliers
+                            </button>
+                        </div>
                     </div>
                     <div
                         style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">

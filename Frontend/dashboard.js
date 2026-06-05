@@ -461,26 +461,78 @@ async function submitDistributor(e) {
 // ═══════════════════════════════
 
 function openNearbySuppliersModal() {
+    const sourceSel = document.getElementById('nearby-source');
+    if (sourceSel) {
+        sourceSel.value = 'local';
+        toggleNearbySourceView();
+    }
     document.getElementById('nearby-query').value = 'wholesale suppliers';
     document.getElementById('nearby-results-body').innerHTML = `
         <tr>
             <td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-muted);">
-                Click "Search Area" to find suppliers near you.
+                Select search type and click "Search" to find suppliers.
             </td>
         </tr>
     `;
     openModal('modal-nearby-suppliers');
 }
 
+function toggleNearbySourceView() {
+    const source = document.getElementById('nearby-source')?.value || 'local';
+    const cityInput = document.getElementById('nearby-city');
+    const queryInput = document.getElementById('nearby-query');
+    const cityLabel = document.getElementById('nearby-city-label');
+    
+    if (cityInput && queryInput) {
+        if (source === 'alibaba' || source === 'indiamart') {
+            cityInput.placeholder = "Min Order Qty (e.g. 100) - Optional";
+            cityInput.value = "";
+            cityInput.title = "Specify minimum order quantity";
+            if (cityLabel) cityLabel.textContent = "Minimum Order Qty";
+            
+            if (source === 'alibaba') {
+                queryInput.placeholder = "e.g. LED Lights, Smart Watch, Cables";
+            } else {
+                queryInput.placeholder = "Search Indian manufacturers (e.g. cables, Kirana)";
+            }
+            queryInput.value = "";
+        } else {
+            cityInput.placeholder = "City (e.g. Jaipur) - Optional";
+            cityInput.value = "";
+            cityInput.title = "Leave empty to use current location";
+            if (cityLabel) cityLabel.textContent = "Target City";
+            queryInput.placeholder = "e.g. wholesale, groceries, clothing";
+            queryInput.value = "wholesale suppliers";
+        }
+    }
+}
+
 function triggerFetchNearbySuppliers() {
     const tbody = document.getElementById('nearby-results-body');
     const query = document.getElementById('nearby-query').value.trim() || 'wholesale suppliers';
     const city = document.getElementById('nearby-city').value.trim();
+    const source = document.getElementById('nearby-source')?.value || 'local';
     
     tbody.innerHTML = `<tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><span>Finding suppliers...</span></div></td></tr>`;
     
+    if (source === 'alibaba' || source === 'indiamart') {
+        const platformName = source === 'alibaba' ? 'Alibaba' : 'IndiaMART';
+        aiCall(`/distributors/${currentUser.id}/nearby?query=${encodeURIComponent(query)}&source=${source}&city=${encodeURIComponent(city)}`)
+            .then(res => {
+                if (res.success && res.data && res.data.length > 0) {
+                    renderNearbySuppliers(res.data);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No ${platformName} suppliers found for this search.</td></tr>`;
+                }
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch ${platformName} suppliers.</td></tr>`;
+                console.error(err);
+            });
+        return;
+    }
+    
     if (city) {
-        // If city is provided, we can fetch without geolocation
         aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(city)}&query=${encodeURIComponent(query)}`)
             .then(res => {
                 if (res.success && res.data && res.data.length > 0) {
@@ -495,7 +547,7 @@ function triggerFetchNearbySuppliers() {
             });
     } else {
         if (!navigator.geolocation) {
-            toast('Error', 'Geolocation is not supported by your browser', true);
+            fallbackToProfileAddress(query);
             return;
         }
 
@@ -515,19 +567,49 @@ function triggerFetchNearbySuppliers() {
                 console.error(err);
             }
         }, (error) => {
-            toast('Location Error', 'Please allow location access to find nearby suppliers.', true);
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Location access denied.</td></tr>`;
+            console.warn("Geolocation denied or failed. Trying profile address fallback.", error);
+            fallbackToProfileAddress(query);
         });
+    }
+}
+
+async function fallbackToProfileAddress(query) {
+    const tbody = document.getElementById('nearby-results-body');
+    toast('Location Access Offline', 'Using your shop address location to search...', false);
+    try {
+        const { data: profile } = await sb.from('profiles').select('shop_address').eq('id', currentUser.id).single();
+        let fallbackCity = '';
+        if (profile && profile.shop_address) {
+            fallbackCity = profile.shop_address.trim();
+        }
+        
+        if (fallbackCity) {
+            const res = await aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(fallbackCity)}&query=${encodeURIComponent(query)}`);
+            if (res.success && res.data && res.data.length > 0) {
+                renderNearbySuppliers(res.data);
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No suppliers found for your shop location.</td></tr>`;
+            }
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Please enter a city or enable location services.</td></tr>`;
+        }
+    } catch (fallbackErr) {
+        console.error("Profile fallback search failed:", fallbackErr);
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Location access denied. Please enter a city manually.</td></tr>`;
     }
 }
 
 function renderNearbySuppliers(suppliers) {
     const tbody = document.getElementById('nearby-results-body');
     tbody.innerHTML = suppliers.map((s, index) => {
+        const distStr = typeof s.distance_meters === 'number' 
+            ? `${(s.distance_meters / 1000).toFixed(1)} km` 
+            : (s.distance_meters || 'Global Shipping');
+            
         return `
         <tr>
             <td><strong>${s.name}</strong><br><small style="color:var(--color-muted);">${s.phone || 'No phone provided'}</small></td>
-            <td>${(s.distance_meters / 1000).toFixed(1)} km</td>
+            <td>${distStr}</td>
             <td>${s.location}<br><span class="badge" style="background:#e0e7ff; color:#4f46e5; margin-top:4px;">${s.territory}</span></td>
             <td style="text-align: center;">
                 <button onclick="addNearbySupplier(this, '${s.name.replace(/'/g, "\\'")}', '${(s.phone || '').replace(/'/g, "\\'")}', '${s.location.replace(/'/g, "\\'")}', '${s.territory.replace(/'/g, "\\'")}')" class="btn-add" style="background: var(--color-brand); border: none; padding: 6px 12px; border-radius: 4px; color: white; cursor: pointer; font-size: 0.75rem;">+ Add</button>
