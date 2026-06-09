@@ -457,234 +457,106 @@ async function submitDistributor(e) {
 }
 
 // ═══════════════════════════════
-// NEARBY SUPPLIERS FETCH
+// MARKET TRENDING PRODUCTS
 // ═══════════════════════════════
 
-function openNearbySuppliersModal() {
-    const sourceSel = document.getElementById('nearby-source');
-    if (sourceSel) {
-        sourceSel.value = 'local';
-        toggleNearbySourceView();
-    }
-    document.getElementById('nearby-query').value = 'wholesale suppliers';
-    document.getElementById('nearby-results-body').innerHTML = `
-        <tr>
-            <td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-muted);">
-                Select search type and click "Search" to find suppliers.
-            </td>
-        </tr>
+async function loadTrendingProducts() {
+    const container = document.getElementById('trending-products-container');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div style="grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; padding: 3rem 0; color: var(--color-muted);">
+            <div class="spinner" style="margin-right: 12px;"></div>
+            <span>Fetching market trends...</span>
+        </div>
     `;
-    openModal('modal-nearby-suppliers');
-}
-
-function toggleNearbySourceView() {
-    const source = document.getElementById('nearby-source')?.value || 'local';
-    const cityInput = document.getElementById('nearby-city');
-    const queryInput = document.getElementById('nearby-query');
-    const cityLabel = document.getElementById('nearby-city-label');
     
-    if (cityInput && queryInput) {
-        if (source === 'alibaba' || source === 'indiamart') {
-            cityInput.placeholder = "Min Order Qty (e.g. 100) - Optional";
-            cityInput.value = "";
-            cityInput.title = "Specify minimum order quantity";
-            if (cityLabel) cityLabel.textContent = "Minimum Order Qty";
-            
-            if (source === 'alibaba') {
-                queryInput.placeholder = "e.g. LED Lights, Smart Watch, Cables";
-            } else {
-                queryInput.placeholder = "Search Indian manufacturers (e.g. cables, Kirana)";
-            }
-            queryInput.value = "";
-        } else {
-            cityInput.placeholder = "City (e.g. Jaipur) - Optional";
-            cityInput.value = "";
-            cityInput.title = "Leave empty to use current location";
-            if (cityLabel) cityLabel.textContent = "Target City";
-            queryInput.placeholder = "e.g. wholesale, groceries, clothing";
-            queryInput.value = "wholesale suppliers";
-        }
-    }
-}
-
-function triggerFetchNearbySuppliers() {
-    const tbody = document.getElementById('nearby-results-body');
-    const query = document.getElementById('nearby-query').value.trim() || 'wholesale suppliers';
-    const city = document.getElementById('nearby-city').value.trim();
-    const source = document.getElementById('nearby-source')?.value || 'local';
-    
-    tbody.innerHTML = `<tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><span>Finding suppliers...</span></div></td></tr>`;
-    
-    const renderError = (msg, errVal) => {
-        if (errVal) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: #ef4444;">
-                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;">⚠️ Backend Connection Failed</div>
-                <div style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-text); opacity: 0.85;">${errVal}</div>
-                <div style="font-size: 0.85rem; padding: 8px 12px; background: rgba(0,0,0,0.05); border-radius: 6px; display: inline-block; color: var(--color-text); font-family: monospace;">
-                    python Backend/api.py
-                </div>
-                <small style="display: block; margin-top: 10px; color: var(--color-muted);">Make sure the FastAPI server is running on port 8000.</small>
-            </td></tr>`;
-        } else {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">${msg}</td></tr>`;
-        }
-    };
-
-    if (source === 'alibaba' || source === 'indiamart') {
-        const platformName = source === 'alibaba' ? 'Alibaba' : 'IndiaMART';
-        aiCall(`/distributors/${currentUser.id}/nearby?query=${encodeURIComponent(query)}&source=${source}&city=${encodeURIComponent(city)}`)
-            .then(res => {
-                if (res.success && res.data && res.data.length > 0) {
-                    renderNearbySuppliers(res.data);
-                } else if (res.error) {
-                    renderError(`Failed to fetch ${platformName} suppliers.`, res.error);
-                } else {
-                    renderError(`No ${platformName} suppliers found for this search.`);
-                }
-            })
-            .catch(err => {
-                renderError(`Failed to fetch ${platformName} suppliers.`, err.message);
-                console.error(err);
-            });
-        return;
-    }
-    
-    if (city) {
-        aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(city)}&query=${encodeURIComponent(query)}`)
-            .then(res => {
-                if (res.success && res.data && res.data.length > 0) {
-                    renderNearbySuppliers(res.data);
-                } else if (res.error) {
-                    renderError(`Failed to fetch suppliers.`, res.error);
-                } else {
-                    renderError(`No suppliers found for this search.`);
-                }
-            })
-            .catch(err => {
-                renderError(`Failed to fetch suppliers.`, err.message);
-                console.error(err);
-            });
-    } else {
-        if (!navigator.geolocation) {
-            fallbackToProfileAddress(query);
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            
-            try {
-                const res = await aiCall(`/distributors/${currentUser.id}/nearby?lat=${lat}&lng=${lng}&query=${encodeURIComponent(query)}`);
-                if (res.success && res.data && res.data.length > 0) {
-                    renderNearbySuppliers(res.data);
-                } else if (res.error) {
-                    renderError(`Failed to fetch nearby suppliers.`, res.error);
-                } else {
-                    renderError(`No nearby suppliers found for this search.`);
-                }
-            } catch (err) {
-                renderError(`Failed to fetch nearby suppliers.`, err.message);
-                console.error(err);
-            }
-        }, (error) => {
-            console.warn("Geolocation denied or failed. Trying profile address fallback.", error);
-            fallbackToProfileAddress(query);
-        });
-    }
-}
-
-async function fallbackToProfileAddress(query) {
-    const tbody = document.getElementById('nearby-results-body');
-    toast('Location Access Offline', 'Using your shop address location to search...', false);
-    
-    const renderError = (msg, errVal) => {
-        if (errVal) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: #ef4444;">
-                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;">⚠️ Backend Connection Failed</div>
-                <div style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-text); opacity: 0.85;">${errVal}</div>
-                <div style="font-size: 0.85rem; padding: 8px 12px; background: rgba(0,0,0,0.05); border-radius: 6px; display: inline-block; color: var(--color-text); font-family: monospace;">
-                    python Backend/api.py
-                </div>
-                <small style="display: block; margin-top: 10px; color: var(--color-muted);">Make sure the FastAPI server is running on port 8000.</small>
-            </td></tr>`;
-        } else {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">${msg}</td></tr>`;
-        }
-    };
-
     try {
-        const { data: profile } = await sb.from('profiles').select('shop_address').eq('id', currentUser.id).single();
-        let fallbackCity = '';
-        if (profile && profile.shop_address) {
-            fallbackCity = profile.shop_address.trim();
-        }
-        
-        if (fallbackCity) {
-            const res = await aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(fallbackCity)}&query=${encodeURIComponent(query)}`);
-            if (res.success && res.data && res.data.length > 0) {
-                renderNearbySuppliers(res.data);
-            } else if (res.error) {
-                renderError(`Failed to fetch suppliers for your shop location.`, res.error);
-            } else {
-                renderError(`No suppliers found for your shop location.`);
-            }
+        const res = await aiCall('/market/trending');
+        if (res.success && res.data && res.data.length > 0) {
+            container.innerHTML = res.data.map(p => {
+                let badgeClass = 'trending';
+                const tagLower = (p.tag || '').toLowerCase();
+                if (tagLower.includes('best')) badgeClass = 'best-seller';
+                else if (tagLower.includes('hot')) badgeClass = 'hot-buy';
+                else if (tagLower.includes('new')) badgeClass = 'new-launch';
+                
+                return `
+                    <div class="trending-card">
+                        <div>
+                            <div class="trending-header">
+                                <h4 class="trending-title">${p.name}</h4>
+                                <span class="trending-badge ${badgeClass}">${p.tag || 'Trending'}</span>
+                            </div>
+                            <p class="trending-desc">${p.description || 'Highly demanded product in retail markets.'}</p>
+                        </div>
+                        <div>
+                            <div class="trending-growth">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="14" height="14">
+                                    <path d="M13 7h8m0 0v8m0-8L13 15l-4-4-6 6" />
+                                </svg>
+                                <span>${p.growth || '+20% demand'} growth</span>
+                            </div>
+                            <div class="trending-stats">
+                                <div>
+                                    <div class="trending-stat-label">Wholesale Est.</div>
+                                    <div class="trending-stat-value">${fmt(p.buying_price)}</div>
+                                </div>
+                                <div>
+                                    <div class="trending-stat-label">Retail Rec.</div>
+                                    <div class="trending-stat-value">${fmt(p.selling_price)}</div>
+                                </div>
+                            </div>
+                            <button class="btn-stock-trending" onclick="stockTrendingProduct('${p.name.replace(/'/g, "\\'")}', '${p.category.replace(/'/g, "\\'")}', ${p.buying_price}, ${p.selling_price})">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="14" height="14">
+                                    <path d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                <span>Add to Stock</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         } else {
-            renderError(`Please enter a city or enable location services.`);
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--color-danger);">
+                    Failed to load trending products. Please ensure the backend is running.
+                </div>
+            `;
         }
-    } catch (fallbackErr) {
-        console.error("Profile fallback search failed:", fallbackErr);
-        renderError(`Location access denied. Please enter a city manually.`);
+    } catch (err) {
+        console.error('Error fetching trending products:', err);
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--color-danger);">
+                Error loading trends: ${err.message}
+            </div>
+        `;
     }
 }
 
-function renderNearbySuppliers(suppliers) {
-    const tbody = document.getElementById('nearby-results-body');
-    tbody.innerHTML = suppliers.map((s, index) => {
-        const distStr = typeof s.distance_meters === 'number' 
-            ? `${(s.distance_meters / 1000).toFixed(1)} km` 
-            : (s.distance_meters || 'Global Shipping');
-            
-        return `
-        <tr>
-            <td><strong>${s.name}</strong><br><small style="color:var(--color-muted);">${s.phone || 'No phone provided'}</small></td>
-            <td>${distStr}</td>
-            <td>${s.location}<br><span class="badge" style="background:#e0e7ff; color:#4f46e5; margin-top:4px;">${s.territory}</span></td>
-            <td style="text-align: center;">
-                <button onclick="addNearbySupplier(this, '${s.name.replace(/'/g, "\\'")}', '${(s.phone || '').replace(/'/g, "\\'")}', '${s.location.replace(/'/g, "\\'")}', '${s.territory.replace(/'/g, "\\'")}')" class="btn-add" style="background: var(--color-brand); border: none; padding: 6px 12px; border-radius: 4px; color: white; cursor: pointer; font-size: 0.75rem;">+ Add</button>
-            </td>
-        </tr>
-    `}).join('');
+function stockTrendingProduct(name, category, buyingPrice, sellingPrice) {
+    openModal('modal-inv');
+    const nameInput = document.getElementById('i-name');
+    const catInput = document.getElementById('i-cat');
+    const buyInput = document.getElementById('i-buy');
+    const sellInput = document.getElementById('i-sell');
+    const qtyInput = document.getElementById('i-qty');
+    const unitInput = document.getElementById('i-unit');
+    const reorderInput = document.getElementById('i-reorder');
+    const skuInput = document.getElementById('i-sku');
+    
+    if (nameInput) nameInput.value = name;
+    if (catInput) catInput.value = category;
+    if (buyInput) buyInput.value = buyingPrice;
+    if (sellInput) sellInput.value = sellingPrice;
+    if (qtyInput) qtyInput.value = 50;
+    if (unitInput) unitInput.value = 'units';
+    if (reorderInput) reorderInput.value = 10;
+    if (skuInput) skuInput.value = (category.substring(0, 3) + '-' + name.substring(0, 3) + '-' + Math.floor(Math.random() * 900 + 100)).toUpperCase().replace(/\s+/g, '');
+    
+    toast('Pre-filled Stock details 📦', `Details for ${name} loaded. Set the starting quantity and click save.`);
 }
 
-async function addNearbySupplier(btn, name, phone, location, territory) {
-    btn.textContent = 'Adding...';
-    btn.disabled = true;
-    
-    const { error } = await sb.from('distributors').insert({
-        user_id: currentUser.id,
-        name: name,
-        phone: phone || '',
-        location: location || '',
-        territory: territory || '',
-        balance: 0,
-        notes: 'Added from Nearby Search'
-    });
-
-    if (error) { 
-        toast('Error', error.message, true); 
-        btn.textContent = '+ Add';
-        btn.disabled = false;
-        return; 
-    }
-    
-    toast('Supplier Added ✅', `${name} added to your directory.`);
-    btn.textContent = 'Added';
-    btn.style.background = '#10b981';
-    
-    loadDistributors();
-    loadOverview();
-}
 
 async function submitKhata(e) {
     e.preventDefault();
@@ -1187,6 +1059,10 @@ async function delInv(id) {
 async function loadDistributors() {
     const tbody = document.getElementById('dist-body');
     if (!tbody) return;
+    
+    // Fetch and load trending products in the market
+    loadTrendingProducts();
+
     const { data: dists, error } = await sb.from('distributors').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
     if (error) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444">Error loading suppliers.</td></tr>`; return; }
     window.currentDistributorsCache = dists || [];

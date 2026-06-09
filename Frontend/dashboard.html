@@ -520,11 +520,6 @@
                 <div class="sec-head">
                     <span class="sec-title">Suppliers Directory</span>
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        <button class="btn-add" onclick="openNearbySuppliersModal()"
-                            style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer;">
-                            <span style="font-size: 0.9rem; margin-right: 4px;">📍</span>
-                            <span>Find Nearby</span>
-                        </button>
                         <button class="btn-add" onclick="openModal('modal-dist')">
                             <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16"
                                 height="16">
@@ -557,6 +552,25 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- TRENDING PRODUCTS IN MARKET -->
+                <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--color-border);">
+                    <div class="sec-head" style="margin-bottom: 16px;">
+                        <span class="sec-title" style="font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                            <span>🔥 Market Trending Products</span>
+                            <span style="font-size: 0.7rem; background: var(--color-brand-glow); color: var(--color-brand); padding: 2px 8px; border-radius: 20px; font-weight: 800; border: 1px solid var(--color-brand-border); text-transform: uppercase;">Real-Time Demand</span>
+                        </span>
+                        <button class="btn-add" onclick="loadTrendingProducts()" style="background: rgba(99, 102, 241, 0.08); color: var(--color-brand); border: 1px solid var(--color-brand-border); padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 6px; box-shadow: none;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="12" height="12">
+                                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17" />
+                            </svg>
+                            <span>Refresh Trends</span>
+                        </button>
+                    </div>
+                    <div id="trending-products-container" class="trending-grid">
+                        <!-- Dynamically filled -->
+                    </div>
                 </div>
             </div>
 
@@ -847,69 +861,7 @@
                     <div id="aiAnalysisContent" style="max-height: 70vh; overflow-y: auto; color: var(--color-text);">
                         <div style="text-align: center; padding: 2rem; color: var(--color-muted);">Loading analysis...
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- NEARBY SUPPLIERS MODAL -->
-            <div class="modal-bg" id="nearbySuppliersModal"
-                onclick="if(event.target===this)closeModal('nearbySuppliersModal')">
-                <div class="modal-card"
-                    style="max-width: 750px; background: rgba(255, 255, 255, 0.75); color: var(--color-text); border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); padding: 24px;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--color-border);">
-                        <h3
-                            style="margin: 0; font-family: var(--font-title); color: var(--color-brand); display: flex; align-items: center; gap: 8px;">
-                            <span>📍</span> Find Nearby Suppliers
-                        </h3>
-                        <button onclick="closeModal('nearbySuppliersModal')" class="btn-del"
-                            style="background: rgba(255, 255, 255, 0.5); border: 1px solid var(--color-border); color: var(--color-text); padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Close</button>
-                    </div>
-
-                    <div
-                        style="margin-bottom: 1.5rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; background: rgba(255, 255, 255, 0.4); padding: 16px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.3);">
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <label for="nearbySearchQuery"
-                                style="font-size: 0.75rem; font-weight: 700; color: var(--color-text);">Supplier
-                                Category</label>
-                            <select id="nearbySearchQuery"
-                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; outline: none; background: #fff; cursor: pointer;">
-                                <option value="wholesale, distributor, supplier">All Distributors & Wholesalers</option>
-                                <option value="groceries wholesale">Groceries Wholesalers</option>
-                                <option value="clothing, textiles wholesale">Clothing & Textiles Wholesalers</option>
-                                <option value="electronics wholesale">Electronics Wholesalers</option>
-                                <option value="pharmaceuticals wholesale">Pharmacy / Medical Suppliers</option>
-                            </select>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <label for="nearbySearchRadius"
-                                style="font-size: 0.75rem; font-weight: 700; color: var(--color-text);">Search
-                                Radius</label>
-                            <select id="nearbySearchRadius"
-                                style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; outline: none; background: #fff; cursor: pointer;">
-                                <option value="1000">1 Kilometer</option>
-                                <option value="2000" selected>2 Kilometers</option>
-                                <option value="5000">5 Kilometers</option>
-                                <option value="10000">10 Kilometers</option>
-                            </select>
-                        </div>
-                        <button onclick="fetchNearbySuppliers()" class="btn-add"
-                            style="background: var(--color-brand); border: none; cursor: pointer; padding: 10px 20px; border-radius: 8px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                            Fetch Suppliers
-                        </button>
-                    </div>
-
-                    <div id="nearbySuppliersContent" style="max-height: 50vh; overflow-y: auto; padding-right: 4px;">
-                        <div
-                            style="text-align: center; padding: 3rem; color: var(--color-muted); background: rgba(255,255,255,0.2); border-radius: var(--radius-md); border: 1px dashed var(--color-border);">
-                            <p style="font-size: 2rem; margin-bottom: 12px; margin-top: 0;">📍</p>
-                            <p
-                                style="font-weight: 600; font-size: 0.9rem; color: var(--color-text); margin-bottom: 4px;">
-                                Search Local Suppliers</p>
-                            <p style="font-size: 0.8rem; max-width: 380px; margin: 0 auto;">Click "Fetch Suppliers" to
-                                request your location and discover nearby wholesale distributors in real-time.</p>
-                        </div>
-                    </div>
+                            </div>
                 </div>
             </div>
 
@@ -1381,81 +1333,6 @@
                 </div>
             </div>
 
-            <!-- Nearby Suppliers Modal -->
-            <div class="modal-bg" id="modal-nearby-suppliers"
-                onclick="if(event.target===this)closeModal('modal-nearby-suppliers')">
-                <div class="modal-card"
-                    style="max-width: 700px; background: #fff; padding: 24px; border-radius: var(--radius-lg);">
-                    <div class="modal-header" style="margin-bottom: 16px;">
-                        <h2
-                            style="font-family: var(--font-title); font-size: 1.25rem; color: var(--color-navy); margin: 0 0 4px 0;">
-                            Find Nearby Suppliers</h2>
-                        <p style="font-size: 0.8rem; color: var(--color-muted); margin: 0;">Search for local wholesale
-                            distributors using GPS</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <div style="flex: 1; min-width: 200px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Search Type</label>
-                                <select id="nearby-source" onchange="toggleNearbySourceView()"
-                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.85rem; color: var(--color-text); font-weight: 600; cursor: pointer; background: #fff; outline: none; height: 40px;">
-                                    <option value="local" style="color: var(--color-text);">📍 Local Search (Nearby GPS)</option>
-                                    <option value="indiamart" style="color: var(--color-text);">🇮🇳 IndiaMART (Indian Wholesalers)</option>
-                                    <option value="alibaba" style="color: var(--color-text);">🇨🇳 Alibaba Global B2B (Imports)</option>
-                                </select>
-                            </div>
-                            <div style="flex: 1; min-width: 200px;">
-                                <label id="nearby-city-label" style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Target City</label>
-                                <input id="nearby-city" placeholder="City (e.g. Jaipur) - Optional"
-                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; height: 40px; box-sizing: border-box; color: var(--color-text);"
-                                    title="Leave empty to use current location">
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
-                            <div style="flex: 2; min-width: 280px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: var(--color-text); margin-bottom: 4px;">Keyword / Product</label>
-                                <input id="nearby-query" placeholder="e.g. wholesale, groceries, clothing"
-                                    value="wholesale suppliers"
-                                    style="width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: inherit; height: 40px; box-sizing: border-box; color: var(--color-text);">
-                            </div>
-                            <button onclick="triggerFetchNearbySuppliers()" class="btn-add"
-                                style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none; cursor: pointer; padding: 10px 24px; border-radius: var(--radius-sm); color: white; white-space: nowrap; height: 40px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                <span>🔍</span> Search Suppliers
-                            </button>
-                        </div>
-                    </div>
-                    <div
-                        style="border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: #f8fafc; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
-                        <div
-                            style="max-height: 300px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 4px; background: #fff;">
-                            <table
-                                style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; font-family: inherit;">
-                                <thead>
-                                    <tr
-                                        style="border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-size: 0.75rem; background: #f1f5f9;">
-                                        <th style="padding: 8px; width: 35%;">Supplier Name</th>
-                                        <th style="padding: 8px; width: 15%;">Distance</th>
-                                        <th style="padding: 8px; width: 35%;">Address / Territory</th>
-                                        <th style="padding: 8px; width: 15%; text-align: center;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="nearby-results-body">
-                                    <tr>
-                                        <td colspan="4"
-                                            style="text-align: center; padding: 2rem; color: var(--color-muted);">
-                                            Click "Search Area" to find suppliers near you.
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-actions" style="margin-top: 16px; display: flex; justify-content: flex-end;">
-                        <button type="button" class="btn-cancel" onclick="closeModal('modal-nearby-suppliers')"
-                            style="background: #fff; border: 1px solid var(--color-border); color: var(--color-text); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;">Close</button>
-                    </div>
-                </div>
-            </div>
 
             <!-- Distributor Modal -->
             <div class="modal-bg" id="modal-dist" onclick="if(event.target===this)closeModal('modal-dist')">
