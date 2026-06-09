@@ -485,7 +485,98 @@ def generate_mock_local_suppliers(lat: float, lng: float, query: str, neighborho
     mock_suppliers.sort(key=lambda s: s["distance_meters"])
     return mock_suppliers
 
+def generate_llm_suppliers(query: str, platform: str, min_qty: str = None) -> list:
+    api_key = os.getenv("GROK_API_KEY")
+    if not api_key:
+        return []
+    try:
+        from openai import OpenAI
+        import json
+        
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1"
+        )
+        
+        min_qty_val = str(min_qty).strip() if min_qty is not None else ""
+        moq_str = f"with minimum order quantity (MOQ) around {min_qty_val}" if min_qty_val else "with standard wholesale MOQs"
+        
+        if platform == "indiamart":
+            prompt = f"""
+            Generate a list of 8 realistic or actual IndiaMART (Indian wholesale/B2B marketplace) suppliers, distributors, or manufacturers for the product or category: '{query}' {moq_str}.
+            Ensure the suppliers are located in well-known wholesale markets in India (e.g., Sadar Bazar, Delhi; Wazirpur Industrial Area, New Delhi; Lamington Road, Mumbai; SP Road, Bengaluru; Kalupur Market, Ahmedabad, etc.).
+            Ensure the contact numbers are realistic Indian mobile/landline numbers.
+            For each supplier, return the following details strictly in this JSON format:
+            {{
+                "name": "Company Name",
+                "phone": "+91 XXXXX XXXXX",
+                "location": "Market Area, City, State",
+                "territory": "MOQ: X units | TrustSEAL Verified / GST Registered / ISO Certified (X Yrs)",
+                "distance_meters": "2-4 days (Road) / Next Day Delivery / 3-5 days (Transit)",
+                "latitude": 0.0,
+                "longitude": 0.0,
+                "source": "indiamart"
+            }}
+            Return ONLY a valid JSON array of these objects. Do not include markdown code block formatting (like ```json), explanations, or extra text.
+            """
+        else: # alibaba
+            prompt = f"""
+            Generate a list of 8 realistic or actual Alibaba (global B2B marketplace) suppliers, manufacturers, or exporters for the product or category: '{query}' {moq_str}.
+            Ensure the suppliers are located in manufacturing hubs (e.g., Shenzhen, Guangzhou, Yiwu, Ningbo, Dongguan, Shanghai, China).
+            Ensure the contact numbers are realistic international numbers (e.g., +86 XX XXXX XXXX).
+            For each supplier, return the following details strictly in this JSON format:
+            {{
+                "name": "Company Name Co., Ltd.",
+                "phone": "+86 XX XXXX XXXX",
+                "location": "City, Province, China",
+                "territory": "MOQ: X units | Verified Manufacturer / Gold Supplier (X Yrs)",
+                "distance_meters": "7-12 days (Air) / 20-30 days (Ocean) / 9-15 days (Express)",
+                "latitude": 0.0,
+                "longitude": 0.0,
+                "source": "alibaba"
+            }}
+            Return ONLY a valid JSON array of these objects. Do not include markdown code block formatting (like ```json), explanations, or extra text.
+            """
+            
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            timeout=8.0
+        )
+        
+        text = response.choices[0].message.content.strip()
+        if text.startswith("```json"):
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif text.startswith("```"):
+            text = text.split("```")[1].split("```")[0].strip()
+            
+        data = json.loads(text)
+        if isinstance(data, list) and len(data) > 0:
+            validated = []
+            for item in data:
+                if isinstance(item, dict) and "name" in item and "location" in item:
+                    validated.append({
+                        "name": item.get("name"),
+                        "phone": item.get("phone", "+91 99999 99999" if platform == "indiamart" else "+86 20 1234 5678"),
+                        "location": item.get("location"),
+                        "territory": item.get("territory", "MOQ: 50 units | Verified Supplier"),
+                        "distance_meters": item.get("distance_meters", "3-5 days" if platform == "indiamart" else "12-15 days"),
+                        "latitude": float(item.get("latitude") or 0.0),
+                        "longitude": float(item.get("longitude") or 0.0),
+                        "source": platform
+                    })
+            if validated:
+                return validated
+    except Exception as e:
+        print(f"Error generating LLM suppliers for {platform}: {e}")
+    return []
+
 def generate_alibaba_suppliers(query: str, min_qty: str = None) -> list:
+    llm_sups = generate_llm_suppliers(query, "alibaba", min_qty)
+    if llm_sups:
+        return llm_sups
+        
     q_lower = query.lower()
     cities = [
         "Shenzhen, Guangdong, China",
@@ -513,7 +604,8 @@ def generate_alibaba_suppliers(query: str, min_qty: str = None) -> list:
         phone = f"+86 {random.randint(20, 755)} {random.randint(1000, 9999)} {random.randint(1000, 9999)}"
         lead_time = random.choice(["7-12 days (Air)", "9-15 days (Air)", "20-30 days (Ocean)", "15-22 days (Express)"])
         
-        moq_val = min_qty if (min_qty and min_qty.strip()) else str(random.choice([10, 50, 100, 200, 500]))
+        min_qty_val = str(min_qty).strip() if min_qty is not None else ""
+        moq_val = min_qty_val if min_qty_val else str(random.choice([10, 50, 100, 200, 500]))
         moq_str = f"MOQ: {moq_val} pcs"
         
         suppliers.append({
@@ -529,6 +621,10 @@ def generate_alibaba_suppliers(query: str, min_qty: str = None) -> list:
     return suppliers
 
 def generate_indiamart_suppliers(query: str, min_qty: str = None) -> list:
+    llm_sups = generate_llm_suppliers(query, "indiamart", min_qty)
+    if llm_sups:
+        return llm_sups
+        
     q_lower = query.lower()
     cities = [
         "Sadar Bazar, Delhi",
@@ -570,7 +666,8 @@ def generate_indiamart_suppliers(query: str, min_qty: str = None) -> list:
         phone = f"+91 {random.choice([98100, 93111, 98999, 90135, 95600, 88002])} {random.randint(10000, 99999)}"
         lead_time = random.choice(["2-4 days (Road)", "Next Day Delivery", "3-5 days (Track)", "1-2 days (Express)"])
         
-        moq_val = min_qty if (min_qty and min_qty.strip()) else str(random.choice([10, 50, 100, 500, "5000 min order"]))
+        min_qty_val = str(min_qty).strip() if min_qty is not None else ""
+        moq_val = min_qty_val if min_qty_val else str(random.choice([10, 50, 100, 500, "5000 min order"]))
         if str(moq_val).isdigit() or moq_val.endswith("pcs") or moq_val.endswith("units"):
             moq_str = f"MOQ: {moq_val} units"
         else:
@@ -600,7 +697,6 @@ def populate_missing_phones(suppliers: list):
 
 @app.get("/distributors/{user_id}/nearby")
 async def get_nearby_suppliers(user_id: str, lat: float = 0.0, lng: float = 0.0, city: str = None, query: str = "wholesale", radius: float = 2000, source: str = "local"):
-    check_supabase()
     try:
         if source == "alibaba":
             suppliers = generate_alibaba_suppliers(query, city)

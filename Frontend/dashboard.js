@@ -515,18 +515,35 @@ function triggerFetchNearbySuppliers() {
     
     tbody.innerHTML = `<tr><td colspan="4"><div class="loading-state"><div class="spinner"></div><span>Finding suppliers...</span></div></td></tr>`;
     
+    const renderError = (msg, errVal) => {
+        if (errVal) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: #ef4444;">
+                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;">⚠️ Backend Connection Failed</div>
+                <div style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-text); opacity: 0.85;">${errVal}</div>
+                <div style="font-size: 0.85rem; padding: 8px 12px; background: rgba(0,0,0,0.05); border-radius: 6px; display: inline-block; color: var(--color-text); font-family: monospace;">
+                    python Backend/api.py
+                </div>
+                <small style="display: block; margin-top: 10px; color: var(--color-muted);">Make sure the FastAPI server is running on port 8000.</small>
+            </td></tr>`;
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">${msg}</td></tr>`;
+        }
+    };
+
     if (source === 'alibaba' || source === 'indiamart') {
         const platformName = source === 'alibaba' ? 'Alibaba' : 'IndiaMART';
         aiCall(`/distributors/${currentUser.id}/nearby?query=${encodeURIComponent(query)}&source=${source}&city=${encodeURIComponent(city)}`)
             .then(res => {
                 if (res.success && res.data && res.data.length > 0) {
                     renderNearbySuppliers(res.data);
+                } else if (res.error) {
+                    renderError(`Failed to fetch ${platformName} suppliers.`, res.error);
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No ${platformName} suppliers found for this search.</td></tr>`;
+                    renderError(`No ${platformName} suppliers found for this search.`);
                 }
             })
             .catch(err => {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch ${platformName} suppliers.</td></tr>`;
+                renderError(`Failed to fetch ${platformName} suppliers.`, err.message);
                 console.error(err);
             });
         return;
@@ -537,12 +554,14 @@ function triggerFetchNearbySuppliers() {
             .then(res => {
                 if (res.success && res.data && res.data.length > 0) {
                     renderNearbySuppliers(res.data);
+                } else if (res.error) {
+                    renderError(`Failed to fetch suppliers.`, res.error);
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No suppliers found for this search.</td></tr>`;
+                    renderError(`No suppliers found for this search.`);
                 }
             })
             .catch(err => {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch suppliers.</td></tr>`;
+                renderError(`Failed to fetch suppliers.`, err.message);
                 console.error(err);
             });
     } else {
@@ -559,11 +578,13 @@ function triggerFetchNearbySuppliers() {
                 const res = await aiCall(`/distributors/${currentUser.id}/nearby?lat=${lat}&lng=${lng}&query=${encodeURIComponent(query)}`);
                 if (res.success && res.data && res.data.length > 0) {
                     renderNearbySuppliers(res.data);
+                } else if (res.error) {
+                    renderError(`Failed to fetch nearby suppliers.`, res.error);
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No nearby suppliers found for this search.</td></tr>`;
+                    renderError(`No nearby suppliers found for this search.`);
                 }
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Failed to fetch nearby suppliers.</td></tr>`;
+                renderError(`Failed to fetch nearby suppliers.`, err.message);
                 console.error(err);
             }
         }, (error) => {
@@ -576,6 +597,22 @@ function triggerFetchNearbySuppliers() {
 async function fallbackToProfileAddress(query) {
     const tbody = document.getElementById('nearby-results-body');
     toast('Location Access Offline', 'Using your shop address location to search...', false);
+    
+    const renderError = (msg, errVal) => {
+        if (errVal) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: #ef4444;">
+                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 6px;">⚠️ Backend Connection Failed</div>
+                <div style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-text); opacity: 0.85;">${errVal}</div>
+                <div style="font-size: 0.85rem; padding: 8px 12px; background: rgba(0,0,0,0.05); border-radius: 6px; display: inline-block; color: var(--color-text); font-family: monospace;">
+                    python Backend/api.py
+                </div>
+                <small style="display: block; margin-top: 10px; color: var(--color-muted);">Make sure the FastAPI server is running on port 8000.</small>
+            </td></tr>`;
+        } else {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">${msg}</td></tr>`;
+        }
+    };
+
     try {
         const { data: profile } = await sb.from('profiles').select('shop_address').eq('id', currentUser.id).single();
         let fallbackCity = '';
@@ -587,15 +624,17 @@ async function fallbackToProfileAddress(query) {
             const res = await aiCall(`/distributors/${currentUser.id}/nearby?city=${encodeURIComponent(fallbackCity)}&query=${encodeURIComponent(query)}`);
             if (res.success && res.data && res.data.length > 0) {
                 renderNearbySuppliers(res.data);
+            } else if (res.error) {
+                renderError(`Failed to fetch suppliers for your shop location.`, res.error);
             } else {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">No suppliers found for your shop location.</td></tr>`;
+                renderError(`No suppliers found for your shop location.`);
             }
         } else {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Please enter a city or enable location services.</td></tr>`;
+            renderError(`Please enter a city or enable location services.`);
         }
     } catch (fallbackErr) {
         console.error("Profile fallback search failed:", fallbackErr);
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #ef4444;">Location access denied. Please enter a city manually.</td></tr>`;
+        renderError(`Location access denied. Please enter a city manually.`);
     }
 }
 
