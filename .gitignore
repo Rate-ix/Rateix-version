@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 scratch/
 .env
+**/.env
 .vscode/
 Backend/inspect_ddg.py

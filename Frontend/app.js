@@ -57,8 +57,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let supabase = null;
     try {
         if (window.supabase) {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: {
+                    storage: window.localStorage,
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
             console.log('Supabase Client Initialized');
+            
+            // Auto-redirect if already logged in via cached session
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
         } else {
             console.warn('Supabase library missing. Operating in offline demo mode.');
         }
