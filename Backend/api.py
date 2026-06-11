@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, HTTPException, File, UploadFile, Query
+from fastapi import FastAPI, HTTPException, File, UploadFile, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -892,9 +892,9 @@ async def ai_scan_bill(file: UploadFile = File(...)):
                         {
                             "type": "text",
                             "text": (
-                                'Analyze this invoice or shopping bill. Extract the store/vendor name and all items '
+                                'Analyze this invoice or shopping bill. Extract the store/vendor name, their GSTIN if present, and all items '
                                 'with their name, quantity, and price. Return ONLY a valid JSON object: '
-                                '{"store_name": "Name", "items": [{"name": "Item Name", "quantity": 1, "price": 10.0}]}. '
+                                '{"store_name": "Name", "supplier_gstin": "GSTIN or null", "items": [{"name": "Item Name", "quantity": 1, "price": 10.0}]}. '
                                 'No markdown, no explanation.'
                             )
                         },
@@ -913,6 +913,7 @@ async def ai_scan_bill(file: UploadFile = File(...)):
     # Realistic fallback
     fallback_data = {
         "store_name": "Krishna General Store",
+        "supplier_gstin": "07AAAAA1234A1Z1",
         "items": [
             {"name": "Fortune Mustard Oil 1L", "quantity": 5, "price": 145.0},
             {"name": "Ashirvaad Shudh Chakki Atta 5kg", "quantity": 3, "price": 260.0},

@@ -981,19 +981,52 @@ async function runAIBillScan() {
         const addToInventory = confirm(`Found ${bill.items.length} items!\nDo you want to add them to stock?`);
 
         if (addToInventory) {
-            for (const item of bill.items) {
-                await updateOrCreateInventoryItem(
-                    item.name,
-                    item.quantity,
-                    item.price,
-                    Math.round(item.price * 1.2),
-                    'units',
-                    '',
-                    'Bill Scan'
-                );
+            try {
+                const API_BASE = window.RATIX_API || 'http://localhost:8000';
+                const purchaseItems = bill.items.map(i => ({
+                    product_name: i.name,
+                    quantity: i.quantity,
+                    unit: 'units',
+                    buying_price: i.price
+                }));
+
+                const stockRes = await fetch(`${API_BASE}/stock/purchase-update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        supplier_name: bill.store_name,
+                        supplier_gstin: bill.supplier_gstin || null,
+                        items: purchaseItems
+                    })
+                });
+
+                if (stockRes.ok) {
+                    const stockJson = await stockRes.json();
+                    if (stockJson.summary && stockJson.summary.supplier_imported) {
+                        toast('Supplier Added! 🤝', `Supplier details imported from GSTIN.`);
+                    }
+                    toast('Items Added! ✅', 'All items have been added or updated in your stock.', false);
+                } else {
+                    throw new Error("Backend failed");
+                }
+            } catch (err) {
+                console.warn('Backend stock update failed, using local fallback:', err);
+                for (const item of bill.items) {
+                    await updateOrCreateInventoryItem(
+                        item.name,
+                        item.quantity,
+                        item.price,
+                        Math.round(item.price * 1.2),
+                        'units',
+                        '',
+                        'Bill Scan'
+                    );
+                }
+                toast('Items Added! ✅', 'All items have been added or updated in your stock.', false);
             }
-            toast('Items Added! ✅', 'All items have been added or updated in your stock.', false);
             loadInventory();
+            loadDistributors();
         }
     };
 
@@ -1078,16 +1111,40 @@ async function loadDistributors() {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748b">No suppliers yet. Add your first supplier details!</td></tr>`;
         return;
     }
-    tbody.innerHTML = dists.map(d => `
-        <tr>
-            <td><strong>${d.name}</strong></td>
-            <td>${d.phone || '—'}</td>
-            <td>${d.location || '—'}</td>
-            <td>${d.territory || '—'}</td>
-            <td style="color:${(d.balance||0) < 0 ? '#ef4444' : '#059669'};font-weight:600">${fmt(d.balance || 0)}</td>
-            <td><button onclick="delDist('${d.id}')" class="btn-del" style="color:#ef4444;border-color:#ef4444;">Delete</button></td>
-        </tr>
-    `).join('');
+    const grouped = {};
+    dists.forEach(d => {
+        const area = d.territory || 'Other / Unknown Area';
+        if (!grouped[area]) grouped[area] = [];
+        grouped[area].push(d);
+    });
+
+    let html = '';
+    for (const area of Object.keys(grouped).sort()) {
+        html += `
+            <tr style="background: rgba(99, 102, 241, 0.05);">
+                <td colspan="6" style="padding: 12px 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg fill="none" stroke="var(--color-brand)" stroke-width="2" viewBox="0 0 24 24" width="16" height="16"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <strong style="color: var(--color-brand); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;">${area}</strong>
+                        <span style="background: var(--color-brand); color: white; border-radius: 12px; padding: 2px 8px; font-size: 0.75rem; font-weight: 600; margin-left: auto;">${grouped[area].length} Supplier${grouped[area].length > 1 ? 's' : ''}</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+        grouped[area].forEach(d => {
+            html += `
+                <tr>
+                    <td style="padding-left: 24px;"><strong>${d.name}</strong></td>
+                    <td>${d.phone || '—'}</td>
+                    <td>${d.location || '—'}</td>
+                    <td><span class="status-badge" style="background:#f1f5f9;color:#475569">${d.territory || '—'}</span></td>
+                    <td style="color:${(d.balance||0) < 0 ? '#ef4444' : '#059669'};font-weight:600">${fmt(d.balance || 0)}</td>
+                    <td><button onclick="delDist('${d.id}')" class="btn-del" style="color:#ef4444;border-color:#ef4444;">Delete</button></td>
+                </tr>
+            `;
+        });
+    }
+    tbody.innerHTML = html;
 }
 
 // DIGITAL KHATA
