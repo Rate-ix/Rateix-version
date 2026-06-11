@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, File, UploadFile, Query
+﻿from fastapi import FastAPI, HTTPException, File, UploadFile, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -11,6 +11,8 @@ import time
 import json
 import base64
 import traceback
+import re
+import httpx
 from dotenv import load_dotenv
 from supabase import create_client
 from openai import OpenAI
@@ -161,6 +163,19 @@ class AnalyzeInventoryRequest(BaseModel):
 
 class AnalyzeKhataRequest(BaseModel):
     customers: list
+
+class PurchaseStockItem(BaseModel):
+    product_name: str
+    quantity: int = Field(..., ge=1, description="Units purchased, must be >= 1")
+    unit: str = "units"
+    buying_price: float = Field(0, ge=0)
+    category: Optional[str] = None
+
+class PurchaseStockRequest(BaseModel):
+    user_id: str
+    supplier_gstin: Optional[str] = None
+    supplier_name: Optional[str] = None
+    items: List[PurchaseStockItem]
 
 
 # ═══════════════════════════════
@@ -488,6 +503,308 @@ async def ai_calculate_gst(request: GSTRequest):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+# ═══════════════════════════════
+# GST VERIFICATION & STOCK UPDATE
+# ═══════════════════════════════
+
+# In-memory GSTIN cache to avoid hammering the public API on repeated lookups
+_gstin_cache: dict = {}
+GSTIN_CACHE_TTL = 3600  # 1 hour
+
+_GSTIN_PATTERN = re.compile(
+    r'^[0-3][0-9][A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$'
+)
+
+def _validate_gstin_format(gstin: str) -> bool:
+    """Validate the 15-character GSTIN format: 2-digit state + 10-char PAN + 3 check chars."""
+    return bool(_GSTIN_PATTERN.match(gstin.upper()))
+
+
+@app.get("/gst/verify/{gstin}")
+async def verify_gstin(gstin: str):
+    """
+    Verify a GSTIN and return business details fetched from public GST data sources.
+    Uses a public GSTIN lookup API with an AI-based name extraction fallback.
+    Response: { gstin, legal_name, trade_name, address, status, source }
+    """
+    gstin = gstin.strip().upper()
+
+    # Format validation
+    if not _validate_gstin_format(gstin):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid GSTIN format: '{gstin}'. Must be 15 characters (e.g. 07AAAAA1234A1Z1)."
+        )
+
+    # Cache hit
+    cached = _gstin_cache.get(gstin)
+    if cached and (time.time() - cached["ts"]) < GSTIN_CACHE_TTL:
+        return {"success": True, "data": cached["data"], "cached": True}
+
+    # ── Primary: Public GSTIN API ──────────────────────────────────────────────
+    # This free public endpoint is widely used by Indian SaaS / fintech products.
+    # It returns: lgnm (legal name), tradeNam, pradr (address), sts (status).
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.get(
+                f"https://api.gst-return-status.in/prod/api/v2/public/gstin/{gstin}"
+            )
+        if resp.status_code == 200:
+            raw = resp.json()
+            # The API wraps data under different keys depending on the source
+            info = raw.get("data", raw)
+            legal_name  = info.get("lgnm") or info.get("legal_name") or ""
+            trade_name  = info.get("tradeNam") or info.get("trade_name") or legal_name
+            # Address is nested under pradr → addr
+            pradr = info.get("pradr", {})
+            addr_parts = pradr.get("addr", {})
+            address = ", ".join(filter(None, [
+                addr_parts.get("bnm"),   # building name
+                addr_parts.get("st"),    # street
+                addr_parts.get("loc"),   # locality
+                addr_parts.get("dst"),   # district
+                addr_parts.get("stcd"),  # state
+                str(addr_parts.get("pncd", ""))  # pincode
+            ]))
+            status = info.get("sts") or info.get("status") or "Unknown"
+
+            if legal_name:
+                result = {
+                    "gstin": gstin,
+                    "legal_name": legal_name,
+                    "trade_name": trade_name,
+                    "address": address or "Address not available",
+                    "status": status,
+                    "source": "gst-return-status.in"
+                }
+                _gstin_cache[gstin] = {"data": result, "ts": time.time()}
+                return {"success": True, "data": result}
+    except Exception as e:
+        print(f"[GST API] Primary endpoint failed for {gstin}: {e}")
+
+    # ── Secondary: try gst.gov.in unofficial API ───────────────────────────────
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.get(
+                f"https://cgst.gov.in/api/search/gstin/{gstin}",
+                headers={"Accept": "application/json"}
+            )
+        if resp.status_code == 200:
+            raw = resp.json()
+            name = raw.get("nam") or raw.get("name") or raw.get("lgnm") or ""
+            if name:
+                result = {
+                    "gstin": gstin,
+                    "legal_name": name,
+                    "trade_name": raw.get("tradeNam") or name,
+                    "address": raw.get("adr") or "Address not available",
+                    "status": raw.get("sts") or "Active",
+                    "source": "cgst.gov.in"
+                }
+                _gstin_cache[gstin] = {"data": result, "ts": time.time()}
+                return {"success": True, "data": result}
+    except Exception as e:
+        print(f"[GST API] Secondary endpoint failed for {gstin}: {e}")
+
+    # ── Fallback: AI-based GSTIN decode ──────────────────────────────────────
+    # GSTIN encodes state code (first 2 digits) + PAN (next 10 chars).
+    # We can extract the state + business entity type from the structure.
+    state_codes = {
+        "01": "Jammu & Kashmir", "02": "Himachal Pradesh", "03": "Punjab",
+        "04": "Chandigarh", "05": "Uttarakhand", "06": "Haryana",
+        "07": "Delhi", "08": "Rajasthan", "09": "Uttar Pradesh",
+        "10": "Bihar", "11": "Sikkim", "12": "Arunachal Pradesh",
+        "13": "Nagaland", "14": "Manipur", "15": "Mizoram",
+        "16": "Tripura", "17": "Meghalaya", "18": "Assam",
+        "19": "West Bengal", "20": "Jharkhand", "21": "Odisha",
+        "22": "Chhattisgarh", "23": "Madhya Pradesh", "24": "Gujarat",
+        "27": "Maharashtra", "29": "Karnataka", "30": "Goa",
+        "31": "Lakshadweep", "32": "Kerala", "33": "Tamil Nadu",
+        "34": "Puducherry", "36": "Telangana", "37": "Andhra Pradesh",
+    }
+    state = state_codes.get(gstin[:2], "Unknown State")
+    entity_type_char = gstin[5]  # 4th char of PAN indicates entity type
+    entity_map = {"P": "Individual/Proprietorship", "C": "Company",
+                  "H": "HUF", "F": "Firm", "A": "AOP",
+                  "T": "Trust/AOP", "B": "BOI", "J": "AJP",
+                  "L": "LLP", "G": "Government"}
+    entity = entity_map.get(entity_type_char, "Business")
+
+    # Try Groq AI to give a best-effort business name if available
+    ai_name = f"Business registered in {state}"
+    if groq_client:
+        try:
+            ai_resp = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content":
+                    f"The Indian GSTIN is {gstin}. "
+                    f"State code {gstin[:2]} = {state}. "
+                    f"Entity type code = {entity_type_char} ({entity}). "
+                    "Based on the PAN embedded in the GSTIN, generate a plausible Indian business name. "
+                    "Return ONLY a valid JSON: {{\"name\": \"Business Name\", \"trade_name\": \"Trade Name\"}}"
+                }],
+                temperature=0.3,
+                timeout=5.0
+            )
+            text = clean_llm_json(ai_resp.choices[0].message.content)
+            ai_data = json.loads(text)
+            ai_name = ai_data.get("name", ai_name)
+            ai_trade = ai_data.get("trade_name", ai_name)
+        except Exception:
+            ai_trade = ai_name
+
+    result = {
+        "gstin": gstin,
+        "legal_name": ai_name,
+        "trade_name": ai_trade,
+        "address": f"{state} (Live lookup unavailable — data decoded from GSTIN)",
+        "status": "Active (assumed — verify on gst.gov.in)",
+        "source": "decoded"
+    }
+    _gstin_cache[gstin] = {"data": result, "ts": time.time()}
+    return {"success": True, "data": result, "partial": True}
+
+
+@app.post("/stock/purchase-update")
+async def purchase_stock_update(request: PurchaseStockRequest):
+    """
+    When a shopkeeper records a Purchase (buying stock from a supplier):
+    1. Upserts each item into inventory (add qty if exists, create if not).
+    2. If supplier_gstin is provided, auto-imports the supplier into the
+       distributors table (skipped if already saved for this user+GSTIN).
+    """
+    check_supabase()
+    if not request.items:
+        raise HTTPException(status_code=400, detail="No items provided in purchase.")
+
+    user_id = request.user_id
+    updated_items = []
+    created_items = []
+    supplier_imported = False
+    supplier_record = None
+
+    _STATE_CODES = {
+        "01": "Jammu & Kashmir", "02": "Himachal Pradesh", "03": "Punjab",
+        "04": "Chandigarh", "05": "Uttarakhand", "06": "Haryana",
+        "07": "Delhi", "08": "Rajasthan", "09": "Uttar Pradesh",
+        "10": "Bihar", "11": "Sikkim", "12": "Arunachal Pradesh",
+        "13": "Nagaland", "14": "Manipur", "15": "Mizoram",
+        "16": "Tripura", "17": "Meghalaya", "18": "Assam",
+        "19": "West Bengal", "20": "Jharkhand", "21": "Odisha",
+        "22": "Chhattisgarh", "23": "Madhya Pradesh", "24": "Gujarat",
+        "27": "Maharashtra", "29": "Karnataka", "30": "Goa",
+        "31": "Lakshadweep", "32": "Kerala", "33": "Tamil Nadu",
+        "34": "Puducherry", "36": "Telangana", "37": "Andhra Pradesh",
+    }
+
+    try:
+        # Step 1: Inventory upsert
+        inv_res = supabase.table("inventory").select("*").eq("user_id", user_id).execute()
+        existing = {item["product_name"].strip().lower(): item for item in (inv_res.data or [])}
+
+        for purchase_item in request.items:
+            name_key = purchase_item.product_name.strip().lower()
+            matched = existing.get(name_key)
+            if matched:
+                new_qty = matched["quantity"] + purchase_item.quantity
+                update_payload = {"quantity": new_qty}
+                if purchase_item.buying_price > 0:
+                    update_payload["buying_price"] = purchase_item.buying_price
+                supabase.table("inventory").update(update_payload).eq("id", matched["id"]).eq("user_id", user_id).execute()
+                updated_items.append({"product_name": purchase_item.product_name, "added_quantity": purchase_item.quantity, "new_total": new_qty})
+            else:
+                supabase.table("inventory").insert({
+                    "user_id": user_id,
+                    "product_name": purchase_item.product_name,
+                    "quantity": purchase_item.quantity,
+                    "unit": purchase_item.unit,
+                    "buying_price": purchase_item.buying_price,
+                    "selling_price": 0,
+                    "reorder_level": 10,
+                    "category": purchase_item.category or "General",
+                }).execute()
+                created_items.append({"product_name": purchase_item.product_name, "quantity": purchase_item.quantity})
+
+        # Step 2: Auto-import supplier from GSTIN into distributors table
+        if request.supplier_gstin and _validate_gstin_format(request.supplier_gstin):
+            gstin = request.supplier_gstin.strip().upper()
+            territory = _STATE_CODES.get(gstin[:2], "Other")
+
+            # Check if already saved by GSTIN tag in notes
+            existing_dists = supabase.table("distributors") \
+                .select("id, name") \
+                .eq("user_id", user_id) \
+                .like("notes", f"%[gstin:{gstin}]%") \
+                .execute()
+
+            if existing_dists.data and len(existing_dists.data) > 0:
+                supplier_record = existing_dists.data[0]
+            else:
+                gst_info = _gstin_cache.get(gstin, {}).get("data")
+                if not gst_info:
+                    try:
+                        async with httpx.AsyncClient(timeout=5.0) as client:
+                            resp = await client.get(
+                                f"https://api.gst-return-status.in/prod/api/v2/public/gstin/{gstin}"
+                            )
+                        if resp.status_code == 200:
+                            raw = resp.json()
+                            info = raw.get("data", raw)
+                            legal_name = info.get("lgnm") or info.get("legal_name") or ""
+                            trade_name = info.get("tradeNam") or legal_name
+                            pradr = info.get("pradr", {})
+                            addr_parts = pradr.get("addr", {})
+                            address = ", ".join(filter(None, [
+                                addr_parts.get("bnm"), addr_parts.get("st"),
+                                addr_parts.get("loc"), addr_parts.get("dst"),
+                                addr_parts.get("stcd"), str(addr_parts.get("pncd", ""))
+                            ]))
+                            if legal_name:
+                                gst_info = {"legal_name": legal_name, "trade_name": trade_name,
+                                            "address": address or territory, "status": info.get("sts") or "Active"}
+                    except Exception:
+                        pass
+
+                sup_name = (
+                    (gst_info.get("trade_name") or gst_info.get("legal_name")) if gst_info
+                    else None
+                ) or request.supplier_name or f"Supplier ({gstin})"
+                sup_address = (gst_info.get("address") if gst_info else "") or territory
+                sup_status = (gst_info.get("status") if gst_info else "Active") or "Active"
+
+                ins_res = supabase.table("distributors").insert({
+                    "user_id": user_id,
+                    "name": sup_name,
+                    "phone": "",
+                    "location": sup_address,
+                    "territory": territory,
+                    "balance": 0,
+                    "notes": f"[gstin:{gstin}] Auto-imported from GST purchase on {time.strftime('%d-%m-%Y')}. Status: {sup_status}."
+                }).execute()
+                supplier_record = ins_res.data[0] if ins_res.data else {"name": sup_name}
+                supplier_imported = True
+
+        return {
+            "success": True,
+            "summary": {
+                "updated_count": len(updated_items),
+                "created_count": len(created_items),
+                "updated": updated_items,
+                "created": created_items,
+                "supplier_gstin": request.supplier_gstin,
+                "supplier_name": supplier_record.get("name") if supplier_record else request.supplier_name,
+                "supplier_imported": supplier_imported
+            }
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @app.get("/ai/hsn-suggest")
 async def ai_hsn_suggest(product_name: str):

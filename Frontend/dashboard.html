@@ -557,12 +557,17 @@
                 <!-- TRENDING PRODUCTS IN MARKET -->
                 <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--color-border);">
                     <div class="sec-head" style="margin-bottom: 16px;">
-                        <span class="sec-title" style="font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                        <span class="sec-title"
+                            style="font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
                             <span>🔥 Market Trending Products</span>
-                            <span style="font-size: 0.7rem; background: var(--color-brand-glow); color: var(--color-brand); padding: 2px 8px; border-radius: 20px; font-weight: 800; border: 1px solid var(--color-brand-border); text-transform: uppercase;">Real-Time Demand</span>
+                            <span
+                                style="font-size: 0.7rem; background: var(--color-brand-glow); color: var(--color-brand); padding: 2px 8px; border-radius: 20px; font-weight: 800; border: 1px solid var(--color-brand-border); text-transform: uppercase;">Real-Time
+                                Demand</span>
                         </span>
-                        <button class="btn-add" onclick="loadTrendingProducts()" style="background: rgba(99, 102, 241, 0.08); color: var(--color-brand); border: 1px solid var(--color-brand-border); padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 6px; box-shadow: none;">
-                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="12" height="12">
+                        <button class="btn-add" onclick="loadTrendingProducts()"
+                            style="background: rgba(99, 102, 241, 0.08); color: var(--color-brand); border: 1px solid var(--color-brand-border); padding: 6px 12px; cursor: pointer; font-size: 0.8rem; font-weight: 700; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 6px; box-shadow: none;">
+                            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="12"
+                                height="12">
                                 <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17" />
                             </svg>
                             <span>Refresh Trends</span>
@@ -718,7 +723,7 @@
                         <label
                             style="display:block; font-size:0.85rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;">Transaction
                             Type</label>
-                        <select id="sheet-bill-type" onchange="toggleSheetLabels()"
+                        <select id="sheet-bill-type" onchange="toggleSheetLabels(); toggleSheetGSTINRow()"
                             style="width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.98rem; font-family:inherit; outline:none; color:#0f172a; background:#fff; box-sizing:border-box; cursor:pointer; transition:border 0.15s;"
                             onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
                             <option value="Sale">Sale — Customer Outflow</option>
@@ -737,6 +742,41 @@
                             <option>In Transit</option>
                             <option>Cancelled</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- GSTIN Auto-Lookup Row (only visible for Purchase type) -->
+                <div id="sheet-gstin-row"
+                    style="display:none; padding: 0 28px 20px 28px; animation: fadeInDown 0.25s ease;">
+                    <div
+                        style="display:flex; align-items:center; gap:10px; background:#f0f4ff; border:1.5px solid #c7d2fe; border-radius:12px; padding:12px 16px;">
+                        <svg fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24" width="18" height="18"
+                            style="flex-shrink:0;">
+                            <path
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <div style="flex:1; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span
+                                style="font-size:0.82rem; font-weight:700; color:#4338ca; white-space:nowrap;">Supplier
+                                GSTIN</span>
+                            <input id="sheet-gstin" placeholder="e.g. 07AAAAA1234A1Z1" maxlength="15"
+                                oninput="this.value=this.value.toUpperCase()"
+                                style="flex:1; min-width:180px; padding:8px 12px; border:1.5px solid #c7d2fe; border-radius:8px; font-size:0.92rem; font-family:inherit; outline:none; text-transform:uppercase; background:#fff; color:#0f172a; transition:border 0.15s;"
+                                onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#c7d2fe'"
+                                onkeydown="if(event.key==='Enter'){event.preventDefault();verifyGSTIN('sheet');}">
+                            <button type="button" onclick="verifyGSTIN('sheet')"
+                                style="padding:8px 16px; background:#4f46e5; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; white-space:nowrap; transition:background 0.15s;"
+                                onmouseover="this.style.background='#4338ca'"
+                                onmouseout="this.style.background='#4f46e5'">
+                                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="13"
+                                    height="13">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                Verify &amp; Auto-fill
+                            </button>
+                            <span id="sheet-gstin-badge"
+                                style="font-size:0.78rem; font-weight:700; display:none;"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -861,7 +901,7 @@
                     <div id="aiAnalysisContent" style="max-height: 70vh; overflow-y: auto; color: var(--color-text);">
                         <div style="text-align: center; padding: 2rem; color: var(--color-muted);">Loading analysis...
                         </div>
-                            </div>
+                    </div>
                 </div>
             </div>
 
@@ -1306,6 +1346,7 @@
                             </div>
                         </div>
                         <div class="form-row">
+
                             <div class="form-group">
                                 <label>Quantity *</label>
                                 <input id="i-qty" type="number" min="0" placeholder="250" required>
@@ -1342,6 +1383,44 @@
                         <p>Add supplier details</p>
                     </div>
                     <form onsubmit="submitDistributor(event)">
+                        <!-- GSTIN Auto-Lookup -->
+                        <div
+                            style="background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(99,102,241,0.08)); border: 1.5px solid rgba(99,102,241,0.2); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                                <svg fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24" width="16"
+                                    height="16">
+                                    <path
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                                <span
+                                    style="font-size: 0.8rem; font-weight: 800; color: #4338ca; text-transform: uppercase; letter-spacing: 0.5px;">GST
+                                    Auto-Fill</span>
+                                <span
+                                    style="font-size: 0.7rem; background: #eef2ff; color: #4338ca; padding: 1px 7px; border-radius: 20px; font-weight: 700; border: 1px solid #c7d2fe;">Enter
+                                    GSTIN to auto-fill details</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input id="d-gstin" placeholder="e.g. 07AAAAA1234A1Z1" maxlength="15"
+                                    oninput="this.value=this.value.toUpperCase()"
+                                    onkeydown="if(event.key==='Enter'){event.preventDefault();verifyGSTIN('dist');}"
+                                    style="flex: 1; padding: 10px 12px; border: 1.5px solid rgba(99,102,241,0.3); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem; text-transform: uppercase; outline: none; color: #0f172a; background: #fff; transition: border 0.15s;"
+                                    onfocus="this.style.borderColor='#4f46e5'"
+                                    onblur="this.style.borderColor='rgba(99,102,241,0.3)'">
+                                <button type="button" id="d-gstin-btn" onclick="verifyGSTIN('dist')"
+                                    style="padding: 10px 16px; background: #4f46e5; color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.15s;"
+                                    onmouseover="this.style.background='#4338ca'"
+                                    onmouseout="this.style.background='#4f46e5'">
+                                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+                                        width="13" height="13">
+                                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    Verify &amp; Auto-fill
+                                </button>
+                            </div>
+                            <div id="d-gstin-badge"
+                                style="margin-top: 8px; font-size: 0.78rem; font-weight: 700; display: none;"></div>
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Supplier Name *</label>

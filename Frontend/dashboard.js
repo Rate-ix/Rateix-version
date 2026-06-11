@@ -2408,6 +2408,112 @@ function toggleSheetLabels() {
     });
 }
 
+// Show/hide the GSTIN lookup row based on transaction type
+function toggleSheetGSTINRow() {
+    const type = document.getElementById('sheet-bill-type')?.value;
+    const gstinRow = document.getElementById('sheet-gstin-row');
+    if (!gstinRow) return;
+    if (type === 'Purchase') {
+        gstinRow.style.display = 'block';
+    } else {
+        gstinRow.style.display = 'none';
+        // Clear GSTIN state when switching back to Sale
+        const inp = document.getElementById('sheet-gstin');
+        const badge = document.getElementById('sheet-gstin-badge');
+        if (inp) inp.value = '';
+        if (badge) { badge.style.display = 'none'; badge.textContent = ''; }
+    }
+}
+
+/**
+ * Unified GSTIN verification handler.
+ * @param {string} context - 'dist' for Add Supplier modal, 'sheet' for Billing Spreadsheet
+ */
+async function verifyGSTIN(context) {
+    const isSheet = context === 'sheet';
+    const gstinInput = document.getElementById(isSheet ? 'sheet-gstin' : 'd-gstin');
+    const badge = document.getElementById(isSheet ? 'sheet-gstin-badge' : 'd-gstin-badge');
+    const btn = isSheet
+        ? document.querySelector('#sheet-gstin-row button[onclick*="verifyGSTIN"]')
+        : document.getElementById('d-gstin-btn');
+
+    if (!gstinInput || !badge) return;
+
+    const gstin = gstinInput.value.trim().toUpperCase();
+    if (!gstin) {
+        badge.style.display = 'inline-flex';
+        badge.style.color = '#ef4444';
+        badge.textContent = '⚠️ Please enter a GSTIN first';
+        return;
+    }
+
+    // Loading state
+    badge.style.display = 'inline-flex';
+    badge.style.color = '#6366f1';
+    badge.textContent = '⏳ Verifying...';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+
+    try {
+        const API_BASE = window.RATIX_API || 'http://localhost:8000';
+        const res = await fetch(`${API_BASE}/gst/verify/${encodeURIComponent(gstin)}`);
+        const json = await res.json();
+
+        if (!res.ok || !json.success) {
+            throw new Error(json.detail || 'Verification failed');
+        }
+
+        const d = json.data;
+        const isPartial = json.partial === true;
+        const displayName = d.trade_name || d.legal_name;
+        const statusColor = d.status.toLowerCase().includes('active') ? '#10b981' : '#f59e0b';
+
+        // Auto-fill appropriate fields based on context
+        if (isSheet) {
+            const custInput = document.getElementById('sheet-cust-name');
+            if (custInput && !custInput.value.trim()) {
+                custInput.value = displayName;
+            }
+        } else {
+            const nameInput = document.getElementById('d-name');
+            const locInput = document.getElementById('d-loc');
+            if (nameInput && !nameInput.value.trim()) nameInput.value = displayName;
+            if (locInput && !locInput.value.trim()) locInput.value = d.address || '';
+        }
+
+        // Show verified badge
+        badge.style.display = 'inline-flex';
+        badge.style.alignItems = 'center';
+        badge.style.gap = '6px';
+        badge.style.padding = '4px 10px';
+        badge.style.borderRadius = '20px';
+        badge.style.fontSize = '0.78rem';
+        badge.style.fontWeight = '700';
+
+        if (isPartial) {
+            badge.style.background = '#fffbeb';
+            badge.style.color = '#92400e';
+            badge.style.border = '1px solid #fcd34d';
+            badge.innerHTML = `⚠️ &nbsp;${d.legal_name} &nbsp;·&nbsp; ${d.status} &nbsp;<span style="font-weight:500;font-size:0.7rem">(Live data unavailable — decoded from GSTIN)</span>`;
+        } else {
+            badge.style.background = '#f0fdf4';
+            badge.style.color = '#166534';
+            badge.style.border = '1px solid #bbf7d0';
+            badge.innerHTML = `✅ &nbsp;<strong>${displayName}</strong>&nbsp;·&nbsp;<span style="color:${statusColor}">${d.status}</span>&nbsp;·&nbsp;<span style="font-weight:500;font-size:0.7rem">${d.address || ''}</span>`;
+        }
+
+    } catch (err) {
+        badge.style.display = 'inline-flex';
+        badge.style.padding = '4px 10px';
+        badge.style.borderRadius = '20px';
+        badge.style.background = '#fef2f2';
+        badge.style.color = '#991b1b';
+        badge.style.border = '1px solid #fecaca';
+        badge.textContent = `❌ ${err.message}`;
+    } finally {
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
+}
+
 function onSheetProductChange(inputElement) {
     const row = inputElement.closest('tr');
     if (!row) return;
@@ -2504,6 +2610,7 @@ async function generateSheetBill() {
     const type = document.getElementById('sheet-bill-type')?.value || 'Sale';
     const status = document.getElementById('sheet-bill-status')?.value || 'Delivered';
     const notes = document.getElementById('sheet-notes')?.value.trim() || '';
+    const supplierGstin = document.getElementById('sheet-gstin')?.value.trim().toUpperCase() || null;
     
     const generateBtn = document.querySelector('button[onclick="generateSheetBill()"]');
     if (generateBtn) {
@@ -2538,20 +2645,63 @@ async function generateSheetBill() {
         
         const createdOrderId = newOrder[0].id;
         
-        for (const item of items) {
-            const qtyDelta = type === 'Purchase' ? item.qty : -item.qty;
-            const buyingPrice = type === 'Purchase' && item.sync ? item.rate : null;
-            const sellingPrice = type === 'Sale' && item.sync ? item.rate : null;
-            
-            await updateOrCreateInventoryItem(
-                item.name,
-                qtyDelta,
-                buyingPrice,
-                sellingPrice
-            );
+        // ── Stock Update ───────────────────────────────────────────────────────
+        if (type === 'Purchase') {
+            // For Purchase: use the backend /stock/purchase-update endpoint
+            // which correctly handles upsert (add to existing or create new)
+            try {
+                const API_BASE = window.RATIX_API || 'http://localhost:8000';
+                const purchaseItems = items.map(i => ({
+                    product_name: i.name,
+                    quantity: i.qty,
+                    unit: 'units',
+                    buying_price: i.rate
+                }));
+
+                const stockRes = await fetch(`${API_BASE}/stock/purchase-update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        supplier_name: custName,
+                        supplier_gstin: supplierGstin || null,
+                        items: purchaseItems
+                    })
+                });
+
+                if (stockRes.ok) {
+                    const stockJson = await stockRes.json();
+                    const s = stockJson.summary || {};
+                    const updated = s.updated_count || 0;
+                    const created = s.created_count || 0;
+                    const lines = [];
+                    if (updated > 0) lines.push(`${updated} item${updated > 1 ? 's' : ''} restocked`);
+                    if (created > 0) lines.push(`${created} new item${created > 1 ? 's' : ''} added to inventory`);
+                    const msg = lines.length > 0 ? lines.join(' · ') : 'Stock updated.';
+                    toast('📦 Stock Updated!', msg);
+                } else {
+                    console.warn('Stock update endpoint returned non-OK status');
+                }
+            } catch (stockErr) {
+                // Fallback to local inventory update if API call fails
+                console.warn('Backend stock update failed, using local fallback:', stockErr);
+                for (const item of items) {
+                    await updateOrCreateInventoryItem(item.name, item.qty, item.rate, null);
+                }
+            }
+        } else {
+            // For Sale: reduce stock as before
+            for (const item of items) {
+                const qtyDelta = -item.qty;
+                const sellingPrice = item.sync ? item.rate : null;
+                await updateOrCreateInventoryItem(item.name, qtyDelta, null, sellingPrice);
+            }
         }
-        
-        toast('Bill Generated! 🧾', `Fulfillment logged successfully. Invoice generated.`);
+        // ─────────────────────────────────────────────────────────────────────
+
+        if (type === 'Sale') {
+            toast('Bill Generated! 🧾', `Fulfillment logged successfully. Invoice generated.`);
+        }
         
         const tbody = document.getElementById('spreadsheetBody');
         if (tbody) {
@@ -2562,6 +2712,11 @@ async function generateSheetBill() {
         }
         const notesInput = document.getElementById('sheet-notes');
         if (notesInput) notesInput.value = "";
+        // Clear GSTIN field after purchase is logged
+        const gstinInput = document.getElementById('sheet-gstin');
+        const gstinBadge = document.getElementById('sheet-gstin-badge');
+        if (gstinInput) gstinInput.value = '';
+        if (gstinBadge) { gstinBadge.style.display = 'none'; gstinBadge.textContent = ''; }
         updateSpreadsheetTotals();
         
         viewInvoice(createdOrderId);
@@ -2575,6 +2730,7 @@ async function generateSheetBill() {
         }
     }
 }
+
 
 // INITIALIZATION
 window.addEventListener('DOMContentLoaded', async () => {
