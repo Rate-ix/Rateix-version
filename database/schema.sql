@@ -80,3 +80,16 @@ CREATE POLICY "own_khata_entries" ON public.khata_entries FOR ALL
     SELECT 1 FROM public.khata_customers
     WHERE khata_customers.id = customer_id AND khata_customers.user_id = auth.uid()
   ));
+
+-- 6. Product Batches (Expiry Tracking)
+CREATE TABLE IF NOT EXISTS public.product_batches (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  product_id uuid NOT NULL REFERENCES public.inventory(id) ON DELETE CASCADE,
+  sku text,
+  quantity integer DEFAULT 0,
+  expiry_date date,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE public.product_batches ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "own_product_batches" ON public.product_batches FOR ALL USING (auth.uid() = user_id);

@@ -118,7 +118,68 @@ async function loadDashboard() {
   } else {
     tbody.innerHTML = '<tr><td colspan="4" class="empty">No bills yet</td></tr>';
   }
+
+  // Check expiry alerts
+  await loadExpiryAlerts();
 }
+
+async function loadExpiryAlerts() {
+  const d = new Date();
+  d.setDate(d.getDate() + 10); // Alert for anything expiring in next 10 days
+  const threshold = d.toISOString().split('T')[0];
+
+  const { data: batches } = await db.from('product_batches')
+    .select('*, inventory(name)')
+    .eq('user_id', USER.id)
+    .lte('expiry_date', threshold)
+    .gt('quantity', 0)
+    .order('expiry_date');
+
+  const card = document.getElementById('expiry-alerts-card');
+  const tbody = document.getElementById('expiry-alerts-body');
+  
+  if (batches && batches.length > 0) {
+    card.style.display = 'block';
+    tbody.innerHTML = batches.map(b => {
+      const expDate = new Date(b.expiry_date);
+      const daysLeft = Math.ceil((expDate - new Date()) / (1000 * 60 * 60 * 24));
+      const urgency = daysLeft <= 3 ? 'color:#dc2626;font-weight:bold;' : 'color:#d97706;';
+      return `<tr>
+        <td><strong>${esc(b.inventory?.name || 'Unknown')}</strong></td>
+        <td>${esc(b.sku || '—')}</td>
+        <td>${b.quantity}</td>
+        <td style="${urgency}">${daysLeft <= 0 ? 'Expired!' : `In ${daysLeft} days`}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    card.style.display = 'none';
+  }
+}
+
+// Subscribe to real-time changes so if scanner updates stock, dashboard updates instantly
+db.channel('custom-all-channel')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, payload => {
+    loadInventory();
+  })
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'product_batches' }, payload => {
+    loadExpiryAlerts();
+  })
+  .subscribe();
+
+// ══════════════════════════════════════════════
+//  QR SCANNER 
+// ══════════════════════════════════════════════
+function generateQR() {
+  const url = window.location.origin + '/scan.html';
+  document.getElementById('qr-code-img').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" alt="QR Code" width="200" height="200">`;
+}
+
+// Hook into openModal to generate QR when opened
+const originalOpenModal = window.openModal;
+window.openModal = function(id) {
+  if (id === 'qr-scanner') generateQR();
+  originalOpenModal(id);
+};
 
 // ══════════════════════════════════════════════
 //  INVENTORY
