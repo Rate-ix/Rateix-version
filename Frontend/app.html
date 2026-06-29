@@ -34,6 +34,7 @@
     <div class="sidebar-footer">
       <div class="shop-label" id="sb-shop">—</div>
       <div class="shop-email" id="sb-email">—</div>
+      <button class="ai-setup-btn" onclick="openModal('ai-setup')">⚙ AI Setup</button>
       <button class="logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </aside>
@@ -53,9 +54,20 @@
         <div class="stat-card"><div class="stat-icon orange">⚠️</div><div><div class="stat-val" id="st-lowstock">—</div><div class="stat-lbl">Low / Out of Stock Items</div></div></div>
         <div class="stat-card"><div class="stat-icon red">📒</div><div><div class="stat-val" id="st-udhari">—</div><div class="stat-lbl">Total Udhari Pending (₹)</div></div></div>
       </div>
+      <!-- AI Insights Card -->
+      <div class="ai-insights-card card" id="ai-insights-card" style="display:none;margin-bottom:24px;">
+        <div class="ai-card-header">
+          <span>✨ AI Business Insights</span>
+          <button onclick="document.getElementById('ai-insights-card').style.display='none'" style="background:none;border:none;cursor:pointer;color:#6b7280;">✕</button>
+        </div>
+        <div id="ai-insights-text" class="ai-insights-text"></div>
+      </div>
       <div class="two-col">
         <div class="card">
-          <div class="card-header"><h3>Recent Bills</h3></div>
+          <div class="card-header">
+            <h3>Recent Bills</h3>
+            <button class="btn-ai" onclick="generateBusinessInsights()">✨ AI Insights</button>
+          </div>
           <table class="data-table" id="dash-bills-table">
             <thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Date</th></tr></thead>
             <tbody id="dash-bills-body"><tr><td colspan="4" class="empty">No bills yet</td></tr></tbody>
@@ -72,7 +84,18 @@
     <section id="panel-inventory" class="panel">
       <div class="page-header">
         <h1>Inventory</h1>
-        <button class="btn-primary" onclick="openProductModal()">+ Add Item</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-ai" onclick="generateRestockAnalysis()">🤖 AI Restock</button>
+          <button class="btn-primary" onclick="openProductModal()">+ Add Item</button>
+        </div>
+      </div>
+      <!-- AI Restock Output -->
+      <div id="ai-restock-card" class="ai-insights-card card" style="display:none;margin-bottom:16px;">
+        <div class="ai-card-header">
+          <span>🤖 AI Restock Analysis</span>
+          <button onclick="document.getElementById('ai-restock-card').style.display='none'" style="background:none;border:none;cursor:pointer;color:#6b7280;">✕</button>
+        </div>
+        <div id="ai-restock-text" class="ai-insights-text"></div>
       </div>
       <div class="card">
         <div class="card-header">
@@ -96,6 +119,18 @@
           <button class="btn-outline" onclick="clearBill()">Clear</button>
           <button class="btn-primary" onclick="saveBill(false)">Save Bill</button>
           <button class="btn-primary" style="background:#16a34a;" onclick="saveBill(true)">Save & Print</button>
+        </div>
+      </div>
+      <!-- AI Natural Language Entry -->
+      <div class="nl-bill-bar card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
+          <span style="font-size:0.8rem;font-weight:600;color:#7c3aed;">✨ AI Bill Entry</span>
+          <span style="font-size:0.75rem;color:#9ca3af;">— Type your bill in plain language</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="nl-bill-input" class="nl-input"
+            placeholder='e.g. "5 kg atta 45 rs, 2 sarso oil 180, 10 maggi 12 each"'>
+          <button class="btn-ai" onclick="parseNaturalBill()">Parse →</button>
         </div>
       </div>
       <!-- Customer Info -->
@@ -231,6 +266,24 @@
       <div class="form-group"><label>Date</label><input type="date" id="ke-date"></div>
       <button type="submit" class="btn-primary" style="width:100%;margin-top:8px;" id="ke-submit">Save Entry</button>
     </form>
+  </div>
+</div>
+
+<!-- AI Setup Modal -->
+<div class="modal-backdrop" id="modal-ai-setup">
+  <div class="modal">
+    <div class="modal-header"><h3>⚙ AI Setup (Gemini)</h3><button class="modal-close" onclick="closeModal('ai-setup')">✕</button></div>
+    <p style="font-size:0.85rem;color:#6b7280;margin-bottom:16px;line-height:1.5;">
+      AI features use Google Gemini. Get a free API key at
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#7c3aed;">aistudio.google.com</a>.
+      Your key is stored locally in your browser only.
+    </p>
+    <div class="form-group">
+      <label>Gemini API Key</label>
+      <input type="password" id="ai-key-input" placeholder="AIza..." style="font-family:monospace;">
+    </div>
+    <button class="btn-primary" style="width:100%;" onclick="saveAIKey()">Save Key</button>
+    <div id="ai-key-status" style="margin-top:10px;font-size:0.82rem;text-align:center;"></div>
   </div>
 </div>
 

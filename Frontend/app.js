@@ -569,3 +569,218 @@ document.getElementById('bill-body').addEventListener('keydown', e => {
 // ─── Utilities ───────────────────────────────
 function fmt(n)  { return (parseFloat(n) || 0).toFixed(2); }
 function esc(s)  { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ══════════════════════════════════════════════
+//  AI — GEMINI INTEGRATION
+// ══════════════════════════════════════════════
+
+// ── Key Management ────────────────────────────
+function saveAIKey() {
+  const key = document.getElementById('ai-key-input').value.trim();
+  if (!key.startsWith('AIza')) {
+    document.getElementById('ai-key-status').textContent = '❌ Invalid key format. Should start with AIza';
+    document.getElementById('ai-key-status').style.color = '#dc2626';
+    return;
+  }
+  localStorage.setItem('ratix_ai_key', key);
+  document.getElementById('ai-key-status').textContent = '✅ Key saved! AI features are now active.';
+  document.getElementById('ai-key-status').style.color = '#16a34a';
+  setTimeout(() => closeModal('ai-setup'), 1500);
+}
+
+function getAIKey() {
+  const key = localStorage.getItem('ratix_ai_key');
+  if (!key) {
+    alert('Please set your Gemini API key first.\nClick "⚙ AI Setup" in the sidebar.');
+    openModal('ai-setup');
+    return null;
+  }
+  return key;
+}
+
+// ── Core Gemini Call ──────────────────────────
+async function callGemini(prompt) {
+  const key = getAIKey();
+  if (!key) return null;
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
+      })
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err?.error?.message || 'Gemini API error');
+  }
+
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// ── Feature 1: Business Insights (Dashboard) ─
+async function generateBusinessInsights() {
+  const card = document.getElementById('ai-insights-card');
+  const txt  = document.getElementById('ai-insights-text');
+  card.style.display = 'block';
+  txt.innerHTML = '<div class="ai-loading">Analysing your shop data with AI...</div>';
+
+  try {
+    // Gather context data
+    const revenue    = document.getElementById('st-revenue').textContent;
+    const sold       = document.getElementById('st-sold').textContent;
+    const lowStock   = document.getElementById('st-lowstock').textContent;
+    const udhari     = document.getElementById('st-udhari').textContent;
+    const topItems   = document.getElementById('top-items-list').innerText.trim();
+    const lowItems   = INVENTORY.filter(p => p.stock <= p.min_stock)
+                                .map(p => `${p.name} (stock: ${p.stock})`).join(', ') || 'None';
+    const meta       = USER.user_metadata || {};
+
+    const prompt = `You are a smart business advisor for an Indian kirana/wholesale shop named "${meta.shop_name || 'this shop'}".
+
+Here is the shop's current data:
+- Revenue this month: ${revenue}
+- Items sold this month: ${sold} units
+- Low/out-of-stock items: ${lowStock}
+- Total pending udhari (credit): ${udhari}
+- Top selling items: ${topItems}
+- Low stock items: ${lowItems}
+
+Give a concise, practical business summary in 4-5 bullet points. 
+Write in simple English. Focus on actionable advice.
+Use ₹ for rupees. Be specific, not generic.`;
+
+    const result = await callGemini(prompt);
+    txt.textContent = result;
+  } catch (err) {
+    txt.textContent = '❌ Error: ' + err.message;
+  }
+}
+
+// ── Feature 2: Natural Language Bill Parser ───
+async function parseNaturalBill() {
+  const input = document.getElementById('nl-bill-input').value.trim();
+  if (!input) { alert('Enter a bill description first.'); return; }
+
+  const btn = document.querySelector('[onclick="parseNaturalBill()"]');
+  btn.disabled = true;
+  btn.textContent = 'Parsing...';
+
+  try {
+    const productList = INVENTORY.map(p => p.name).slice(0, 30).join(', ');
+
+    const prompt = `You are a billing assistant for an Indian kirana/wholesale shop.
+Available products in inventory (for matching): ${productList}
+
+Parse this bill text into items. Try to match product names to the inventory list above.
+Bill text: "${input}"
+
+Return ONLY a valid JSON array. No explanation, no markdown, just pure JSON:
+[{"name": "product name", "qty": number, "rate": number}, ...]
+
+Rules:
+- qty must be a positive number
+- rate is price per unit in rupees
+- If "each" or "per piece" is mentioned, use that as rate
+- Match to inventory product names when possible`;
+
+    const raw    = await callGemini(prompt);
+    // Extract JSON from response (handle markdown code blocks)
+    const match  = raw.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Could not parse AI response as JSON');
+
+    const items  = JSON.parse(match[0]);
+    if (!Array.isArray(items) || !items.length) throw new Error('No items found in the text');
+
+    // Clear existing bill and populate with parsed items
+    BILL_ROWS = [];
+    items.forEach(item => {
+      // Try to match to existing inventory product
+      const inv = INVENTORY.find(p => p.name.toLowerCase().includes(item.name.toLowerCase()) ||
+                                       item.name.toLowerCase().includes(p.name.toLowerCase().split(' ')[0]));
+      BILL_ROWS.push({
+        id:    Date.now() + Math.random(),
+        name:  inv ? inv.name : item.name,
+        pid:   inv?.id || null,
+        qty:   item.qty || 1,
+        rate:  item.rate || inv?.selling_price || 0,
+        total: (item.qty || 1) * (item.rate || inv?.selling_price || 0)
+      });
+    });
+
+    if (!BILL_ROWS.length) addBillRow();
+    else { renderBillRows(); calcTotals(); }
+
+    document.getElementById('nl-bill-input').value = '';
+    btn.textContent = `✓ ${items.length} items added`;
+    setTimeout(() => { btn.textContent = 'Parse →'; btn.disabled = false; }, 2000);
+  } catch (err) {
+    alert('AI parsing failed: ' + err.message + '\n\nTip: Be more specific, e.g. "5 kg atta 45, 2 oil 180"');
+    btn.textContent = 'Parse →';
+    btn.disabled    = false;
+  }
+}
+
+// ── Feature 3: AI Restock Analysis (Inventory) ─
+async function generateRestockAnalysis() {
+  const card = document.getElementById('ai-restock-card');
+  const txt  = document.getElementById('ai-restock-text');
+  card.style.display = 'block';
+  txt.innerHTML = '<div class="ai-loading">Analysing inventory and sales patterns...</div>';
+
+  try {
+    // Get last 30 days sales per product
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
+
+    const { data: recentInvoices } = await db.from('invoices')
+      .select('id').eq('user_id', USER.id)
+      .gte('created_at', since.toISOString());
+
+    let salesMap = {};
+    if (recentInvoices?.length) {
+      const { data: items } = await db.from('invoice_items')
+        .select('name, quantity')
+        .in('invoice_id', recentInvoices.map(i => i.id));
+      (items || []).forEach(i => {
+        salesMap[i.name] = (salesMap[i.name] || 0) + i.quantity;
+      });
+    }
+
+    const inventoryData = INVENTORY.map(p => ({
+      name:       p.name,
+      stock:      p.stock,
+      min_stock:  p.min_stock,
+      sold_30d:   salesMap[p.name] || 0,
+      unit:       p.unit || 'pcs'
+    }));
+
+    const prompt = `You are a smart inventory manager for an Indian kirana/wholesale shop.
+
+Inventory data (last 30 days sales included):
+${JSON.stringify(inventoryData, null, 2)}
+
+Analyze this and return a practical restock recommendation.
+Format your response as clear bullet points:
+• [Item name]: Restock X [unit]. Reason: [brief reason]
+
+Focus on:
+1. Items with stock below min_stock
+2. Items selling fast (high sold_30d relative to stock)
+3. Out of stock items
+
+Keep it under 10 items. Be direct and specific. Use ₹ only if needed.`;
+
+    const result = await callGemini(prompt);
+    txt.textContent = result;
+  } catch (err) {
+    txt.textContent = '❌ Error: ' + err.message;
+  }
+}
+

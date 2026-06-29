@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "ratix",
+  "builds": [
+    {
+      "src": "Frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/Frontend/$1"
+    }
+  ]
+}
