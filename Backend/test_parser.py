@@ -5,7 +5,7 @@ Bill format:  Sr.No | Item | Price/unit | items/kg | Total
 import os
 os.environ["PYTHONUTF8"] = "1"
 
-from main import classify_numbers, sanitize_name
+from scandealerbill import classify_numbers, sanitize_name
 
 tests = [
     ([1, 20, 2, 40],    "toothpaste",    20,  2),

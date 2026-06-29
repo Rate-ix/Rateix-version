@@ -908,7 +908,7 @@ async function handleBillImage(input) {
         <div style="font-weight:600;margin-bottom:8px;">Backend server not running</div>
         <div style="font-size:0.85rem;color:#9ca3af;margin-bottom:16px;">
           Start the Python backend with:<br>
-          <code style="background:#f3f4f6;padding:4px 8px;border-radius:4px;">python Backend/main.py</code>
+          <code style="background:#f3f4f6;padding:4px 8px;border-radius:4px;">python Backend/scandealerbill.py</code>
         </div>
         <button class="btn-outline" onclick="rescanBill()">Try Again</button>
       `;
