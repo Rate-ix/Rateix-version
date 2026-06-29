@@ -4,405 +4,613 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ratix — Simple Kirana Ledger & Stock Manager</title>
-    <meta name="description" content="Manage your local shop credit ledger, send friendly reminders on WhatsApp, and keep track of your stock levels.">
-    
-    <!-- Google Fonts: Outfit (Display) & Plus Jakarta Sans (Body) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
+    <title>Ratix – Shop Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #111;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 36px 40px 40px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #111;
+            margin-bottom: 6px;
+        }
+
+        .logo-sub {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 28px;
+        }
+
+        .tab-row {
+            display: flex;
+            border-bottom: 1px solid #ececec;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 0;
+            margin-right: 24px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #aaa;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #111;
+            border-bottom-color: #111;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: #111;
+            background: #fafafa;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        input:focus {
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            background: #fff;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #bbb;
+        }
+
+        select {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: #111;
+            background: #fafafa;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        select:focus {
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #333;
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: scale(0.99);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+            display: none;
+        }
+
+        .spinner.on {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .alert {
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-size: 0.84rem;
+            margin-bottom: 16px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .alert.error {
+            background: #fff2f2;
+            border: 1px solid #fcc;
+            color: #c0392b;
+        }
+
+        .alert.success {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #276749;
+        }
+
+        .alert.on {
+            display: block;
+        }
+
+        /* Section divider inside register form */
+        .field-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #bbb;
+            margin: 18px 0 10px;
+        }
+
+        /* Logged-in state */
+        .dashboard-view {
+            display: none;
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07);
+            text-align: center;
+        }
+
+        .shop-avatar {
+            width: 56px;
+            height: 56px;
+            background: #111;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.4rem;
+        }
+
+        .shop-name-display {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .shop-email-display {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 28px;
+        }
+
+        .info-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f5f5f5;
+            border-radius: 99px;
+            padding: 7px 16px;
+            font-size: 0.82rem;
+            color: #555;
+            margin-bottom: 24px;
+        }
+
+        .info-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .signout-btn {
+            background: none;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            color: #555;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .signout-btn:hover {
+            border-color: #111;
+            color: #111;
+        }
+
+        /* Notice box below card */
+        .notice {
+            text-align: center;
+            font-size: 0.78rem;
+            color: #aaa;
+            margin-top: 16px;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Navigation System -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="nav-logo">RATIX</a>
-            
-            <ul class="nav-menu">
-                <li><a href="#features" class="nav-link">Features</a></li>
-                <li><a href="#" class="nav-link" id="navLinkLogin">Sign In</a></li>
-                <li><a href="#" class="nav-link btn-nav-auth" id="navLinkRegister">Register Shop</a></li>
-            </ul>
 
-            <button class="mobile-menu-btn" aria-label="Toggle Menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-        </div>
-    </nav>
+    <div class="auth-wrapper">
 
-    <!-- Mobile Navigation Drawer -->
-    <div class="mobile-nav">
-        <a href="#features" class="mobile-nav-link">Features</a>
-        <a href="#" class="mobile-nav-link" id="mobileLinkLogin">Sign In</a>
-        <a href="#" class="mobile-nav-link mobile-auth-btn" id="mobileLinkRegister">Register Shop</a>
-    </div>
+        <!-- Auth Card -->
+        <div class="auth-card" id="auth-card">
+            <div class="logo">Ratix</div>
+            <div class="logo-sub">Shop Management & Credit Platform</div>
 
-    <!-- Hero Section (Flowora-Inspired Landscape & Floating Glass Cards) -->
-    <section class="hero-section">
-        <!-- SVG Rolling Mountains Background with Gradient Sky -->
-        <div class="hero-bg-container">
-            <svg class="hero-svg-bg" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
-                <!-- Sky Gradient -->
-                <rect width="1440" height="900" fill="url(#skyGradient)" />
-                
-                <!-- Sun/Glow Source -->
-                <circle cx="720" cy="450" r="400" fill="url(#sunGlow)" opacity="0.6" />
-                
-                <!-- Back Mountains -->
-                <path d="M-100 900 L250 550 L600 750 L1000 480 L1400 780 L1600 900 Z" fill="url(#mountainBack)" opacity="0.8" />
-                
-                <!-- Mid Mountains -->
-                <path d="M-50 900 L350 620 L800 800 L1150 540 L1500 820 L1550 900 Z" fill="url(#mountainMid)" opacity="0.9" />
-                
-                <!-- Front Hills -->
-                <path d="M0 900 L200 750 L550 850 L950 680 L1300 820 L1440 760 L1440 900 Z" fill="url(#mountainFront)" />
-                
-                <!-- Gradients Definitions -->
-                <defs>
-                    <linearGradient id="skyGradient" x1="720" y1="0" x2="720" y2="900" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#EEF2F6" />
-                        <stop offset="35%" stop-color="#E0E7FF" />
-                        <stop offset="70%" stop-color="#F5F3FF" />
-                        <stop offset="100%" stop-color="#FDF2F8" />
-                    </linearGradient>
-                    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#FDA4AF" stop-opacity="0.3" />
-                        <stop offset="100%" stop-color="#F5F3FF" stop-opacity="0" />
-                    </radialGradient>
-                    <linearGradient id="mountainBack" x1="720" y1="480" x2="720" y2="900" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#E9D5FF" />
-                        <stop offset="100%" stop-color="#C084FC" />
-                    </linearGradient>
-                    <linearGradient id="mountainMid" x1="720" y1="540" x2="720" y2="900" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#C7D2FE" />
-                        <stop offset="100%" stop-color="#818CF8" />
-                    </linearGradient>
-                    <linearGradient id="mountainFront" x1="720" y1="680" x2="720" y2="900" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#DDD6FE" />
-                        <stop offset="100%" stop-color="#A78BFA" />
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <div class="hero-container">
-            <!-- Center Hero Content -->
-            <div class="hero-content">
-                <h1 class="hero-title">Manage your shop and credit<br>on your <span class="gradient-text">mobile.</span></h1>
-                <p class="hero-subtitle">Ratix makes it easy to keep track of your stock, manage customer credit (Udhari), and send quick digital bills on WhatsApp.</p>
-                
-                <div class="hero-actions-row">
-                    <button class="btn btn-hero-primary" id="heroGetStartedBtn">Get Started Free</button>
-                </div>
+            <div class="tab-row">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register Shop</button>
             </div>
 
-            <!-- Floating Glassmorphic Cards (Positioned Absolutely) -->
-            <!-- Card 1: Left Ledger Card -->
-            <div class="float-card card-ledger animate-float-slow">
-                <div class="card-header-row">
-                    <span class="card-icon-box purple-bg">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4>Udhari Balance</h4>
-                        <p class="card-sub">Sharma General Store</p>
-                    </div>
-                </div>
-                <div class="card-metric-row">
-                    <span class="metric-val">₹18,500</span>
-                    <span class="metric-status success-tag">Sent</span>
-                </div>
-                <div class="card-footer-lbl">WhatsApp reminder sent successfully.</div>
-            </div>
+            <div class="alert error" id="alert-error"></div>
+            <div class="alert success" id="alert-success"></div>
 
-            <!-- Card 2: Center Bottom Today's Plan Ledger -->
-            <div class="float-card card-plan animate-float-medium">
-                <div class="card-header-row">
-                    <h4>Today's Orders</h4>
-                </div>
-                <ul class="task-list">
-                    <li class="task-item checked">
-                        <span class="checkbox-box">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </span>
-                        <div class="task-desc">
-                            <span>Tata Salt (50 Bags)</span>
-                            <span class="task-time">10:00 AM</span>
-                        </div>
-                    </li>
-                    <li class="task-item checked">
-                        <span class="checkbox-box">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </span>
-                        <div class="task-desc">
-                            <span>Fortune Oil (10 Cases)</span>
-                            <span class="task-time">12:30 PM</span>
-                        </div>
-                    </li>
-                    <li class="task-item">
-                        <span class="checkbox-box"></span>
-                        <div class="task-desc">
-                            <span>Basmati Rice (20 Bags)</span>
-                            <span class="task-time">03:00 PM</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Card 3: Right Inventory Progress Card -->
-            <div class="float-card card-stock animate-float-fast">
-                <div class="card-header-row">
-                    <h4>Stock Levels</h4>
-                    <span class="folder-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </span>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-lbl-row">
-                        <span>Oil Stock</span>
-                        <span>82%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-bar purple-bar" style="width: 82%;"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <div class="progress-lbl-row">
-                        <span>Atta Reserves</span>
-                        <span>35%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-bar orange-bar" style="width: 35%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bento Box Features Grid -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="sub-title">Dukaan Management</span>
-                <h2 class="section-title">Everything you need for your shop</h2>
-                <p class="section-desc">Easily manage your everyday sales, ledger books, stock alerts, and billing in one simple application.</p>
-            </div>
-
-            <div class="features-grid">
-                <!-- Card 1: Khata Ledger -->
-                <div class="feature-card">
-                    <div class="feature-icon-box orange-tint">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                    </div>
-                    <h3>Digital Khata (Udhari Book)</h3>
-                    <p>Record customer credit (Udhari) easily. Send friendly payment reminders on WhatsApp with direct UPI payment links so you get paid faster.</p>
-                    <div class="card-pill">Udhari Book</div>
-                </div>
-
-                <!-- Card 2: Smart Inventory -->
-                <div class="feature-card">
-                    <div class="feature-icon-box purple-tint">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
-                        </svg>
-                    </div>
-                    <h3>Stock Tracker</h3>
-                    <p>See your stock levels in real time. Get alerted when popular items like oil, Atta, rice, or sugar are running low, so you can reorder in time.</p>
-                    <div class="card-pill">Stock Alerts</div>
-                </div>
-
-                <!-- Card 3: 1-Tap Billing -->
-                <div class="feature-card">
-                    <div class="feature-icon-box teal-tint">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="9" cy="21" r="1"></circle>
-                            <circle cx="20" cy="21" r="1"></circle>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                        </svg>
-                    </div>
-                    <h3>Quick GST Billing</h3>
-                    <p>Create simple bills for your customers in seconds. Calculate discounts and GST automatically. Share digital bills directly on WhatsApp or SMS.</p>
-                    <div class="card-pill">Digital Bills</div>
-                </div>
-
-                <!-- Card 4: Voice Kirana -->
-                <div class="feature-card">
-                    <div class="feature-icon-box blue-tint">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"></path>
-                        </svg>
-                    </div>
-                    <h3>Speak to Add Items</h3>
-                    <p>Add items to bills just by speaking. Dictate in simple voice commands like *"Fortune Oil 10 tins, Ashirvaad Atta 25 bags"* and watch it auto-fill.</p>
-                    <div class="card-pill">Voice Billing</div>
-                </div>
-
-                <!-- Card 5: Billing Spreadsheet -->
-                <div class="feature-card">
-                    <div class="feature-icon-box teal-tint">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <rect x="3" y="3" width="18" height="18" rx="2" />
-                            <line x1="3" y1="9" x2="21" y2="9" />
-                            <line x1="3" y1="15" x2="21" y2="15" />
-                            <line x1="9" y1="3" x2="9" y2="21" />
-                            <line x1="15" y1="3" x2="15" y2="21" />
-                        </svg>
-                    </div>
-                    <h3>Billing Spreadsheet</h3>
-                    <p>Rapidly generate customer bills using a keyboard-friendly grid. Updates stock automatically and matches live market price trends dynamically.</p>
-                    <div class="card-pill">Smart Billing</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer Area -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand-col">
-                    <a href="#" class="footer-logo">RATIX</a>
-                    <p class="footer-desc font-small">Digitizing the backbone of Indian retail with simple ledgers, speech tools, and stock alerts.</p>
-                </div>
-                <div class="footer-links-col">
-                    <h4>Product</h4>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links-col">
-                    <h4>Security</h4>
-                    <ul>
-                        <li><a href="#" id="privacyPolicyBtn">Privacy Policy</a></li>
-                        <li><a href="#" id="termsOfServiceBtn">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2026 Ratix Technologies Private Limited. All rights reserved.</p>
-                <p class="font-small text-gray">Built for local retailers and distributors nationwide.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Interactive Auth Modal (Frosted Glass Popup) -->
-    <div id="authModal" class="auth-modal-overlay">
-        <div class="auth-modal-card glass-modal">
-            <button class="auth-modal-close" id="closeAuthModalBtn">&times;</button>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab-btn active" id="tabSignup">Register Shop</button>
-                <button class="auth-tab-btn" id="tabLogin">Sign In</button>
-            </div>
-
-            <!-- Sign Up Form -->
-            <form class="auth-form active" id="signupForm">
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label for="signupStoreName">Shop / Wholesaler Name</label>
-                        <input type="text" id="signupStoreName" placeholder="e.g., Balaji Kirana Store" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupOwnerName">Owner Full Name</label>
-                        <input type="text" id="signupOwnerName" placeholder="e.g., Ramesh Kumar" required>
-                    </div>
-                </div>
-
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label for="signupEmail">Your Email Address</label>
-                        <input type="email" id="signupEmail" placeholder="e.g., name@gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupPassword">Password</label>
-                        <input type="password" id="signupPassword" placeholder="Minimum 6 characters" required>
-                    </div>
-                </div>
-
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label for="signupPhone">WhatsApp Number</label>
-                        <div class="phone-input-row">
-                            <span class="prefix">+91</span>
-                            <input type="tel" id="signupPhone" placeholder="10-digit number" pattern="[0-9]{10}" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupGSTIN">GST Number (GSTIN)</label>
-                        <input type="text" id="signupGSTIN" placeholder="e.g., 07AAAAA0000A1Z5" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" title="Enter a valid 15-character GSTIN format" required>
-                    </div>
-                </div>
-
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label for="signupAddress">Shop Address</label>
-                        <input type="text" id="signupAddress" placeholder="Shop No., Market Area" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupPinCode">PIN Code</label>
-                        <input type="text" id="signupPinCode" placeholder="6-digit PIN" pattern="[0-9]{6}" required>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-block">Create Free Account</button>
-            </form>
-
-            <!-- Log In Form -->
-            <form class="auth-form" id="loginForm">
+            <!-- ==================== LOGIN FORM ==================== -->
+            <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="loginEmail">Your Email Address</label>
-                    <input type="email" id="loginEmail" placeholder="e.g., name@gmail.com" required>
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="shopowner@email.com" required
+                        autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">Your Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required
+                        autocomplete="current-password">
                 </div>
-                
-                <button type="submit" class="btn btn-primary btn-block">Log In to Shop</button>
+                <button type="submit" class="submit-btn" id="login-btn">
+                    <div class="spinner" id="login-spinner"></div>
+                    <span id="login-label">Sign In to Dashboard</span>
+                </button>
             </form>
 
-            <div id="authStatusMessage" class="auth-status-panel"></div>
-        </div>
-    </div>
+            <!-- ==================== REGISTER FORM ==================== -->
+            <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
 
-    <!-- Legal Terms Modals -->
-    <div id="legalModal" class="legal-modal-overlay">
-        <div class="legal-modal-card">
-            <button class="legal-modal-close" id="closeLegalModalBtn">&times;</button>
-            <div id="legalModalContent" class="legal-modal-inner">
-                <!-- Dynamic Legal Content Loaded Here -->
+                <!-- Shop Details -->
+                <div class="field-section-title">🏪 Shop Details</div>
+
+                <div class="form-group">
+                    <label for="reg-shop-name">Shop / Business Name *</label>
+                    <input type="text" id="reg-shop-name" placeholder="e.g. Sharma General Store" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-shop-type">Shop Type *</label>
+                        <select id="reg-shop-type" required>
+                            <option value="" disabled selected>Select type</option>
+                            <option value="kirana">Kirana / General Store</option>
+                            <option value="wholesale">Wholesale</option>
+                            <option value="grocery">Grocery</option>
+                            <option value="pharmacy">Pharmacy</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing / Textile</option>
+                            <option value="hardware">Hardware</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-city">City / Area *</label>
+                        <input type="text" id="reg-city" placeholder="e.g. Delhi, Noida" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-gst">GST Number (optional)</label>
+                        <input type="text" id="reg-gst" placeholder="e.g. 22AAAAA0000A1Z5"
+                               maxlength="15" style="text-transform:uppercase;"
+                               oninput="this.value=this.value.toUpperCase()">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-address">Shop Address</label>
+                        <input type="text" id="reg-address" placeholder="Street / Area">
+                    </div>
+                </div>
+
+                <!-- Owner Details -->
+                <div class="field-section-title">👤 Owner Details</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-owner-name">Owner Name *</label>
+                        <input type="text" id="reg-owner-name" placeholder="Full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-phone">Phone Number *</label>
+                        <input type="tel" id="reg-phone" placeholder="10-digit number" required pattern="[0-9]{10}"
+                            maxlength="10">
+                    </div>
+                </div>
+
+                <!-- Account Details -->
+                <div class="field-section-title">🔐 Account Credentials</div>
+
+                <div class="form-group">
+                    <label for="reg-email">Email Address *</label>
+                    <input type="email" id="reg-email" placeholder="shopowner@email.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password *</label>
+                    <input type="password" id="reg-password" placeholder="Min. 6 characters" required minlength="6"
+                        autocomplete="new-password">
+                </div>
+
+                <button type="submit" class="submit-btn" id="register-btn">
+                    <div class="spinner" id="register-spinner"></div>
+                    <span id="register-label">Register My Shop</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Dashboard (post-login) -->
+        <div class="dashboard-view" id="dashboard-view">
+            <div class="shop-avatar">🏪</div>
+            <div class="shop-name-display" id="dash-shop-name">Your Shop</div>
+            <div class="shop-email-display" id="dash-email">—</div>
+            <div class="info-pill">
+                <div class="info-dot"></div>
+                Logged in — session saved on this device
             </div>
+            <br>
+            <button class="signout-btn" onclick="handleSignOut()">Sign Out</button>
+        </div>
+
+        <div class="notice" id="auth-notice">
+            By registering, you confirm this is a legitimate business account.
         </div>
     </div>
 
-    <!-- Supabase UMD Bundle (loads before app.js) -->
+    <!-- Supabase SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    
-    <!-- App Control JavaScript -->
-    <script src="app.js"></script>
+
+    <script>
+        // =====================================================
+        //  Supabase Client
+        // =====================================================
+        const SUPABASE_URL = 'https://ixeausiogmzweppiytfy.supabase.co';
+        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4ZWF1c2lvZ216d2VwcGl5dGZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3Mjc4NjYsImV4cCI6MjA5ODMwMzg2Nn0.Z08IWCr10Vjuj9y_OgvsE4yFViv2jNQ1t1nwVMIaOy0';
+
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+        // =====================================================
+        //  On Load: restore session if exists
+        // =====================================================
+        (async () => {
+            const { data: { session } } = await db.auth.getSession();
+            if (session) showDashboard(session.user);
+        })();
+
+        db.auth.onAuthStateChange((_event, session) => {
+            if (session) showDashboard(session.user);
+            else showAuth();
+        });
+
+        // =====================================================
+        //  Tab Switching
+        // =====================================================
+        function switchTab(tab) {
+            clearAlerts();
+            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+            document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('auth-notice').style.display = tab === 'register' ? 'block' : 'none';
+        }
+
+        // =====================================================
+        //  LOGIN
+        // =====================================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            clearAlerts();
+            loading('login', true);
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            const { error } = await db.auth.signInWithPassword({ email, password });
+            loading('login', false);
+
+            if (error) {
+                // Surface friendly messages for common cases
+                if (error.message.includes('Invalid login')) {
+                    showAlert('error', 'Incorrect email or password. Please try again.');
+                } else if (error.message.includes('Email not confirmed')) {
+                    showAlert('error', 'Please confirm your email address first. Check your inbox (and spam folder).');
+                } else {
+                    showAlert('error', error.message);
+                }
+            }
+            // On success → onAuthStateChange fires → showDashboard()
+        }
+
+        // =====================================================
+        //  REGISTER
+        // =====================================================
+        async function handleRegister(e) {
+            e.preventDefault();
+            clearAlerts();
+
+            const shopName  = document.getElementById('reg-shop-name').value.trim();
+            const shopType  = document.getElementById('reg-shop-type').value;
+            const city      = document.getElementById('reg-city').value.trim();
+            const address   = document.getElementById('reg-address').value.trim();
+            const gst       = document.getElementById('reg-gst').value.trim().toUpperCase();
+            const ownerName = document.getElementById('reg-owner-name').value.trim();
+            const phone     = document.getElementById('reg-phone').value.trim();
+            const email     = document.getElementById('reg-email').value.trim();
+            const password  = document.getElementById('reg-password').value;
+
+            // Client-side phone validation
+            if (!/^[0-9]{10}$/.test(phone)) {
+                showAlert('error', 'Please enter a valid 10-digit phone number.');
+                return;
+            }
+
+            loading('register', true);
+
+            // signUp stores all shop metadata in user_metadata (accessible without extra table)
+            const { data, error } = await db.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        shop_name:  shopName,
+                        shop_type:  shopType,
+                        city:       city,
+                        address:    address,
+                        gst_number: gst || null,
+                        owner_name: ownerName,
+                        phone:      phone
+                    },
+                    // Skip email redirect — user goes straight to app
+                    emailRedirectTo: window.location.href
+                }
+            });
+
+            loading('register', false);
+
+            if (error) {
+                if (error.message.includes('already registered') || error.message.includes('already exists')) {
+                    showAlert('error', 'This email is already registered. Please sign in instead.');
+                } else {
+                    showAlert('error', error.message);
+                }
+                return;
+            }
+
+            // Supabase may auto-confirm or require email confirmation depending on project settings.
+            // If session is immediately returned, log them in. Otherwise show instructions.
+            if (data.session) {
+                // Email confirmation disabled in Supabase → user is logged in right away
+                showDashboard(data.session.user);
+            } else {
+                // Email confirmation required
+                showAlert('success',
+                    `✅ Account created for ${shopName}! A confirmation email has been sent to ${email}. 
+            Please click the link in that email, then come back and sign in.`
+                );
+                switchTab('login');
+            }
+        }
+
+        // =====================================================
+        //  SIGN OUT
+        // =====================================================
+        async function handleSignOut() {
+            await db.auth.signOut();
+            // onAuthStateChange fires → showAuth()
+        }
+
+        // =====================================================
+        //  View Management
+        // =====================================================
+        function showDashboard(user) {
+            // Redirect to app — session is stored by Supabase in localStorage automatically
+            window.location.href = 'app.html';
+        }
+
+        function showAuth() {
+            document.getElementById('auth-card').style.display = 'block';
+        }
+
+        // =====================================================
+        //  UI Helpers
+        // =====================================================
+        function loading(form, on) {
+            document.getElementById(`${form}-btn`).disabled = on;
+            document.getElementById(`${form}-spinner`).classList.toggle('on', on);
+            document.getElementById(`${form}-label`).style.opacity = on ? 0 : 1;
+        }
+
+        function showAlert(type, msg) {
+            const el = document.getElementById(`alert-${type}`);
+            el.textContent = msg;
+            el.classList.add('on');
+        }
+
+        function clearAlerts() {
+            document.getElementById('alert-error').classList.remove('on');
+            document.getElementById('alert-success').classList.remove('on');
+        }
+    </script>
+
 </body>
 
 </html>

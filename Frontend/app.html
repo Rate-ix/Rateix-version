@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ratix – Dashboard</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">Ratix</div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-panel="dashboard" onclick="showPanel('dashboard',this)">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-panel="inventory" onclick="showPanel('inventory',this)">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Inventory
+      </a>
+      <a class="nav-item" data-panel="billing" onclick="showPanel('billing',this)">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Billing
+      </a>
+      <a class="nav-item" data-panel="khatabook" onclick="showPanel('khatabook',this)">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Khatabook
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="shop-label" id="sb-shop">—</div>
+      <div class="shop-email" id="sb-email">—</div>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <section id="panel-dashboard" class="panel active">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <span id="dash-date" class="date-chip"></span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue">₹</div><div><div class="stat-val" id="st-revenue">—</div><div class="stat-lbl">Revenue This Month</div></div></div>
+        <div class="stat-card"><div class="stat-icon green">📦</div><div><div class="stat-val" id="st-sold">—</div><div class="stat-lbl">Items Sold This Month</div></div></div>
+        <div class="stat-card"><div class="stat-icon orange">⚠️</div><div><div class="stat-val" id="st-lowstock">—</div><div class="stat-lbl">Low / Out of Stock Items</div></div></div>
+        <div class="stat-card"><div class="stat-icon red">📒</div><div><div class="stat-val" id="st-udhari">—</div><div class="stat-lbl">Total Udhari Pending (₹)</div></div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><h3>Recent Bills</h3></div>
+          <table class="data-table" id="dash-bills-table">
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Date</th></tr></thead>
+            <tbody id="dash-bills-body"><tr><td colspan="4" class="empty">No bills yet</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>Top Selling Items</h3></div>
+          <div id="top-items-list" class="top-list"><div class="empty">No sales data yet</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="panel-inventory" class="panel">
+      <div class="page-header">
+        <h1>Inventory</h1>
+        <button class="btn-primary" onclick="openProductModal()">+ Add Item</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <input type="text" class="search-input" placeholder="Search products..." oninput="filterInventory(this.value)">
+          <span id="inv-count" class="badge-count"></span>
+        </div>
+        <table class="data-table" id="inv-table">
+          <thead>
+            <tr><th>Name</th><th>Category</th><th>SKU</th><th>Stock</th><th>Min Stock</th><th>Selling Price</th><th>Cost Price</th><th>Unit</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="inv-body"><tr><td colspan="9" class="empty">No items yet. Click "+ Add Item" to start.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BILLING -->
+    <section id="panel-billing" class="panel">
+      <div class="page-header">
+        <h1>Billing</h1>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-outline" onclick="clearBill()">Clear</button>
+          <button class="btn-primary" onclick="saveBill(false)">Save Bill</button>
+          <button class="btn-primary" style="background:#16a34a;" onclick="saveBill(true)">Save & Print</button>
+        </div>
+      </div>
+      <!-- Customer Info -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="bill-meta-row">
+          <div class="form-group"><label>Customer Name</label><input type="text" id="bill-cust-name" placeholder="Walk-in Customer"></div>
+          <div class="form-group"><label>Phone</label><input type="text" id="bill-cust-phone" placeholder="Phone (optional)"></div>
+          <div class="form-group"><label>Date</label><input type="date" id="bill-date"></div>
+          <div class="form-group"><label>Payment Mode</label>
+            <select id="bill-pay-mode">
+              <option>Cash</option><option>UPI</option><option>Credit</option><option>Card</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- Spreadsheet -->
+      <div class="card" style="margin-bottom:16px;overflow-x:auto;">
+        <table class="data-table bill-table" id="bill-table">
+          <thead><tr><th width="32">#</th><th>Product</th><th width="80">Qty</th><th width="110">Rate (₹)</th><th width="120">Amount (₹)</th><th width="40"></th></tr></thead>
+          <tbody id="bill-body"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addBillRow()">+ Add Row</button>
+      </div>
+      <!-- Summary -->
+      <div class="bill-summary-wrap">
+        <div class="bill-summary card">
+          <div class="sum-row"><span>Subtotal</span><span id="sum-subtotal">₹0.00</span></div>
+          <div class="sum-row"><span>Discount (₹)</span><input type="number" id="sum-discount" value="0" min="0" oninput="calcTotals()" class="sum-input"></div>
+          <div class="sum-row"><span><label><input type="checkbox" id="gst-toggle" onchange="calcTotals()"> GST 18%</label></span><span id="sum-gst">₹0.00</span></div>
+          <div class="sum-row total-row"><span>Grand Total</span><span id="sum-total">₹0.00</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KHATABOOK -->
+    <section id="panel-khatabook" class="panel">
+      <div class="page-header">
+        <h1>Khatabook (Udhari)</h1>
+        <button class="btn-primary" onclick="openKhataCustomerModal()">+ Add Party</button>
+      </div>
+      <div class="khata-layout">
+        <!-- Customer List -->
+        <div class="card khata-list-panel">
+          <input type="text" class="search-input" placeholder="Search party..." oninput="filterKhata(this.value)" style="margin-bottom:12px;">
+          <div id="khata-customers"></div>
+        </div>
+        <!-- Ledger -->
+        <div class="card khata-ledger-panel">
+          <div id="khata-empty-state" style="text-align:center;padding:60px 20px;color:#9ca3af;">
+            <div style="font-size:2rem;margin-bottom:8px;">📒</div>
+            Select a party from the left to view their ledger
+          </div>
+          <div id="khata-ledger" style="display:none;">
+            <div class="ledger-header">
+              <div>
+                <div class="ledger-name" id="ledger-name"></div>
+                <div class="ledger-phone" id="ledger-phone"></div>
+              </div>
+              <div class="ledger-balance-wrap">
+                <div class="ledger-bal-label">Total Due</div>
+                <div class="ledger-bal" id="ledger-bal">₹0</div>
+              </div>
+            </div>
+            <div class="ledger-actions">
+              <button class="btn-red" onclick="openEntryModal('credit')">+ Gave Goods / Udhari</button>
+              <button class="btn-green" onclick="openEntryModal('debit')">✓ Received Payment</button>
+            </div>
+            <table class="data-table" style="margin-top:16px;">
+              <thead><tr><th>Date</th><th>Description</th><th>Udhari (Dr)</th><th>Payment (Cr)</th><th>Balance</th></tr></thead>
+              <tbody id="ledger-entries"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.main -->
+</div><!-- /.layout -->
+
+<!-- ============================
+     MODALS
+     ============================ -->
+
+<!-- Product Add/Edit Modal -->
+<div class="modal-backdrop" id="modal-product">
+  <div class="modal">
+    <div class="modal-header"><h3 id="product-modal-title">Add Product</h3><button class="modal-close" onclick="closeModal('product')">✕</button></div>
+    <form onsubmit="saveProduct(event)">
+      <input type="hidden" id="p-id">
+      <div class="form-row-2">
+        <div class="form-group"><label>Name *</label><input type="text" id="p-name" required placeholder="e.g. Tata Salt 1kg"></div>
+        <div class="form-group"><label>Category</label><input type="text" id="p-category" placeholder="e.g. Grocery"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>SKU / Barcode</label><input type="text" id="p-sku" placeholder="e.g. 8901234567"></div>
+        <div class="form-group"><label>Unit</label><input type="text" id="p-unit" placeholder="e.g. pcs, kg, box"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Selling Price (₹) *</label><input type="number" id="p-sell" step="0.01" min="0" required placeholder="0.00"></div>
+        <div class="form-group"><label>Cost Price (₹)</label><input type="number" id="p-cost" step="0.01" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Current Stock *</label><input type="number" id="p-stock" min="0" required placeholder="0"></div>
+        <div class="form-group"><label>Min Stock (Low Alert)</label><input type="number" id="p-minstock" min="0" placeholder="5"></div>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:8px;">Save Product</button>
+    </form>
+  </div>
+</div>
+
+<!-- Khatabook Customer Modal -->
+<div class="modal-backdrop" id="modal-khata-customer">
+  <div class="modal">
+    <div class="modal-header"><h3>Add Party / Customer</h3><button class="modal-close" onclick="closeModal('khata-customer')">✕</button></div>
+    <form onsubmit="saveKhataCustomer(event)">
+      <div class="form-group"><label>Name *</label><input type="text" id="kc-name" required placeholder="e.g. Ramesh Kumar"></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Phone</label><input type="tel" id="kc-phone" placeholder="10-digit number"></div>
+        <div class="form-group"><label>Address</label><input type="text" id="kc-address" placeholder="Area / City"></div>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:8px;">Add Party</button>
+    </form>
+  </div>
+</div>
+
+<!-- Khatabook Entry Modal -->
+<div class="modal-backdrop" id="modal-khata-entry">
+  <div class="modal">
+    <div class="modal-header"><h3 id="entry-modal-title">Add Entry</h3><button class="modal-close" onclick="closeModal('khata-entry')">✕</button></div>
+    <form onsubmit="saveKhataEntry(event)">
+      <div class="form-group"><label>Amount (₹) *</label><input type="number" id="ke-amount" step="0.01" min="0.01" required placeholder="0.00"></div>
+      <div class="form-group"><label>Description</label><input type="text" id="ke-desc" placeholder="e.g. Rice 5 bags, or Cash received"></div>
+      <div class="form-group"><label>Date</label><input type="date" id="ke-date"></div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:8px;" id="ke-submit">Save Entry</button>
+    </form>
+  </div>
+</div>
+
+<!-- PRINT AREA (hidden on screen, visible on print) -->
+<div id="print-area">
+  <div class="print-header">
+    <h2 id="pr-shop-name"></h2>
+    <div id="pr-shop-meta"></div>
+  </div>
+  <hr>
+  <div class="print-invoice-meta">
+    <div><strong>Invoice:</strong> <span id="pr-inv-no"></span></div>
+    <div><strong>Date:</strong> <span id="pr-date"></span></div>
+    <div><strong>Customer:</strong> <span id="pr-cust"></span></div>
+    <div><strong>Phone:</strong> <span id="pr-phone"></span></div>
+    <div><strong>Payment:</strong> <span id="pr-pay"></span></div>
+  </div>
+  <hr>
+  <table class="print-table" id="pr-items-table">
+    <thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+    <tbody id="pr-items"></tbody>
+  </table>
+  <hr>
+  <div class="print-summary">
+    <div>Subtotal: <span id="pr-subtotal"></span></div>
+    <div id="pr-discount-row">Discount: <span id="pr-discount"></span></div>
+    <div id="pr-gst-row">GST (18%): <span id="pr-gst"></span></div>
+    <div class="print-total">Grand Total: <span id="pr-total"></span></div>
+  </div>
+  <div class="print-footer">Thank you for your business!</div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
