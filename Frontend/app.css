@@ -105,6 +105,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #d1d5db; border-radius: 7px; z-index: 100; max-height: 180px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
 .autocomplete-item { padding: 8px 12px; cursor: pointer; font-size: 0.85rem; display: flex; justify-content: space-between; }
 .autocomplete-item:hover { background: #eff6ff; }
+.autocomplete-item.ac-active { background: #dbeafe; border-left: 3px solid #2563eb; font-weight: 600; }
 .autocomplete-price { color: #6b7280; font-size: 0.78rem; }
 
 /* ── KHATABOOK ── */
@@ -215,3 +216,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   transition: border-color .15s;
 }
 .nl-input:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px #ede9fe; }
+
+/* ── TOAST NOTIFICATIONS ── */
+#toast-container {
+  position: fixed; top: 18px; right: 18px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 18px; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 500; max-width: 340px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.15);
+  pointer-events: all;
+  animation: toast-in .3s ease;
+}
+.toast.toast-error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.toast.toast-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.toast.toast-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+.toast.toast-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+.toast-icon   { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.toast-body   { flex: 1; }
+.toast-title  { font-weight: 700; margin-bottom: 2px; }
+.toast-msg    { font-size: 0.82rem; opacity: .85; }
+.toast-close  { background: none; border: none; cursor: pointer; opacity: .5; font-size: 1rem; line-height: 1; padding: 0; flex-shrink: 0; }
+.toast-close:hover { opacity: 1; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toast-out {
+  from { opacity: 1; transform: translateX(0); max-height: 100px; }
+  to   { opacity: 0; transform: translateX(40px); max-height: 0; padding: 0; margin: 0; }
+}
+
+/* Stock-exceeded input highlight in billing */
+.stock-exceeded { border: 1.5px solid #ef4444 !important; background: #fef2f2 !important; outline: none; border-radius: 4px; }

@@ -24,10 +24,17 @@ let ENTRY_TYPE = 'credit';
   document.getElementById('sb-shop').textContent  = meta.shop_name  || USER.email;
   document.getElementById('sb-email').textContent = meta.owner_name || USER.email;
 
-  // Set today's date
-  const today = new Date();
-  document.getElementById('dash-date').textContent = today.toLocaleDateString('en-IN', { dateStyle: 'long' });
-  document.getElementById('bill-date').value = today.toISOString().split('T')[0];
+  // Set today's date and live clock
+  function updateLiveClock() {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-IN', { dateStyle: 'long' });
+    const timeStr = today.toLocaleTimeString('en-IN');
+    const dashDateEl = document.getElementById('dash-date');
+    if (dashDateEl) dashDateEl.textContent = dateStr + ' • ' + timeStr;
+  }
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
+  document.getElementById('bill-date').value = getLocalISODate();
 
   await loadInventory();
   await loadDashboard();
@@ -48,6 +55,7 @@ function showPanel(name, el) {
 
   if (name === 'dashboard')  loadDashboard();
   if (name === 'inventory')  renderInventory();
+  if (name === 'history')    loadHistory();
   if (name === 'khatabook')  loadKhataCustomers();
 }
 
@@ -126,7 +134,7 @@ async function loadDashboard() {
 async function loadExpiryAlerts() {
   const d = new Date();
   d.setDate(d.getDate() + 10); // Alert for anything expiring in next 10 days
-  const threshold = d.toISOString().split('T')[0];
+  const threshold = getLocalISODate(d);
 
   const { data: batches } = await db.from('product_batches')
     .select('*, inventory(name)')
@@ -301,7 +309,9 @@ function renderBillRows() {
         <div class="autocomplete-wrap">
           <input type="text" value="${esc(row.name)}" placeholder="Product name..."
             oninput="onProductInput(this, '${row.id}')"
-            onfocus="onProductInput(this, '${row.id}')">
+            onfocus="onProductInput(this, '${row.id}')"
+            onkeydown="navigateAutocomplete(event, '${row.id}')"
+            onblur="setTimeout(()=>closeAutocomplete('${row.id}'),150)">
           <div class="autocomplete-list" id="ac-${row.id}" style="display:none;"></div>
         </div>
       </td>
@@ -318,18 +328,71 @@ function renderBillRows() {
 
 function onProductInput(input, rowId) {
   const q = input.value.toLowerCase();
-  const dropId = 'ac-' + rowId;
-  const drop = document.getElementById(dropId);
+
+  // Save manually typed names to the state
+  const row = BILL_ROWS.find(r => String(r.id) === String(rowId));
+  if (row) row.name = input.value;
+
+  const drop = document.getElementById('ac-' + rowId);
   if (!q) { drop.style.display = 'none'; return; }
   const matches = INVENTORY.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8);
   if (!matches.length) { drop.style.display = 'none'; return; }
+
   drop.innerHTML = matches.map(p =>
-    `<div class="autocomplete-item" onmousedown="selectProduct('${rowId}','${p.id}')">
+    `<div class="autocomplete-item" data-pid="${p.id}" onmousedown="selectProduct('${rowId}','${p.id}')">
        <span>${esc(p.name)}</span>
        <span class="autocomplete-price">₹${fmt(p.selling_price)} | Stk:${p.stock}</span>
      </div>`
   ).join('');
   drop.style.display = 'block';
+  drop.dataset.activeIndex = -1;  // reset keyboard cursor
+}
+
+function closeAutocomplete(rowId) {
+  const drop = document.getElementById('ac-' + rowId);
+  if (drop) drop.style.display = 'none';
+}
+
+function navigateAutocomplete(e, rowId) {
+  const drop = document.getElementById('ac-' + rowId);
+  if (!drop || drop.style.display === 'none') return;
+
+  const items = drop.querySelectorAll('.autocomplete-item');
+  if (!items.length) return;
+
+  let idx = parseInt(drop.dataset.activeIndex ?? -1);
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    idx = (idx + 1) % items.length;
+    setActiveItem(items, idx, drop);
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    idx = (idx - 1 + items.length) % items.length;
+    setActiveItem(items, idx, drop);
+
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (idx >= 0 && items[idx]) {
+      const pid = items[idx].dataset.pid;
+      selectProduct(rowId, pid);
+    }
+
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    closeAutocomplete(rowId);
+    drop.dataset.activeIndex = -1;
+  }
+}
+
+function setActiveItem(items, idx, drop) {
+  items.forEach(el => el.classList.remove('ac-active'));
+  if (items[idx]) {
+    items[idx].classList.add('ac-active');
+    items[idx].scrollIntoView({ block: 'nearest' });
+  }
+  drop.dataset.activeIndex = idx;
 }
 
 function selectProduct(rowId, pid) {
@@ -384,13 +447,29 @@ function clearBill() {
   document.getElementById('bill-cust-phone').value = '';
   document.getElementById('sum-discount').value     = '0';
   document.getElementById('gst-toggle').checked    = false;
-  document.getElementById('bill-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('bill-date').value = getLocalISODate();
   addBillRow();
 }
 
 async function saveBill(print) {
   const validRows = BILL_ROWS.filter(r => r.name && r.qty > 0);
   if (!validRows.length) { alert('Add at least one item with quantity.'); return; }
+
+  // ── STOCK VALIDATION: block if any row exceeds available stock ──
+  const stockErrors = [];
+  for (const r of validRows) {
+    if (r.pid) {
+      const prod = INVENTORY.find(p => p.id === r.pid);
+      if (prod && parseInt(r.qty) > prod.stock) {
+        stockErrors.push(`${prod.name}: only ${prod.stock} in stock, but billing ${parseInt(r.qty)}`);
+      }
+    }
+  }
+  if (stockErrors.length) {
+    showToast('error', 'Stock Insufficient', stockErrors.join('\n'));
+    alert('Cannot save bill — insufficient stock:\n\n' + stockErrors.join('\n'));
+    return;
+  }
 
   const subtotal  = validRows.reduce((s, r) => s + r.total, 0);
   const discount  = parseFloat(document.getElementById('sum-discount').value) || 0;
@@ -435,6 +514,13 @@ async function saveBill(print) {
       if (prod) {
         const newStock = Math.max(0, prod.stock - parseInt(r.qty));
         await db.from('inventory').update({ stock: newStock }).eq('id', r.pid);
+
+        // Fire out-of-stock notification
+        if (newStock === 0) {
+          showToast('error', 'Out of Stock!', `${prod.name} has reached 0 units. Restock soon.`, 8000);
+        } else if (newStock <= prod.min_stock) {
+          showToast('warning', 'Low Stock Alert', `${prod.name} is low — only ${newStock} unit(s) left.`, 6000);
+        }
       }
     }
   }
@@ -453,7 +539,7 @@ function printInvoice(inv, rows, subtotal, discount, gstAmt, gstOn, total, payMo
   document.getElementById('pr-shop-meta').textContent =
     (meta.owner_name || '') + ' | ' + (meta.city || '') + ' | ' + (USER.user_metadata?.phone || '');
   document.getElementById('pr-inv-no').textContent  = inv.invoice_number;
-  document.getElementById('pr-date').textContent    = new Date(inv.created_at).toLocaleDateString('en-IN');
+  document.getElementById('pr-date').textContent    = new Date(inv.created_at).toLocaleString('en-IN');
   document.getElementById('pr-cust').textContent    = inv.customer_name;
   document.getElementById('pr-phone').textContent   = inv.customer_phone || '—';
   document.getElementById('pr-pay').textContent     = payMode;
@@ -469,6 +555,52 @@ function printInvoice(inv, rows, subtotal, discount, gstAmt, gstOn, total, payMo
   document.getElementById('pr-gst').textContent   = '₹' + fmt(gstAmt);
   document.getElementById('pr-total').textContent = '₹' + fmt(total);
   setTimeout(() => window.print(), 200);
+}
+
+// ══════════════════════════════════════════════
+//  HISTORY
+// ══════════════════════════════════════════════
+async function loadHistory() {
+  const tbody = document.getElementById('history-bills-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" class="empty">Loading history...</td></tr>';
+  
+  const { data: invoices, error } = await db.from('invoices')
+    .select('*, invoice_items(name, quantity)')
+    .eq('user_id', USER.id)
+    .order('created_at', { ascending: false });
+
+  if (error || !invoices || !invoices.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No history found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = invoices.map(inv => {
+    const itemsStr = (inv.invoice_items || []).map(i => `${i.quantity}x ${i.name}`).join(', ');
+    const dt = new Date(inv.created_at).toLocaleString('en-IN');
+    return `<tr>
+      <td><strong>${inv.invoice_number}</strong></td>
+      <td>${esc(inv.customer_name)}</td>
+      <td>₹${fmt(inv.total)}</td>
+      <td>${dt}</td>
+      <td style="font-size:0.85em;color:#666;max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(itemsStr)}">${esc(itemsStr)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterHistory(q) {
+  const query = q.toLowerCase();
+  const rows = document.querySelectorAll('#history-bills-body tr');
+  rows.forEach(row => {
+    if (row.querySelector('.empty')) return;
+    const invNo = row.cells[0].textContent.toLowerCase();
+    const custName = row.cells[1].textContent.toLowerCase();
+    if (invNo.includes(query) || custName.includes(query)) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
 }
 
 // ══════════════════════════════════════════════
@@ -534,8 +666,14 @@ async function selectKhataCustomer(id) {
     const drAmt = e.type === 'credit' ? '₹' + fmt(amt) : '—';
     const crAmt = e.type === 'debit'  ? '₹' + fmt(amt) : '—';
     const balClr = balance > 0 ? 'color:#dc2626;' : 'color:#16a34a;';
+    let dtStr;
+    if (e.entry_date.includes('T')) {
+      dtStr = new Date(e.entry_date).toLocaleString('en-IN');
+    } else {
+      dtStr = new Date(e.entry_date + 'T00:00:00').toLocaleDateString('en-IN') + ', ' + new Date(e.created_at).toLocaleTimeString('en-IN');
+    }
     return `<tr>
-      <td>${new Date(e.entry_date).toLocaleDateString('en-IN')}</td>
+      <td>${dtStr}</td>
       <td>${esc(e.description || '—')}</td>
       <td style="color:#dc2626;font-weight:600;">${drAmt}</td>
       <td style="color:#16a34a;font-weight:600;">${crAmt}</td>
@@ -567,7 +705,7 @@ function openEntryModal(type) {
     type === 'credit' ? '+ Gave Goods / Udhari' : '✓ Received Payment';
   document.getElementById('ke-submit').textContent =
     type === 'credit' ? 'Save Udhari' : 'Save Payment';
-  document.getElementById('ke-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ke-date').value = getLocalISODateTime();
   document.getElementById('ke-amount').value = '';
   document.getElementById('ke-desc').value   = '';
   openModal('khata-entry');
@@ -630,218 +768,267 @@ document.getElementById('bill-body').addEventListener('keydown', e => {
 // ─── Utilities ───────────────────────────────
 function fmt(n)  { return (parseFloat(n) || 0).toFixed(2); }
 function esc(s)  { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function getLocalISODate(d = new Date()) { return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; }
+function getLocalISODateTime(d = new Date()) { return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16); }
 
-// ══════════════════════════════════════════════
-//  AI — GEMINI INTEGRATION
-// ══════════════════════════════════════════════
+// ─── Toast Notifications ──────────────────────────────────────
+// type: 'error' | 'warning' | 'success' | 'info'
+function showToast(type, title, msg, duration = 5000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
 
-// ── Key Management ────────────────────────────
-function saveAIKey() {
-  const key = document.getElementById('ai-key-input').value.trim();
-  if (!key.startsWith('AIza')) {
-    document.getElementById('ai-key-status').textContent = '❌ Invalid key format. Should start with AIza';
-    document.getElementById('ai-key-status').style.color = '#dc2626';
-    return;
-  }
-  localStorage.setItem('ratix_ai_key', key);
-  document.getElementById('ai-key-status').textContent = '✅ Key saved! AI features are now active.';
-  document.getElementById('ai-key-status').style.color = '#16a34a';
-  setTimeout(() => closeModal('ai-setup'), 1500);
+  const icons = { error: '🚫', warning: '⚠️', success: '✅', info: 'ℹ️' };
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+    <div class="toast-body">
+      <div class="toast-title">${esc(title)}</div>
+      ${msg ? `<div class="toast-msg">${esc(msg)}</div>` : ''}
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.appendChild(toast);
+
+  // Auto-dismiss
+  setTimeout(() => {
+    toast.style.animation = 'toast-out .35s ease forwards';
+    setTimeout(() => toast.remove(), 380);
+  }, duration);
 }
 
-function getAIKey() {
-  const key = localStorage.getItem('ratix_ai_key');
-  if (!key) {
-    alert('Please set your Gemini API key first.\nClick "⚙ AI Setup" in the sidebar.');
-    openModal('ai-setup');
-    return null;
-  }
-  return key;
+// ══════════════════════════════════════════════
+//  DEALER BILL SCANNER (Python Backend API)
+// ══════════════════════════════════════════════
+
+// Change this URL when you deploy your Python backend to the cloud
+const SCANNER_API = 'http://localhost:8000';
+
+let SCANNED_ITEMS = [];
+
+function closeBillScanner() {
+  closeModal('bill-scanner');
+  rescanBill();
 }
 
-// ── Core Gemini Call ──────────────────────────
-async function callGemini(prompt) {
-  const key = getAIKey();
-  if (!key) return null;
+function rescanBill() {
+  SCANNED_ITEMS = [];
+  document.getElementById('bill-scan-input').value = '';
+  document.getElementById('scan-preview').style.display = 'none';
+  document.getElementById('scan-step-upload').style.display = '';
+  document.getElementById('scan-step-progress').style.display = 'none';
+  document.getElementById('scan-step-results').style.display = 'none';
+  document.getElementById('scan-step-empty').style.display = 'none';
+  document.getElementById('scan-progress-bar').style.width = '0%';
+}
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
-    {
+async function handleBillImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Show image preview
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('scan-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  // Switch to progress view
+  document.getElementById('scan-step-upload').style.display = 'none';
+  document.getElementById('scan-step-progress').style.display = '';
+  document.getElementById('scan-progress-text').textContent = 'Sending bill to server...';
+
+  // Animate progress bar while waiting
+  let fakeProgress = 0;
+  const progressInterval = setInterval(() => {
+    fakeProgress = Math.min(fakeProgress + 5, 85);
+    document.getElementById('scan-progress-bar').style.width = fakeProgress + '%';
+    if (fakeProgress < 30)      document.getElementById('scan-progress-text').textContent = 'Uploading image...';
+    else if (fakeProgress < 60) document.getElementById('scan-progress-text').textContent = 'Enhancing image quality...';
+    else                        document.getElementById('scan-progress-text').textContent = 'Reading text & parsing items...';
+  }, 200);
+
+  try {
+    // Build FormData: send image + current inventory for fuzzy matching
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('inventory', JSON.stringify(
+      INVENTORY.map(p => ({ id: p.id, name: p.name }))
+    ));
+
+    const response = await fetch(`${SCANNER_API}/api/scan-bill`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 1024 }
-      })
-    }
-  );
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err?.error?.message || 'Gemini API error');
-  }
-
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-}
-
-// ── Feature 1: Business Insights (Dashboard) ─
-async function generateBusinessInsights() {
-  const card = document.getElementById('ai-insights-card');
-  const txt  = document.getElementById('ai-insights-text');
-  card.style.display = 'block';
-  txt.innerHTML = '<div class="ai-loading">Analysing your shop data with AI...</div>';
-
-  try {
-    // Gather context data
-    const revenue    = document.getElementById('st-revenue').textContent;
-    const sold       = document.getElementById('st-sold').textContent;
-    const lowStock   = document.getElementById('st-lowstock').textContent;
-    const udhari     = document.getElementById('st-udhari').textContent;
-    const topItems   = document.getElementById('top-items-list').innerText.trim();
-    const lowItems   = INVENTORY.filter(p => p.stock <= p.min_stock)
-                                .map(p => `${p.name} (stock: ${p.stock})`).join(', ') || 'None';
-    const meta       = USER.user_metadata || {};
-
-    const prompt = `You are a smart business advisor for an Indian kirana/wholesale shop named "${meta.shop_name || 'this shop'}".
-
-Here is the shop's current data:
-- Revenue this month: ${revenue}
-- Items sold this month: ${sold} units
-- Low/out-of-stock items: ${lowStock}
-- Total pending udhari (credit): ${udhari}
-- Top selling items: ${topItems}
-- Low stock items: ${lowItems}
-
-Give a concise, practical business summary in 4-5 bullet points. 
-Write in simple English. Focus on actionable advice.
-Use ₹ for rupees. Be specific, not generic.`;
-
-    const result = await callGemini(prompt);
-    txt.textContent = result;
-  } catch (err) {
-    txt.textContent = '❌ Error: ' + err.message;
-  }
-}
-
-// ── Feature 2: Natural Language Bill Parser ───
-async function parseNaturalBill() {
-  const input = document.getElementById('nl-bill-input').value.trim();
-  if (!input) { alert('Enter a bill description first.'); return; }
-
-  const btn = document.querySelector('[onclick="parseNaturalBill()"]');
-  btn.disabled = true;
-  btn.textContent = 'Parsing...';
-
-  try {
-    const productList = INVENTORY.map(p => p.name).slice(0, 30).join(', ');
-
-    const prompt = `You are a billing assistant for an Indian kirana/wholesale shop.
-Available products in inventory (for matching): ${productList}
-
-Parse this bill text into items. Try to match product names to the inventory list above.
-Bill text: "${input}"
-
-Return ONLY a valid JSON array. No explanation, no markdown, just pure JSON:
-[{"name": "product name", "qty": number, "rate": number}, ...]
-
-Rules:
-- qty must be a positive number
-- rate is price per unit in rupees
-- If "each" or "per piece" is mentioned, use that as rate
-- Match to inventory product names when possible`;
-
-    const raw    = await callGemini(prompt);
-    // Extract JSON from response (handle markdown code blocks)
-    const match  = raw.match(/\[[\s\S]*\]/);
-    if (!match) throw new Error('Could not parse AI response as JSON');
-
-    const items  = JSON.parse(match[0]);
-    if (!Array.isArray(items) || !items.length) throw new Error('No items found in the text');
-
-    // Clear existing bill and populate with parsed items
-    BILL_ROWS = [];
-    items.forEach(item => {
-      // Try to match to existing inventory product
-      const inv = INVENTORY.find(p => p.name.toLowerCase().includes(item.name.toLowerCase()) ||
-                                       item.name.toLowerCase().includes(p.name.toLowerCase().split(' ')[0]));
-      BILL_ROWS.push({
-        id:    Date.now() + Math.random(),
-        name:  inv ? inv.name : item.name,
-        pid:   inv?.id || null,
-        qty:   item.qty || 1,
-        rate:  item.rate || inv?.selling_price || 0,
-        total: (item.qty || 1) * (item.rate || inv?.selling_price || 0)
-      });
+      body: formData,
     });
 
-    if (!BILL_ROWS.length) addBillRow();
-    else { renderBillRows(); calcTotals(); }
+    clearInterval(progressInterval);
+    document.getElementById('scan-progress-bar').style.width = '100%';
+    document.getElementById('scan-progress-text').textContent = 'Done!';
 
-    document.getElementById('nl-bill-input').value = '';
-    btn.textContent = `✓ ${items.length} items added`;
-    setTimeout(() => { btn.textContent = 'Parse →'; btn.disabled = false; }, 2000);
-  } catch (err) {
-    alert('AI parsing failed: ' + err.message + '\n\nTip: Be more specific, e.g. "5 kg atta 45, 2 oil 180"');
-    btn.textContent = 'Parse →';
-    btn.disabled    = false;
-  }
-}
-
-// ── Feature 3: AI Restock Analysis (Inventory) ─
-async function generateRestockAnalysis() {
-  const card = document.getElementById('ai-restock-card');
-  const txt  = document.getElementById('ai-restock-text');
-  card.style.display = 'block';
-  txt.innerHTML = '<div class="ai-loading">Analysing inventory and sales patterns...</div>';
-
-  try {
-    // Get last 30 days sales per product
-    const since = new Date();
-    since.setDate(since.getDate() - 30);
-
-    const { data: recentInvoices } = await db.from('invoices')
-      .select('id').eq('user_id', USER.id)
-      .gte('created_at', since.toISOString());
-
-    let salesMap = {};
-    if (recentInvoices?.length) {
-      const { data: items } = await db.from('invoice_items')
-        .select('name, quantity')
-        .in('invoice_id', recentInvoices.map(i => i.id));
-      (items || []).forEach(i => {
-        salesMap[i.name] = (salesMap[i.name] || 0) + i.quantity;
-      });
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.detail || 'Server error');
     }
 
-    const inventoryData = INVENTORY.map(p => ({
-      name:       p.name,
-      stock:      p.stock,
-      min_stock:  p.min_stock,
-      sold_30d:   salesMap[p.name] || 0,
-      unit:       p.unit || 'pcs'
+    const data = await response.json();
+
+    // Map API response to our internal format
+    SCANNED_ITEMS = (data.items || []).map(item => ({
+      raw_name:     item.name,
+      matched_name: item.matched_name,
+      matched_id:   item.matched_id || null,
+      qty:          item.qty,
+      price:        item.cost_price,
+      is_new:       item.is_new,
+      confidence:   item.confidence || 0,
     }));
 
-    const prompt = `You are a smart inventory manager for an Indian kirana/wholesale shop.
+    setTimeout(() => {
+      document.getElementById('scan-step-progress').style.display = 'none';
+      if (SCANNED_ITEMS.length === 0) {
+        document.getElementById('scan-step-empty').style.display = '';
+      } else {
+        renderScanResults();
+        document.getElementById('scan-step-results').style.display = '';
+      }
+    }, 400);
 
-Inventory data (last 30 days sales included):
-${JSON.stringify(inventoryData, null, 2)}
-
-Analyze this and return a practical restock recommendation.
-Format your response as clear bullet points:
-• [Item name]: Restock X [unit]. Reason: [brief reason]
-
-Focus on:
-1. Items with stock below min_stock
-2. Items selling fast (high sold_30d relative to stock)
-3. Out of stock items
-
-Keep it under 10 items. Be direct and specific. Use ₹ only if needed.`;
-
-    const result = await callGemini(prompt);
-    txt.textContent = result;
   } catch (err) {
-    txt.textContent = '❌ Error: ' + err.message;
+    clearInterval(progressInterval);
+    document.getElementById('scan-step-progress').style.display = 'none';
+    document.getElementById('scan-step-empty').style.display = '';
+
+    // Show a more helpful error if backend is not running
+    const emptyDiv = document.getElementById('scan-step-empty');
+    if (err.message.includes('fetch') || err.message.includes('Failed')) {
+      emptyDiv.innerHTML = `
+        <div style="font-size:2rem;margin-bottom:8px;">🔌</div>
+        <div style="font-weight:600;margin-bottom:8px;">Backend server not running</div>
+        <div style="font-size:0.85rem;color:#9ca3af;margin-bottom:16px;">
+          Start the Python backend with:<br>
+          <code style="background:#f3f4f6;padding:4px 8px;border-radius:4px;">python Backend/main.py</code>
+        </div>
+        <button class="btn-outline" onclick="rescanBill()">Try Again</button>
+      `;
+    }
+    console.error('Scanner Error:', err);
   }
 }
 
+function sanitizeProductName(name) {
+  // Remove OCR garbage characters
+  return name
+    .replace(/[|{}\[\]\\/<>@#$%^*_=+~`"'!]/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/^[\W\d]+/, '')
+    .replace(/[^a-zA-Z0-9 .,&()-]/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function renderScanResults() {
+  const tbody = document.getElementById('scan-results-body');
+  if (!SCANNED_ITEMS.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:20px;">No items detected</td></tr>';
+    return;
+  }
+  tbody.innerHTML = SCANNED_ITEMS.map((item, i) => {
+    const displayName = sanitizeProductName(item.matched_name || item.raw_name || '');
+    const detectedName = sanitizeProductName(item.raw_name || '');
+    const totalPrice = ((item.qty || 1) * (item.price || 0)).toFixed(2);
+    return `
+    <tr>
+      <td>
+        <input type="text" value="${esc(displayName)}" 
+          style="width:100%;padding:4px 8px;border:1px solid #e5e7eb;border-radius:6px;font-weight:600;"
+          onchange="SCANNED_ITEMS[${i}].matched_name=sanitizeProductName(this.value);SCANNED_ITEMS[${i}].is_new=true;">
+        ${item.is_new
+          ? `<div style="margin-top:3px;"><span style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:99px;">🆕 NEW ITEM</span></div>`
+          : `<div style="margin-top:3px;"><span style="font-size:0.7rem;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:99px;">✓ Matched ${item.confidence}%</span></div>`}
+      </td>
+      <td><input type="number" value="${item.qty}" min="0.01" step="0.01" style="width:75px;padding:4px 6px;border:1px solid #e5e7eb;border-radius:6px;text-align:center;" onchange="SCANNED_ITEMS[${i}].qty=parseFloat(this.value)||1;updateScanRowTotal(${i})"></td>
+      <td><input type="number" value="${item.price}" min="0" step="0.01" style="width:90px;padding:4px 6px;border:1px solid #e5e7eb;border-radius:6px;text-align:right;" onchange="SCANNED_ITEMS[${i}].price=parseFloat(this.value)||0;updateScanRowTotal(${i})"></td>
+      <td style="font-weight:600;color:#111;" id="scan-row-total-${i}">₹${totalPrice}</td>
+      <td><button class="del-row-btn" onclick="SCANNED_ITEMS.splice(${i},1);renderScanResults()">✕</button></td>
+    </tr>
+  `;}).join('');
+}
+
+function updateScanRowTotal(i) {
+  const item = SCANNED_ITEMS[i];
+  const totalEl = document.getElementById('scan-row-total-' + i);
+  if (totalEl) totalEl.textContent = '₹' + ((item.qty||1)*(item.price||0)).toFixed(2);
+}
+
+async function addScannedToInventory() {
+  if (!SCANNED_ITEMS.length) return;
+
+  const btn = document.querySelector('[onclick="addScannedToInventory()"]');
+  btn.disabled = true;
+  btn.textContent = 'Updating inventory...';
+
+  let added = 0, updated = 0, errors = 0;
+
+  for (const item of SCANNED_ITEMS) {
+    // Always re-sanitize name before saving
+    const cleanName = sanitizeProductName(item.matched_name || item.raw_name || '').trim();
+    if (!cleanName || cleanName.length < 2) { errors++; continue; }
+
+    const qty   = Math.max(0, parseFloat(item.qty)   || 0);
+    const price = Math.max(0, parseFloat(item.price) || 0);
+
+    if (item.matched_id && !item.is_new) {
+      // Update existing product: add stock, update cost price
+      const prod = INVENTORY.find(p => p.id === item.matched_id);
+      if (prod) {
+        const newStock = (parseFloat(prod.stock) || 0) + qty;
+        const { error } = await db.from('inventory')
+          .update({ stock: newStock, cost_price: price })
+          .eq('id', item.matched_id);
+        if (!error) updated++;
+        else errors++;
+      }
+    } else {
+      // Check if a product with this name already exists (prevent duplicates)
+      const existing = INVENTORY.find(p =>
+        p.name.toLowerCase().trim() === cleanName.toLowerCase().trim()
+      );
+      if (existing) {
+        // Restock the existing one
+        const newStock = (parseFloat(existing.stock) || 0) + qty;
+        await db.from('inventory')
+          .update({ stock: newStock, cost_price: price })
+          .eq('id', existing.id);
+        updated++;
+      } else {
+        // Insert brand new product
+        const { error } = await db.from('inventory').insert({
+          user_id:       USER.id,
+          name:          cleanName,
+          category:      'General',
+          stock:         qty,
+          cost_price:    price,
+          selling_price: price,   // default selling = cost; user can edit later
+          min_stock:     5,
+          unit:          'pcs'
+        });
+        if (!error) added++;
+        else errors++;
+      }
+    }
+  }
+
+  await loadInventory();
+  renderInventory();
+
+  closeModal('bill-scanner');
+  rescanBill();
+  btn.disabled = false;
+  btn.textContent = '✓ Add to Inventory';
+
+  let msg = `✅ Done!\n\n📦 ${updated} existing item(s) restocked\n🆕 ${added} new item(s) added to inventory`;
+  if (errors > 0) msg += `\n⚠️ ${errors} item(s) skipped (invalid name or DB error)`;
+  alert(msg);
+}

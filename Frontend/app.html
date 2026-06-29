@@ -8,6 +8,9 @@
 </head>
 <body>
 
+<!-- Toast Notification Container -->
+<div id="toast-container"></div>
+
 <div class="layout">
 
   <!-- SIDEBAR -->
@@ -30,11 +33,14 @@
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Khatabook
       </a>
+      <a class="nav-item" data-panel="history" onclick="showPanel('history',this)">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        History
+      </a>
     </nav>
     <div class="sidebar-footer">
       <div class="shop-label" id="sb-shop">—</div>
       <div class="shop-email" id="sb-email">—</div>
-      <button class="ai-setup-btn" onclick="openModal('ai-setup')">⚙ AI Setup</button>
       <button class="logout-btn" onclick="logout()">Sign Out</button>
     </div>
   </aside>
@@ -54,14 +60,6 @@
         <div class="stat-card"><div class="stat-icon orange">⚠️</div><div><div class="stat-val" id="st-lowstock">—</div><div class="stat-lbl">Low / Out of Stock Items</div></div></div>
         <div class="stat-card"><div class="stat-icon red">📒</div><div><div class="stat-val" id="st-udhari">—</div><div class="stat-lbl">Total Udhari Pending (₹)</div></div></div>
       </div>
-      <!-- AI Insights Card -->
-      <div class="ai-insights-card card" id="ai-insights-card" style="display:none;margin-bottom:24px;">
-        <div class="ai-card-header">
-          <span>✨ AI Business Insights</span>
-          <button onclick="document.getElementById('ai-insights-card').style.display='none'" style="background:none;border:none;cursor:pointer;color:#6b7280;">✕</button>
-        </div>
-        <div id="ai-insights-text" class="ai-insights-text"></div>
-      </div>
       
       <!-- Expiry Alerts Card -->
       <div class="card" id="expiry-alerts-card" style="margin-bottom:24px; display:none; border-left: 3px solid #dc2626;">
@@ -78,7 +76,6 @@
         <div class="card">
           <div class="card-header">
             <h3>Recent Bills</h3>
-            <button class="btn-ai" onclick="generateBusinessInsights()">✨ AI Insights</button>
           </div>
           <table class="data-table" id="dash-bills-table">
             <thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Date</th></tr></thead>
@@ -97,19 +94,11 @@
       <div class="page-header">
         <h1>Inventory</h1>
         <div style="display:flex;gap:8px;">
-          <button class="btn-outline" onclick="openModal('qr-scanner')">📷 Scan Stock</button>
-          <button class="btn-ai" onclick="generateRestockAnalysis()">🤖 AI Restock</button>
+          <button class="btn-primary" style="background:#7c3aed;" onclick="openModal('bill-scanner')">🧾 Scan Dealer Bill</button>
           <button class="btn-primary" onclick="openProductModal()">+ Add Item</button>
         </div>
       </div>
-      <!-- AI Restock Output -->
-      <div id="ai-restock-card" class="ai-insights-card card" style="display:none;margin-bottom:16px;">
-        <div class="ai-card-header">
-          <span>🤖 AI Restock Analysis</span>
-          <button onclick="document.getElementById('ai-restock-card').style.display='none'" style="background:none;border:none;cursor:pointer;color:#6b7280;">✕</button>
-        </div>
-        <div id="ai-restock-text" class="ai-insights-text"></div>
-      </div>
+      
       <div class="card">
         <div class="card-header">
           <input type="text" class="search-input" placeholder="Search products..." oninput="filterInventory(this.value)">
@@ -134,18 +123,7 @@
           <button class="btn-primary" style="background:#16a34a;" onclick="saveBill(true)">Save & Print</button>
         </div>
       </div>
-      <!-- AI Natural Language Entry -->
-      <div class="nl-bill-bar card" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:6px;">
-          <span style="font-size:0.8rem;font-weight:600;color:#7c3aed;">✨ AI Bill Entry</span>
-          <span style="font-size:0.75rem;color:#9ca3af;">— Type your bill in plain language</span>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="nl-bill-input" class="nl-input"
-            placeholder='e.g. "5 kg atta 45 rs, 2 sarso oil 180, 10 maggi 12 each"'>
-          <button class="btn-ai" onclick="parseNaturalBill()">Parse →</button>
-        </div>
-      </div>
+      
       <!-- Customer Info -->
       <div class="card" style="margin-bottom:16px;">
         <div class="bill-meta-row">
@@ -174,6 +152,9 @@
           <div class="sum-row"><span>Discount (₹)</span><input type="number" id="sum-discount" value="0" min="0" oninput="calcTotals()" class="sum-input"></div>
           <div class="sum-row"><span><label><input type="checkbox" id="gst-toggle" onchange="calcTotals()"> GST 18%</label></span><span id="sum-gst">₹0.00</span></div>
           <div class="sum-row total-row"><span>Grand Total</span><span id="sum-total">₹0.00</span></div>
+          <div style="margin-top: 16px;">
+            <button class="btn-primary" style="width: 100%; background:#16a34a; padding: 12px; font-size: 1rem;" onclick="saveBill(true)">Save & Print Bill</button>
+          </div>
         </div>
       </div>
     </section>
@@ -212,13 +193,30 @@
               <button class="btn-green" onclick="openEntryModal('debit')">✓ Received Payment</button>
             </div>
             <table class="data-table" style="margin-top:16px;">
-              <thead><tr><th>Date</th><th>Description</th><th>Udhari (Dr)</th><th>Payment (Cr)</th><th>Balance</th></tr></thead>
+              <thead><tr><th>Date & Time</th><th>Description</th><th>Udhari (Dr)</th><th>Payment (Cr)</th><th>Balance</th></tr></thead>
               <tbody id="ledger-entries"></tbody>
             </table>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- HISTORY -->
+    <section id="panel-history" class="panel">
+      <div class="page-header">
+        <h1>History (Previous Bills)</h1>
+      </div>
+      <div class="card">
+        <div class="card-header" style="margin-bottom: 12px;">
+          <input type="text" id="history-search" class="search-input" placeholder="Search by Invoice or Customer name..." oninput="filterHistory(this.value)" style="width: 100%; max-width: 400px;">
+        </div>
+        <table class="data-table" id="history-bills-table">
+          <thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Date & Time</th><th>Items Sold</th></tr></thead>
+          <tbody id="history-bills-body"><tr><td colspan="5" class="empty">Loading history...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
 
   </div><!-- /.main -->
 </div><!-- /.layout -->
@@ -276,29 +274,12 @@
     <form onsubmit="saveKhataEntry(event)">
       <div class="form-group"><label>Amount (₹) *</label><input type="number" id="ke-amount" step="0.01" min="0.01" required placeholder="0.00"></div>
       <div class="form-group"><label>Description</label><input type="text" id="ke-desc" placeholder="e.g. Rice 5 bags, or Cash received"></div>
-      <div class="form-group"><label>Date</label><input type="date" id="ke-date"></div>
+      <div class="form-group"><label>Date & Time</label><input type="datetime-local" id="ke-date"></div>
       <button type="submit" class="btn-primary" style="width:100%;margin-top:8px;" id="ke-submit">Save Entry</button>
     </form>
   </div>
 </div>
 
-<!-- AI Setup Modal -->
-<div class="modal-backdrop" id="modal-ai-setup">
-  <div class="modal">
-    <div class="modal-header"><h3>⚙ AI Setup (Gemini)</h3><button class="modal-close" onclick="closeModal('ai-setup')">✕</button></div>
-    <p style="font-size:0.85rem;color:#6b7280;margin-bottom:16px;line-height:1.5;">
-      AI features use Google Gemini. Get a free API key at
-      <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#7c3aed;">aistudio.google.com</a>.
-      Your key is stored locally in your browser only.
-    </p>
-    <div class="form-group">
-      <label>Gemini API Key</label>
-      <input type="password" id="ai-key-input" placeholder="AIza..." style="font-family:monospace;">
-    </div>
-    <button class="btn-primary" style="width:100%;" onclick="saveAIKey()">Save Key</button>
-    <div id="ai-key-status" style="margin-top:10px;font-size:0.82rem;text-align:center;"></div>
-  </div>
-</div>
 
 <!-- QR Scanner Link Modal -->
 <div class="modal-backdrop" id="modal-qr-scanner">
@@ -311,6 +292,61 @@
     <div style="font-size:0.8rem;color:#9ca3af;">Ensure you are logged in on your phone.</div>
   </div>
 </div>
+
+<!-- Dealer Bill Scanner Modal -->
+<div class="modal-backdrop" id="modal-bill-scanner">
+  <div class="modal" style="max-width:700px;width:95%;">
+    <div class="modal-header">
+      <h3>🧾 Scan Dealer Bill</h3>
+      <button class="modal-close" onclick="closeBillScanner()">✕</button>
+    </div>
+
+    <!-- Step 1: Upload -->
+    <div id="scan-step-upload">
+      <p style="color:#6b7280;margin-bottom:16px;font-size:0.9rem;">Upload a photo of the dealer's bill. The system will automatically read the items and update your inventory stock.</p>
+      <label for="bill-scan-input" id="scan-drop-zone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:2px dashed #7c3aed;border-radius:12px;padding:40px;cursor:pointer;background:#faf5ff;transition:background 0.2s;">
+        <div style="font-size:2.5rem;">📷</div>
+        <div style="font-weight:600;color:#7c3aed;">Click to upload or drag & drop</div>
+        <div style="font-size:0.8rem;color:#9ca3af;">Supports JPG, PNG, PDF screenshots</div>
+        <input type="file" id="bill-scan-input" accept="image/*" style="display:none;" onchange="handleBillImage(this)">
+      </label>
+      <img id="scan-preview" style="display:none;max-width:100%;border-radius:8px;margin-top:12px;border:1px solid #e5e7eb;">
+    </div>
+
+    <!-- Step 2: Progress -->
+    <div id="scan-step-progress" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🧠</div>
+      <div style="font-weight:600;margin-bottom:12px;" id="scan-progress-text">Reading bill...</div>
+      <div style="background:#e5e7eb;border-radius:99px;height:8px;overflow:hidden;">
+        <div id="scan-progress-bar" style="height:100%;background:#7c3aed;border-radius:99px;width:0%;transition:width 0.3s;"></div>
+      </div>
+    </div>
+
+    <!-- Step 3: Results -->
+    <div id="scan-step-results" style="display:none;">
+      <p style="color:#6b7280;font-size:0.85rem;margin-bottom:12px;">Review the items detected below. Edit quantities or prices if needed, then click <strong>Add to Inventory</strong>.</p>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead><tr><th>Item Name</th><th style="width:90px">Qty</th><th style="width:110px">Cost Price (₹)</th><th style="width:90px">Total (₹)</th><th style="width:40px"></th></tr></thead>
+          <tbody id="scan-results-body"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn-outline" onclick="rescanBill()">↺ Re-scan</button>
+        <button class="btn-primary" style="flex:1;background:#7c3aed;" onclick="addScannedToInventory()">✓ Add to Inventory</button>
+      </div>
+    </div>
+
+    <!-- No items found -->
+    <div id="scan-step-empty" style="display:none;text-align:center;padding:20px;">
+      <div style="font-size:2rem;margin-bottom:8px;">⚠️</div>
+      <div style="font-weight:600;margin-bottom:8px;">Could not read items from this bill</div>
+      <div style="font-size:0.85rem;color:#9ca3af;margin-bottom:16px;">Try a clearer photo with good lighting. Make sure the text is sharp and not blurry.</div>
+      <button class="btn-outline" onclick="rescanBill()">Try Again</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- PRINT AREA (hidden on screen, visible on print) -->
 <div id="print-area">
@@ -342,6 +378,7 @@
 </div>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
