@@ -174,20 +174,6 @@ db.channel('custom-all-channel')
   })
   .subscribe();
 
-// ══════════════════════════════════════════════
-//  QR SCANNER 
-// ══════════════════════════════════════════════
-function generateQR() {
-  const url = window.location.origin + '/scan.html';
-  document.getElementById('qr-code-img').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" alt="QR Code" width="200" height="200">`;
-}
-
-// Hook into openModal to generate QR when opened
-const originalOpenModal = window.openModal;
-window.openModal = function(id) {
-  if (id === 'qr-scanner') generateQR();
-  originalOpenModal(id);
-};
 
 // ══════════════════════════════════════════════
 //  INVENTORY
