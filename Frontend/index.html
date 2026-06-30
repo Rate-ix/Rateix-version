@@ -7,7 +7,7 @@
     <title>Ratix – Shop Login</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playwrite+AU+TAS:wght@100..400&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,197 +15,284 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-snap-type: y proximity;
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background-color: #F4F1EB;
-            color: #1E352F;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* Noise overlay */
-        .noise-overlay {
+        /* Top Navigation Bar */
+        .top-nav {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            content: "";
-            opacity: 0.04;
-            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 24px 60px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
             pointer-events: none;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* Split screen layout */
-        .split-container {
+        .top-nav.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .nav-logo {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 1.85rem;
+            color: #000000;
+            text-decoration: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.7;
+        }
+
+        .nav-actions {
             display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid transparent;
+            padding: 10px 22px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #000000;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-btn:hover {
+            color: #666666;
+        }
+
+        .nav-btn.btn-outline {
+            border-color: #000000;
+        }
+
+        .nav-btn.btn-outline:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        /* Hero storytelling layout */
+        .hero-scroll-container {
+            width: 100%;
+            height: 250vh; /* Plenty of space for scrollytelling */
+            position: relative;
+            background: #ffffff;
+        }
+
+        .hero-sticky-content {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .hero-logo-container {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 2;
+            padding: 0 20px;
+        }
+
+        .hero-logo {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 15vw;
+            line-height: 1.1;
+            color: #000000;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            user-select: none;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(140px) scale(0.9);
+            will-change: transform, opacity;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        .hero-motto {
+            font-family: 'Noto Serif Display', serif;
+            font-style: italic;
+            font-size: 1.85rem;
+            font-weight: 400;
+            color: #444444;
+            margin-top: 24px;
+            max-width: 800px;
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateY(40px);
+            will-change: transform, opacity;
+            letter-spacing: -0.01em;
+            text-align: center;
+        }
+
+        .hero-fog-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 52vh;
+            background: linear-gradient(to top, #ffffff 45%, rgba(255, 255, 255, 0) 100%);
+            z-index: 2.5;
+            pointer-events: none;
+        }
+
+        .hero-doodle-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: 100%;
+            max-width: 1100px;
+            height: 45vh;
+            z-index: 3;
+            pointer-events: none;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+            will-change: transform;
+        }
+
+        .hero-shops-svg {
+            width: 100%;
+            height: auto;
+            max-height: 45vh;
+            display: block;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #888888;
+            opacity: 0.8;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            user-select: none;
+            z-index: 4;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-6px);
+            }
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Auth Section */
+        .auth-section {
             width: 100%;
             min-height: 100vh;
-        }
-
-        .left-pane {
-            flex: 1.25;
-            background-color: #1E352F;
-            color: #F4F1EB;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .right-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 40px;
-            background-color: #F4F1EB;
-            position: relative;
-        }
-
-        /* Left Pane Elements */
-        .background-text {
-            position: absolute;
-            bottom: -50px;
-            left: -30px;
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 18rem;
-            line-height: 0.8;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(244, 241, 235, 0.04);
-            user-select: none;
-            pointer-events: none;
-        }
-
-        .brand-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 2;
-        }
-
-        .brand-logo {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: -0.04em;
-            color: #F4F1EB;
-        }
-
-        .brand-badge {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            border: 1px solid rgba(244, 241, 235, 0.3);
-            padding: 5px 14px;
-            border-radius: 99px;
-            text-transform: uppercase;
-        }
-
-        .hero-main {
-            margin: auto 0;
-            max-width: 520px;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 3.8rem;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 24px;
-        }
-
-        .hero-desc {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: rgba(244, 241, 235, 0.75);
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        .hero-image-wrap {
-            width: 100%;
-            height: 280px;
-            overflow: hidden;
-            border-radius: 8px;
-            border: 1px solid rgba(244, 241, 235, 0.1);
-            background: rgba(244, 241, 235, 0.02);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            background: #ffffff;
+            padding: 100px 24px;
         }
 
-        .hero-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            mix-blend-mode: luminosity;
-            opacity: 0.8;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .hero-img:hover {
-            transform: scale(1.04);
-            opacity: 0.95;
-        }
-
-        .left-footer {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 0.05em;
-            color: rgba(244, 241, 235, 0.4);
-            z-index: 2;
-        }
-
-        /* Right Pane Auth Card */
         .auth-wrapper {
             width: 100%;
-            max-width: 460px;
+            max-width: 580px; /* wider card for comfortable side-by-side fields */
         }
 
         .auth-card {
-            background: #EAE6DC;
-            border: 1px solid rgba(30, 53, 47, 0.15);
-            border-radius: 4px;
-            padding: 40px;
-            box-shadow: 0 4px 30px rgba(30, 53, 47, 0.02);
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 0;
+            padding: 48px;
+            box-shadow: 8px 8px 0px #000000; /* offset shadow matches boutique outline aesthetic */
             position: relative;
         }
 
         .tab-row {
             display: flex;
-            border-bottom: 1px solid rgba(30, 53, 47, 0.1);
+            border-bottom: 2px solid #000000;
             margin-bottom: 30px;
         }
 
         .tab-btn {
+            flex: 1;
             background: none;
             border: none;
-            padding: 12px 0;
-            margin-right: 32px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
+            padding: 16px 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
             font-weight: 700;
-            letter-spacing: 0.05em;
-            color: rgba(30, 53, 47, 0.4);
+            letter-spacing: 0.08em;
+            color: #888888;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -1.5px;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             text-transform: uppercase;
+            text-align: center;
+            margin: 0;
         }
-
+        
+        .tab-btn:hover {
+            color: #000000;
+            background-color: #f9f9f9;
+        }
+        
         .tab-btn.active {
-            color: #1E352F;
-            border-bottom-color: #1E352F;
+            color: #ffffff;
+            background-color: #000000;
+            border-bottom-color: #000000;
         }
 
         /* Form Styles */
@@ -224,73 +311,71 @@
         }
 
         label {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 0.68rem;
             font-weight: 700;
-            color: #1E352F;
+            color: #000000;
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
 
         input, select {
             width: 100%;
-            padding: 10px 4px;
-            border: none;
-            border-bottom: 1.5px solid rgba(30, 53, 47, 0.25);
-            background: transparent;
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
             font-family: 'Inter', sans-serif;
             font-size: 0.92rem;
-            color: #1E352F;
+            color: #000000;
             border-radius: 0;
-            transition: border-color 0.25s ease;
+            transition: all 0.2s ease;
         }
 
         input:focus, select:focus {
             outline: none;
-            border-bottom-color: #B8860B;
+            border-color: #000000;
+            box-shadow: 0 0 0 1px #000000;
         }
 
         input::placeholder {
-            color: rgba(30, 53, 47, 0.35);
+            color: #bbbbbb;
         }
 
         select {
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%231E352F' d='M0 3l5 5 5-5z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23000000' d='M0 3l5 5 5-5z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: calc(100% - 4px) center;
+            background-position: calc(100% - 14px) center;
         }
 
         /* Submit Button */
         .submit-btn {
             width: 100%;
             padding: 16px;
-            background: #1E352F;
-            color: #F4F1EB;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
+            background: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
         }
 
         .submit-btn:hover:not(:disabled) {
-            background: #2D4C43;
-            letter-spacing: 0.13em;
-            box-shadow: 0 4px 12px rgba(30, 53, 47, 0.15);
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 4px 4px 0px #000000;
         }
 
         .submit-btn:active:not(:disabled) {
@@ -298,8 +383,9 @@
         }
 
         .submit-btn:disabled {
-            background: rgba(30, 53, 47, 0.15);
-            color: rgba(30, 53, 47, 0.4);
+            background: #f5f5f5;
+            border-color: #eeeeee;
+            color: #cccccc;
             cursor: not-allowed;
         }
 
@@ -307,8 +393,8 @@
         .spinner {
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(244, 241, 235, 0.3);
-            border-top-color: #F4F1EB;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top-color: inherit;
             border-radius: 50%;
             animation: spin 0.65s linear infinite;
             display: none;
@@ -326,25 +412,26 @@
 
         /* Alerts */
         .alert {
-            border-radius: 4px;
+            border-radius: 0;
             padding: 12px 16px;
             font-size: 0.82rem;
             margin-bottom: 20px;
             display: none;
             line-height: 1.4;
             font-weight: 500;
+            border: 1px solid transparent;
         }
 
         .alert.error {
-            background: #FCE8E6;
-            border-left: 4px solid #D93025;
-            color: #A51D12;
+            background: #fff5f5;
+            border-color: #ffc9c9;
+            color: #fa5252;
         }
 
         .alert.success {
-            background: #E6F4EA;
-            border-left: 4px solid #137333;
-            color: #137333;
+            background: #f4fce3;
+            border-color: #d8f5a2;
+            color: #37b24d;
         }
 
         .alert.on {
@@ -352,32 +439,33 @@
         }
 
         .field-section-title {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 0.72rem;
             font-weight: 800;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #B8860B;
-            margin: 24px 0 14px;
-            border-bottom: 1px solid rgba(30, 53, 47, 0.08);
-            padding-bottom: 4px;
+            color: #888888;
+            margin: 28px 0 16px;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 6px;
         }
 
         /* Dashboard view */
         .dashboard-view {
             display: none;
-            background: #EAE6DC;
-            border: 1px solid rgba(30, 53, 47, 0.15);
-            border-radius: 4px;
-            padding: 40px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 0;
+            padding: 48px;
             text-align: center;
+            box-shadow: 8px 8px 0px #000000;
         }
 
         .shop-avatar {
             width: 60px;
             height: 60px;
-            background: #1E352F;
-            color: #F4F1EB;
+            background: #000000;
+            color: #ffffff;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -387,15 +475,15 @@
         }
 
         .shop-name-display {
-            font-family: 'Syne', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
             margin-bottom: 6px;
-            color: #1E352F;
+            color: #000000;
         }
 
         .shop-email-display {
-            color: rgba(30, 53, 47, 0.6);
+            color: #666666;
             font-size: 0.9rem;
             margin-bottom: 30px;
         }
@@ -404,11 +492,11 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(30, 53, 47, 0.05);
+            background: #f5f5f5;
             border-radius: 99px;
             padding: 8px 18px;
             font-size: 0.8rem;
-            color: #1E352F;
+            color: #000000;
             font-weight: 600;
             margin-bottom: 30px;
         }
@@ -416,231 +504,1361 @@
         .info-dot {
             width: 8px;
             height: 8px;
-            background: #2e7d32;
+            background: #37b24d;
             border-radius: 50%;
         }
 
         .signout-btn {
             background: transparent;
-            border: 1.5px solid #1E352F;
-            border-radius: 4px;
+            border: 1.5px solid #000000;
+            border-radius: 0;
             padding: 12px 28px;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
-            color: #1E352F;
+            color: #000000;
             transition: all 0.25s ease;
             text-transform: uppercase;
         }
 
         .signout-btn:hover {
-            background: #1E352F;
-            color: #F4F1EB;
+            background: #000000;
+            color: #ffffff;
         }
 
         .notice {
             text-align: center;
             font-size: 0.72rem;
-            color: rgba(30, 53, 47, 0.45);
+            color: #888888;
             margin-top: 20px;
             line-height: 1.5;
         }
 
         /* Responsive styles */
         @media (max-width: 900px) {
-            body {
-                flex-direction: column;
+            .top-nav {
+                padding: 20px 24px;
             }
-            .split-container {
-                flex-direction: column;
+            .hero-logo {
+                font-size: 16vw;
             }
-            .left-pane {
-                padding: 40px 24px;
-                flex: none;
-                border-right: none;
-                border-bottom: 1px solid rgba(244, 241, 235, 0.1);
+            .hero-motto {
+                font-size: 1.1rem;
+                margin-top: 16px;
+                max-width: 90%;
             }
-            .hero-title {
-                font-size: 2.5rem;
+            .hero-doodle-container {
+                height: 35vh;
             }
-            .hero-desc {
-                font-size: 0.95rem;
-                margin-bottom: 24px;
+            .hero-fog-overlay {
+                height: 42vh;
             }
-            .hero-image-wrap {
-                height: 200px;
+        }
+
+        /* NAVIGATION BAR EXTENSION */
+        .top-nav {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+        .nav-links {
+            grid-column: 2;
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+        }
+        .nav-actions {
+            grid-column: 3;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .nav-link-item {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555555;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s ease;
+        }
+        .nav-link-item:hover {
+            color: #000000;
+        }
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none; /* Hide link bar on small screens to prevent overlap */
             }
-            .right-pane {
+        }
+
+        /* GENERAL SECTION CONTAINER STYLES */
+        .landing-section {
+            background-color: #ffffff;
+            padding: 120px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            scroll-snap-align: start;
+            scroll-margin-top: 80px;
+        }
+
+        /* Snap target on the auth container */
+        .auth-section {
+            scroll-snap-align: start;
+            scroll-margin-top: 80px;
+        }
+
+        /* ANIMATION STATES */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
+        }
+        .animate-on-scroll.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Staggered transition delays */
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin-bottom: 70px;
+        }
+        .section-title {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 3rem;
+            color: #000000;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .section-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: #666666;
+            line-height: 1.6;
+        }
+
+        /* 1. SERVICES SCROLLYTELLING STYLES */
+        .services-scroll-container {
+            position: relative;
+            height: 380vh; /* scroll track height for 4 services */
+            background-color: #ffffff;
+            scroll-snap-align: start;
+            scroll-margin-top: 80px;
+        }
+        .services-sticky-content {
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 40px 20px 140px; /* add left padding to push content right and make room for sidebar */
+            overflow: hidden;
+            background-color: #ffffff;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .services-layout-wrapper {
+            display: block; /* flat block for desktop, padding handles offset */
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+        }
+        .services-sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 0;
+        }
+        .services-sidebar-title {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-family: 'Playwrite AU TAS', cursive;
+            font-size: 2.2rem;
+            color: #000000;
+            white-space: nowrap;
+            text-align: center;
+        }
+        .services-main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            width: 100%;
+            padding: 10px 0;
+        }
+        .services-doodle-viewport {
+            height: 52vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .service-doodle-display {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            will-change: opacity, transform;
+        }
+        .services-desc-viewport {
+            width: 100%;
+            position: relative;
+            height: 30vh;
+        }
+        .service-desc-block {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(15px);
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .service-desc-block.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+        .service-story-title {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 1.85rem;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        .service-story-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #444444;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            max-width: 850px;
+        }
+        .service-steps {
+            display: flex;
+            justify-content: center;
+            gap: 45px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .service-step-item {
+            flex: 1;
+            min-width: 200px;
+            max-width: 260px;
+            text-align: left;
+        }
+        .service-step-num {
+            font-family: 'Noto Serif Display', serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #000000;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 2px;
+            margin-bottom: 6px;
+            display: inline-block;
+        }
+        .service-step-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #666666;
+            line-height: 1.4;
+        }
+        .service-mobile-img-wrapper {
+            display: none;
+        }
+        @media (max-width: 992px) {
+            .services-sticky-content {
+                height: auto;
+                position: relative;
+                top: 0;
                 padding: 40px 20px;
             }
-            .background-text {
-                font-size: 10rem;
-                bottom: -20px;
+            .services-scroll-container {
+                height: auto;
             }
+            .services-layout-wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .services-sidebar {
+                position: relative;
+                left: auto;
+                top: auto;
+                bottom: auto;
+                width: 100%;
+                border-right: none;
+                padding: 0;
+                height: auto;
+                margin-bottom: 15px;
+            }
+            .services-sidebar-title {
+                writing-mode: horizontal-tb;
+                transform: none;
+                font-size: 2.2rem;
+                font-weight: normal;
+            }
+            .services-doodle-viewport {
+                display: none;
+            }
+            .service-mobile-img-wrapper {
+                display: block;
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto 24px;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .service-mobile-img {
+                width: 100%;
+                height: auto;
+                max-height: 380px;
+                object-fit: contain;
+            }
+            .services-desc-viewport {
+                height: auto;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 40px;
+            }
+            .service-desc-block {
+                position: relative;
+                opacity: 1;
+                pointer-events: auto;
+                transform: none;
+                margin-bottom: 40px;
+            }
+            .service-steps {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .service-step-item {
+                max-width: 100%;
+                text-align: center;
+            }
+            .service-step-num {
+                display: block;
+                width: fit-content;
+                margin: 0 auto 8px;
+            }
+        }
+
+        /* 2. WHY US SECTION */
+        .why-us-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+            max-width: 1200px;
+            align-items: center;
+        }
+        @media (max-width: 900px) {
+            .why-us-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+        .why-us-visual {
+            border: 1.5px solid #000000;
+            padding: 40px;
+            background: #fafafa;
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .why-us-quote {
+            font-family: 'Noto Serif Display', serif;
+            font-style: italic;
+            font-size: 1.65rem;
+            color: #000000;
+            line-height: 1.45;
+            margin: 0 0 20px;
+        }
+        .why-us-author {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #555555;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .why-us-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .why-us-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .why-us-number {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: #000000;
+            line-height: 1;
+        }
+        .why-us-text-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #000000;
+            margin: 0 0 6px;
+        }
+        .why-us-text-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #666666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* 3. SUBSCRIPTIONS & BENEFITS COMPARISON */
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 80px;
+            justify-content: center;
+        }
+        .pricing-card {
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-sizing: border-box;
+        }
+        .pricing-card.premium-tier {
+            border: 2px solid #000000;
+        }
+        .pricing-card.premium-tier::before {
+            content: 'Recommended';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            letter-spacing: 0.05em;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+        .pricing-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #666666;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+        .pricing-price {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 2.8rem;
+            color: #000000;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+        }
+        .pricing-price span {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #666666;
+            margin-left: 6px;
+        }
+        .pricing-btn {
+            width: 100%;
+            background: #000000;
+            color: #ffffff;
+            border: 1.5px solid #000000;
+            padding: 14px 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .pricing-btn.btn-outline {
+            background: transparent;
+            color: #000000;
+        }
+        .pricing-btn:hover {
+            background: #333333;
+            color: #ffffff;
+            border-color: #333333;
+        }
+        .pricing-btn.btn-outline:hover {
+            background: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+        .pricing-features-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #000000;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+        .pricing-features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .pricing-features-list li {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #444444;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .pricing-features-list li::before {
+            content: '✓';
+            color: #000000;
+            font-weight: bold;
+        }
+
+        /* COMPARISON TABLE */
+        .comparison-wrapper {
+            width: 100%;
+            max-width: 900px;
+            overflow-x: auto;
+            border: 1px solid #e5e5e5;
+            background: #ffffff;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 18px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .comparison-table th {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            background: #fafafa;
+        }
+        .comparison-table td.feature-name {
+            font-weight: 600;
+            color: #000000;
+        }
+        .comparison-table td.plan-val {
+            color: #555555;
+        }
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        .comparison-table tr:hover td {
+            background-color: #fafafa;
+        }
+
+        /* LEGAL FOOTER */
+        .site-footer {
+            background: #000000;
+            color: #ffffff;
+            padding: 80px 40px 40px;
+            border-top: 1px solid #333333;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        @media (max-width: 900px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+        @media (max-width: 600px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .footer-logo {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: -0.04em;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .footer-tagline {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .footer-column h4 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .footer-link-item {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #888888;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+        .footer-link-item:hover {
+            color: #ffffff;
+        }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid #222222;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #555555;
+        }
+        @media (max-width: 600px) {
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        /* MODAL OVERLAYS FOR LEGAL & PRIVACY */
+        .legal-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .legal-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .legal-modal-card {
+            background: #ffffff;
+            border: 2px solid #000000;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 50px 40px;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-sizing: border-box;
+        }
+        .legal-modal.open .legal-modal-card {
+            transform: translateY(0);
+        }
+        .legal-modal-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 300;
+            cursor: pointer;
+            color: #000000;
+        }
+        .legal-modal-title {
+            font-family: 'Noto Serif Display', serif;
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 24px;
+            color: #000000;
+            margin-top: 0;
+        }
+        .legal-modal-content {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #444444;
+            line-height: 1.7;
+        }
+        .legal-modal-content h5 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #000000;
+            margin: 25px 0 10px;
+        }
+        .legal-modal-content p {
+            margin-bottom: 15px;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="noise-overlay"></div>
+    <!-- TOP NAVIGATION BAR (Visible after scroll) -->
+    <div class="top-nav" id="top-nav">
+        <div></div>
+        <div class="nav-links">
+            <a href="#services-section" class="nav-link-item">Services</a>
+            <a href="#why-us-section" class="nav-link-item">Why Us</a>
+            <a href="#pricing-section" class="nav-link-item">Pricing</a>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="scrollToAuth('login')">Sign In</button>
+            <button class="nav-btn btn-outline" onclick="scrollToAuth('register')">Register Shop</button>
+        </div>
+    </div>
 
-    <div class="split-container">
-        <!-- LEFT HERO PANE -->
-        <div class="left-pane">
-            <div class="background-text">RATIX</div>
+    <!-- HERO SECTION (Scrollytelling Container) -->
+    <div class="hero-scroll-container">
+        <div class="hero-sticky-content">
             
-            <div class="brand-header">
-                <div class="brand-logo">Ratix</div>
-                <div class="brand-badge">EST. 2026</div>
+            <!-- Logo & Motto (Background layer) -->
+            <div class="hero-logo-container">
+                <div class="hero-logo" id="parallax-logo">Ratix</div>
+                <div class="hero-motto" id="parallax-motto">“Simplifying retail, one bill at a time.”</div>
             </div>
+
+            <!-- Soft Fog Overlay (Middle layer) -->
+            <div class="hero-fog-overlay"></div>
+
+            <!-- Shops Facade (Foreground layer - pure code built vector) -->
+            <div class="hero-doodle-container" id="parallax-shops">
+                <svg class="hero-shops-svg" viewBox="0 0 1600 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ground & Highway -->
+                    <rect x="0" y="380" width="1600" height="20" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <line x1="0" y1="390" x2="1600" y2="390" stroke="#000000" stroke-width="2" stroke-dasharray="20,20"/>
+                    
+                    <!-- Tree 1 -->
+                    <line x1="25" y1="300" x2="25" y2="380" stroke="#000000" stroke-width="4"/>
+                    <circle cx="25" cy="260" r="35" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="25" cy="260" r="25" fill="none" stroke="#000000" stroke-dasharray="4,4" stroke-width="1.5"/>
+
+                    <!-- Shop 1 (Bookstore) -->
+                    <polygon points="50,140 230,140 140,80" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="50" y="140" width="180" height="240" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="70" y="190" width="70" height="120" rx="10" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="80" y="270" width="50" height="10" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <rect x="85" y="260" width="40" height="10" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <rect x="82" y="250" width="45" height="10" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <rect x="155" y="190" width="55" height="190" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="168" cy="285" r="3" fill="#000000"/>
+                    <text x="140" y="170" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#000000" text-anchor="middle" letter-spacing="1">BOOKS</text>
+
+                    <!-- Lamp 1 -->
+                    <line x1="240" y1="180" x2="240" y2="380" stroke="#000000" stroke-width="3"/>
+                    <path d="M225,180 C225,160 255,160 255,180 Z" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="240" cy="180" r="6" fill="#000000"/>
+
+                    <!-- Shop 2 (Grocery) -->
+                    <rect x="250" y="140" width="200" height="240" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <path d="M245,140 L245,180 C245,180 258,190 270,180 C282,190 295,180 307,190 C320,180 332,190 345,180 C357,190 370,180 382,190 C395,180 407,190 420,180 C432,190 445,180 455,180 L455,140 Z" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="275" y="200" width="90" height="110" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <polygon points="280,285 360,285 355,305 285,305" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <rect x="380" y="200" width="55" height="180" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="290" y="80" width="120" height="40" fill="#000000"/>
+                    <text x="350" y="104" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="2">GROCERY</text>
+
+                    <!-- Tree 2 -->
+                    <line x1="460" y1="300" x2="460" y2="380" stroke="#000000" stroke-width="4"/>
+                    <circle cx="460" cy="260" r="30" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+
+                    <!-- Shop 3 (Boutique) -->
+                    <rect x="470" y="100" width="220" height="280" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="495" y="180" width="100" height="130" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <path d="M545,210 C545,210 550,212 552,217 C555,225 548,245 555,270 L535,270 C542,245 535,225 538,217 C540,212 545,210 545,210 Z" fill="#000000"/>
+                    <line x1="545" y1="270" x2="545" y2="295" stroke="#000000" stroke-width="2"/>
+                    <line x1="530" y1="295" x2="560" y2="295" stroke="#000000" stroke-width="2"/>
+                    <rect x="615" y="180" width="55" height="200" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="500" y="50" width="160" height="35" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <text x="580" y="72" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#000000" text-anchor="middle" letter-spacing="3">BOUTIQUE</text>
+
+                    <!-- Lamp 2 -->
+                    <line x1="700" y1="180" x2="700" y2="380" stroke="#000000" stroke-width="3"/>
+                    <path d="M685,180 C685,160 715,160 715,180 Z" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="700" cy="180" r="6" fill="#000000"/>
+
+                    <!-- Shop 4 (Café) -->
+                    <rect x="710" y="80" width="240" height="300" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="735" y="140" width="50" height="150" rx="25" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <line x1="735" y1="215" x2="795" y2="215" stroke="#000000" stroke-width="2"/>
+                    <rect x="800" y="140" width="50" height="150" rx="25" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <line x1="800" y1="215" x2="860" y2="215" stroke="#000000" stroke-width="2"/>
+                    <rect x="865" y="180" width="60" height="200" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="865" y="140" width="60" height="30" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <text x="825" y="115" font-family="'Inter', sans-serif" font-weight="800" font-size="20" fill="#000000" text-anchor="middle" letter-spacing="4">CAFÉ</text>
+
+                    <!-- Tree 3 -->
+                    <line x1="960" y1="300" x2="960" y2="380" stroke="#000000" stroke-width="4"/>
+                    <circle cx="960" cy="260" r="30" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+
+                    <!-- Shop 5 (Bakery) -->
+                    <rect x="970" y="120" width="210" height="260" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <path d="M965,120 L965,150 L1185,150 L1185,120 Z" fill="#000000"/>
+                    <rect x="995" y="180" width="95" height="120" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <line x1="995" y1="240" x2="1090" y2="240" stroke="#000000" stroke-width="2"/>
+                    <rect x="1110" y="180" width="50" height="200" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="1010" y="80" width="130" height="35" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <text x="1075" y="102" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#000000" text-anchor="middle" letter-spacing="2">BAKERY</text>
+
+                    <!-- Lamp 3 -->
+                    <line x1="1190" y1="180" x2="1190" y2="380" stroke="#000000" stroke-width="3"/>
+                    <path d="M1175,180 C1175,160 1205,160 1205,180 Z" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="1190" cy="180" r="6" fill="#000000"/>
+
+                    <!-- Shop 6 (Pharmacy) -->
+                    <rect x="1200" y="100" width="200" height="280" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="1220" y="160" width="90" height="140" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <path d="M1255,200 L1275,200 M1265,190 L1265,210" stroke="#000000" stroke-width="4"/>
+                    <rect x="1325" y="160" width="55" height="220" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="1230" y="55" width="140" height="35" fill="#000000"/>
+                    <text x="1300" y="77" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="2">PHARMACY</text>
+
+                    <!-- Shop 7 (Florist) -->
+                    <rect x="1420" y="140" width="150" height="240" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="1440" y="190" width="50" height="190" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <rect x="1500" y="190" width="55" height="110" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="1445" cy="370" r="10" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <circle cx="1515" cy="360" r="12" fill="#ffffff" stroke="#000000" stroke-width="2"/>
+                    <rect x="1435" y="95" width="120" height="35" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <text x="1495" y="117" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#000000" text-anchor="middle" letter-spacing="2">FLORIST</text>
+
+                    <!-- Tree 4 -->
+                    <line x1="1585" y1="300" x2="1585" y2="380" stroke="#000000" stroke-width="4"/>
+                    <circle cx="1585" cy="260" r="35" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+                    <circle cx="1585" cy="260" r="25" fill="none" stroke="#000000" stroke-dasharray="4,4" stroke-width="1.5"/>
+                </svg>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator" id="hero-scroll-indicator" onclick="scrollToAuth('login')">
+                <span>Scroll to Begin</span>
+                <span>↓</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SERVICES SECTION (Scrollytelling Container) -->
+    <div class="services-scroll-container" id="services-section">
+        <div class="services-sticky-content">
             
-            <div class="hero-main">
-                <h1 class="hero-title">Zero-Effort<br>Shop Billing.</h1>
-                <p class="hero-desc">
-                    Streamline your kirana inventory with our advanced IDP scanner. 
-                    Experience 100% scanning accuracy, live low-stock alerts, 
-                    and unified credit management.
-                </p>
-                <div class="hero-image-wrap">
-                    <img src="ratix_hero_concept.png" alt="Ratix Minimalist" class="hero-img">
+            <div class="services-layout-wrapper">
+                
+                <!-- Left Sidebar: Vertical Centered Heading -->
+                <div class="services-sidebar animate-on-scroll">
+                    <h2 class="services-sidebar-title">Our Services</h2>
+                </div>
+                
+                <!-- Right Main Content Area: Visual and Description -->
+                <div class="services-main-content">
+                    
+                    <!-- Service Visual (Centered, borderless, large) -->
+                    <div class="services-doodle-viewport animate-on-scroll">
+                        <img src="./dealer_bill_scan.png" id="service-doodle-img" alt="Service Doodle" class="service-doodle-display">
+                    </div>
+                    
+                    <!-- Service Description Text -->
+                    <div class="services-desc-viewport animate-on-scroll">
+                        <!-- Service 1 Description -->
+                        <div class="service-desc-block active" id="service-desc-1">
+                            <div class="service-mobile-img-wrapper">
+                                <img src="./dealer_bill_scan.png" alt="Dealer Bill Scanner" class="service-mobile-img">
+                            </div>
+                            <h3 class="service-story-title">Automatic Dealer Bill Scanner</h3>
+                            <p class="service-story-desc">No more typing and writing items in books! When a dealer gives you a wholesale bill, just take a picture. Ratix reads everything automatically and updates your shop stock.</p>
+                            <div class="service-steps">
+                                <div class="service-step-item">
+                                    <span class="service-step-num">01</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Snap a Photo</h4>
+                                    <p class="service-step-text">Click a clear photo of the dealer bill using your mobile phone camera.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">02</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Automatic Reading</h4>
+                                    <p class="service-step-text">Our system reads all item names, purchase rates, and quantities in seconds.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">03</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Stock Updated</h4>
+                                    <p class="service-step-text">All items are instantly added to your dashboard stock database. Ready to sell!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 2 Description -->
+                        <div class="service-desc-block" id="service-desc-2">
+                            <div class="service-mobile-img-wrapper">
+                                <img src="./stock_profit.png" alt="Stock Profit" class="service-mobile-img">
+                            </div>
+                            <h3 class="service-story-title">Stock & Daily Profit Calculator</h3>
+                            <p class="service-story-desc">See your entire shop's health in one screen. Know exactly how much money is locked in your inventory, what sold today, and your net daily profit growth automatically.</p>
+                            <div class="service-steps">
+                                <div class="service-step-item">
+                                    <span class="service-step-num">01</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Shop Inventory Value</h4>
+                                    <p class="service-step-text">See total money locked in stock and monitor inventory levels automatically.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">02</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Daily Sales & Profits</h4>
+                                    <p class="service-step-text">Calculates net profits and daily percentage growth without any manual diary work.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">03</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Stay Updated</h4>
+                                    <p class="service-step-text">Get automatic growth insights to know which items are making you the most money.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 3 Description -->
+                        <div class="service-desc-block" id="service-desc-3">
+                            <div class="service-mobile-img-wrapper">
+                                <img src="./expiry_warnings.png" alt="Expiry Warnings" class="service-mobile-img">
+                            </div>
+                            <h3 class="service-story-title">Smart Expiry Warnings</h3>
+                            <p class="service-story-desc">Keep track of item expiry dates easily. Get quick alerts before items go bad so you can return them to the dealer, put them on sale, or sell them fast without losing money.</p>
+                            <div class="service-steps">
+                                <div class="service-step-item">
+                                    <span class="service-step-num">01</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Log Expiry Dates</h4>
+                                    <p class="service-step-text">Expiry dates are automatically read during bill scans or added with one quick tap.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">02</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Automatic Warnings</h4>
+                                    <p class="service-step-text">Get clear warnings on your dashboard weeks before any item batch expires.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">03</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Zero Waste</h4>
+                                    <p class="service-step-text">Return items to the wholesaler for refund or clearance-sell them. Avoid losses.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service 4 Description -->
+                        <div class="service-desc-block" id="service-desc-4">
+                            <div class="service-mobile-img-wrapper">
+                                <img src="./quick_billing.png" alt="Quick Billing" class="service-mobile-img">
+                            </div>
+                            <h3 class="service-story-title">Quick Customer Billing</h3>
+                            <p class="service-story-desc">Scan barcodes and print/send clean bills to your customers in seconds. Keep the customer queue moving fast and record every sale automatically.</p>
+                            <div class="service-steps">
+                                <div class="service-step-item">
+                                    <span class="service-step-num">01</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Scan Barcodes</h4>
+                                    <p class="service-step-text">Use any basic USB scanner or your mobile phone camera to scan customer items.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">02</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Instant Invoicing</h4>
+                                    <p class="service-step-text">Calculates totals, GST, and discounts instantly. Prints or sends bill via SMS/WhatsApp.</p>
+                                </div>
+                                <div class="service-step-item">
+                                    <span class="service-step-num">03</span>
+                                    <h4 class="why-us-text-title" style="font-size: 1.02rem; margin-bottom: 6px;">Stock Deducted</h4>
+                                    <p class="service-step-text">As items sell, your shop stock decreases in real-time. Never run out of popular items!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+
+    <!-- WHY US SECTION -->
+    <section class="landing-section" id="why-us-section" style="background-color: #fafafa;">
+        <div class="section-header animate-on-scroll">
+            <h2 class="section-title">Why Shopkeepers Choose Us</h2>
+            <p class="section-subtitle">No computer experience needed. We made it as easy as taking a photo on WhatsApp.</p>
+        </div>
+
+        <div class="why-us-grid">
+            <div class="why-us-visual animate-on-scroll delay-1">
+                <blockquote class="why-us-quote">“Before Ratix, typing 150 items from a supplier bill took us nearly 2 hours. Now we just snap a photo and we are ready to sell.”</blockquote>
+                <div class="why-us-author">Kirana Store Owner, Bengaluru</div>
+            </div>
+            <div class="why-us-list">
+                <!-- Item 1 -->
+                <div class="why-us-item animate-on-scroll delay-2">
+                    <span class="why-us-number">01</span>
+                    <div class="why-us-text">
+                        <h4 class="why-us-text-title">Save Hours of Manual Work</h4>
+                        <p class="why-us-text-desc">Forget spelling mistakes and calculator struggles. Scan your dealer invoice once and your inventory is updated.</p>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="why-us-item animate-on-scroll delay-3">
+                    <span class="why-us-number">02</span>
+                    <div class="why-us-text">
+                        <h4 class="why-us-text-title">Safe & Secure Cloud Backup</h4>
+                        <p class="why-us-text-desc">Your shop records are stored safely in the cloud. Access your billing dashboard anytime from any mobile phone or tablet.</p>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="why-us-item animate-on-scroll delay-4">
+                    <span class="why-us-number">03</span>
+                    <div class="why-us-text">
+                        <h4 class="why-us-text-title">Complete Store History</h4>
+                        <p class="why-us-text-desc">Keep a clear log of who made sales, when stock was updated, and easily track your store transaction records.</p>
+                    </div>
                 </div>
             </div>
-            
-            <div class="left-footer">
-                © 2026 Ratix Co. All rights reserved.
+        </div>
+    </section>
+
+    <!-- PRICING & SUBSCRIPTION SECTION -->
+    <section class="landing-section" id="pricing-section">
+        <div class="section-header animate-on-scroll">
+            <h2 class="section-title">Simple Subscription Plans</h2>
+            <p class="section-subtitle">Try for free, then upgrade if you want automated scanning. No hidden charges.</p>
+        </div>
+
+        <div class="pricing-cards">
+            <!-- Simple Free Tier -->
+            <div class="pricing-card animate-on-scroll delay-1">
+                <div class="pricing-name">Simple Plan</div>
+                <div class="pricing-price">₹0 <span>/ month</span></div>
+                <button class="pricing-btn btn-outline" onclick="scrollToAuth('register')">Get Started</button>
+                <div class="pricing-features-title">Core Features</div>
+                <ul class="pricing-features-list">
+                    <li>Manual Shop Entries</li>
+                    <li>Customer Sales & Billing</li>
+                    <li>Offline Device Storage</li>
+                    <li>Clean Digital Invoicing</li>
+                </ul>
+            </div>
+            <!-- Premium Growth Tier -->
+            <div class="pricing-card premium-tier animate-on-scroll delay-2">
+                <div class="pricing-name">Premium Plan</div>
+                <div class="pricing-price">₹299 <span>/ month</span></div>
+                <button class="pricing-btn" onclick="scrollToAuth('register')">Upgrade to Premium</button>
+                <div class="pricing-features-title">Everything in Free, Plus:</div>
+                <ul class="pricing-features-list">
+                    <li>Automatic Wholesaler Bill Scanning (OCR)</li>
+                    <li>Store Expiry Warnings & Alerts</li>
+                    <li>Multi-device Live Cloud Backup</li>
+                    <li>Store Sales & Profit Reports</li>
+                    <li>Priority Phone & Email Help</li>
+                </ul>
             </div>
         </div>
 
-        <!-- RIGHT FORM PANE -->
-        <div class="right-pane">
-            <div class="auth-wrapper">
+        <!-- Comparison Table -->
+        <h3 class="why-us-text-title animate-on-scroll delay-3" style="font-size: 1.4rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;">Compare Plan Benefits</h3>
+        
+        <div class="comparison-wrapper animate-on-scroll delay-4">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Simple (Free)</th>
+                        <th>Premium (₹299/mo)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">Bill Scanning & Reading</td>
+                        <td class="plan-val">Type items manually</td>
+                        <td class="plan-val">Automatic scanning (unlimited scans)</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Multi-device Cloud Backup</td>
+                        <td class="plan-val">Local to single device</td>
+                        <td class="plan-val">Instant cloud backup across devices</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Product Expiry Warnings</td>
+                        <td class="plan-val">Not available</td>
+                        <td class="plan-val">Smart warning notices & lists</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Receipts & Sales</td>
+                        <td class="plan-val">Standard digital bills</td>
+                        <td class="plan-val">Custom shop header + barcode scanning</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Help & Support</td>
+                        <td class="plan-val">Help forum</td>
+                        <td class="plan-val">24/7 Direct phone support</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-                <!-- Auth Card -->
-                <div class="auth-card" id="auth-card">
-                    <div class="tab-row">
-                        <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
-                        <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register Shop</button>
+    <!-- AUTH SECTION -->
+    <div class="auth-section" id="auth-section">
+        <div class="auth-wrapper">
+
+            <!-- Auth Card -->
+            <div class="auth-card" id="auth-card">
+                <div class="tab-row">
+                    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+                    <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register Shop</button>
+                </div>
+
+                <div class="alert error" id="alert-error"></div>
+                <div class="alert success" id="alert-success"></div>
+
+                <!-- ==================== LOGIN FORM ==================== -->
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="shopowner@email.com" required
+                            autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required
+                            autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="submit-btn" id="login-btn">
+                        <div class="spinner" id="login-spinner"></div>
+                        <span id="login-label">Sign In to Dashboard</span>
+                    </button>
+                </form>
+
+                <!-- ==================== REGISTER FORM ==================== -->
+                <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
+
+                    <!-- Shop Details -->
+                    <div class="field-section-title">🏪 Shop Details</div>
+
+                    <div class="form-group">
+                        <label for="reg-shop-name">Shop / Business Name *</label>
+                        <input type="text" id="reg-shop-name" placeholder="e.g. Sharma General Store" required>
                     </div>
 
-                    <div class="alert error" id="alert-error"></div>
-                    <div class="alert success" id="alert-success"></div>
-
-                    <!-- ==================== LOGIN FORM ==================== -->
-                    <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="login-email">Email Address</label>
-                            <input type="email" id="login-email" placeholder="shopowner@email.com" required
-                                autocomplete="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="login-password">Password</label>
-                            <input type="password" id="login-password" placeholder="••••••••" required
-                                autocomplete="current-password">
-                        </div>
-                        <button type="submit" class="submit-btn" id="login-btn">
-                            <div class="spinner" id="login-spinner"></div>
-                            <span id="login-label">Sign In to Dashboard</span>
-                        </button>
-                    </form>
-
-                    <!-- ==================== REGISTER FORM ==================== -->
-                    <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
-
-                        <!-- Shop Details -->
-                        <div class="field-section-title">🏪 Shop Details</div>
-
-                        <div class="form-group">
-                            <label for="reg-shop-name">Shop / Business Name *</label>
-                            <input type="text" id="reg-shop-name" placeholder="e.g. Sharma General Store" required>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="reg-shop-type">Shop Type *</label>
-                                <select id="reg-shop-type" required>
-                                    <option value="" disabled selected>Select type</option>
-                                    <option value="kirana">Kirana / General Store</option>
-                                    <option value="wholesale">Wholesale</option>
-                                    <option value="grocery">Grocery</option>
-                                    <option value="pharmacy">Pharmacy</option>
-                                    <option value="electronics">Electronics</option>
-                                    <option value="clothing">Clothing / Textile</option>
-                                    <option value="hardware">Hardware</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="reg-city">City / Area *</label>
-                                <input type="text" id="reg-city" placeholder="e.g. Delhi, Noida" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="reg-gst">GST Number (optional)</label>
-                                <input type="text" id="reg-gst" placeholder="e.g. 22AAAAA0000A1Z5"
-                                       maxlength="15" style="text-transform:uppercase;"
-                                       oninput="this.value=this.value.toUpperCase()">
-                            </div>
-                            <div class="form-group">
-                                <label for="reg-address">Shop Address</label>
-                                <input type="text" id="reg-address" placeholder="Street / Area">
-                            </div>
-                        </div>
-
-                        <!-- Owner Details -->
-                        <div class="field-section-title">👤 Owner Details</div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="reg-owner-name">Owner Name *</label>
-                                <input type="text" id="reg-owner-name" placeholder="Full name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="reg-phone">Phone Number *</label>
-                                <input type="tel" id="reg-phone" placeholder="10-digit number" required pattern="[0-9]{10}"
-                                    maxlength="10">
-                            </div>
-                        </div>
-
-                        <!-- Account Details -->
-                        <div class="field-section-title">🔐 Account Credentials</div>
-
-                        <div class="form-group">
-                            <label for="reg-email">Email Address *</label>
-                            <input type="email" id="reg-email" placeholder="shopowner@email.com" required autocomplete="email">
+                            <label for="reg-shop-type">Shop Type *</label>
+                            <select id="reg-shop-type" required>
+                                <option value="" disabled selected>Select type</option>
+                                <option value="kirana">Kirana / General Store</option>
+                                <option value="wholesale">Wholesale</option>
+                                <option value="grocery">Grocery</option>
+                                <option value="pharmacy">Pharmacy</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="clothing">Clothing / Textile</option>
+                                <option value="hardware">Hardware</option>
+                                <option value="other">Other</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="reg-password">Password *</label>
-                            <input type="password" id="reg-password" placeholder="Min. 6 characters" required minlength="6"
-                                autocomplete="new-password">
+                            <label for="reg-city">City / Area *</label>
+                            <input type="text" id="reg-city" placeholder="e.g. Delhi, Noida" required>
                         </div>
-
-                        <button type="submit" class="submit-btn" id="register-btn">
-                            <div class="spinner" id="register-spinner"></div>
-                            <span id="register-label">Register My Shop</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Dashboard (post-login) -->
-                <div class="dashboard-view" id="dashboard-view">
-                    <div class="shop-avatar">🏪</div>
-                    <div class="shop-name-display" id="dash-shop-name">Your Shop</div>
-                    <div class="shop-email-display" id="dash-email">—</div>
-                    <div class="info-pill">
-                        <div class="info-dot"></div>
-                        Logged in — session saved on this device
                     </div>
-                    <br>
-                    <button class="signout-btn" onclick="handleSignOut()">Sign Out</button>
-                </div>
 
-                <div class="notice" id="auth-notice">
-                    By registering, you confirm this is a legitimate business account.
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-gst">GST Number (optional)</label>
+                            <input type="text" id="reg-gst" placeholder="e.g. 22AAAAA0000A1Z5"
+                                   maxlength="15" style="text-transform:uppercase;"
+                                   oninput="this.value=this.value.toUpperCase()">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-address">Shop Address</label>
+                            <input type="text" id="reg-address" placeholder="Street / Area">
+                        </div>
+                    </div>
+
+                    <!-- Owner Details -->
+                    <div class="field-section-title">👤 Owner Details</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-owner-name">Owner Name *</label>
+                            <input type="text" id="reg-owner-name" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-phone">Phone Number *</label>
+                            <input type="tel" id="reg-phone" placeholder="10-digit number" required pattern="[0-9]{10}"
+                                maxlength="10">
+                        </div>
+                    </div>
+
+                    <!-- Account Details -->
+                    <div class="field-section-title">🔐 Account Credentials</div>
+
+                    <div class="form-group">
+                        <label for="reg-email">Email Address *</label>
+                        <input type="email" id="reg-email" placeholder="shopowner@email.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password *</label>
+                        <input type="password" id="reg-password" placeholder="Min. 6 characters" required minlength="6"
+                            autocomplete="new-password">
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="register-btn">
+                        <div class="spinner" id="register-spinner"></div>
+                        <span id="register-label">Register My Shop</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Dashboard (post-login) -->
+            <div class="dashboard-view" id="dashboard-view">
+                <div class="shop-avatar">🏪</div>
+                <div class="shop-name-display" id="dash-shop-name">Your Shop</div>
+                <div class="shop-email-display" id="dash-email">—</div>
+                <div class="info-pill">
+                    <div class="info-dot"></div>
+                    Logged in — session saved on this device
                 </div>
+                <br>
+                <button class="signout-btn" onclick="handleSignOut()">Sign Out</button>
+            </div>
+
+            <div class="notice" id="auth-notice">
+                By registering, you confirm this is a legitimate business account.
+            </div>
+        </div>
+    </div>
+
+    <!-- LEGAL FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <a href="#" class="footer-logo">Ratix</a>
+                <p class="footer-tagline">Making inventory automation fast, accurate, and completely paperless for retail shop owners worldwide.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#services-section" class="footer-link-item">Services</a></li>
+                    <li><a href="#pricing-section" class="footer-link-item">Pricing</a></li>
+                    <li><a href="#why-us-section" class="footer-link-item">Why Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul class="footer-links">
+                    <li><a onclick="openLegalModal('terms')" class="footer-link-item">Terms of Service</a></li>
+                    <li><a onclick="openLegalModal('privacy')" class="footer-link-item">Privacy Policy</a></li>
+                    <li><a onclick="openLegalModal('billing')" class="footer-link-item">Billing Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Contact</h4>
+                <ul class="footer-links">
+                    <li><span class="footer-link-item" style="cursor: default;">support@ratix.com</span></li>
+                    <li><span class="footer-link-item" style="cursor: default;">sales@ratix.com</span></li>
+                    <li><span class="footer-link-item" style="cursor: default;">1-800-RATIX-HELP</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2026 Ratix Inc. All rights reserved.</div>
+            <div>Designed for Retail Excellence.</div>
+        </div>
+    </footer>
+
+    <!-- LEGAL MODALS -->
+    <div class="legal-modal" id="legal-modal">
+        <div class="legal-modal-card">
+            <button class="legal-modal-close" onclick="closeLegalModal()">✕</button>
+            <h3 class="legal-modal-title" id="legal-modal-title">Terms & Conditions</h3>
+            <div class="legal-modal-content" id="legal-modal-content">
+                <!-- Dynamic text populated by JS -->
             </div>
         </div>
     </div>
@@ -818,6 +2036,255 @@
             document.getElementById('alert-error').classList.remove('on');
             document.getElementById('alert-success').classList.remove('on');
         }
+
+        // =====================================================
+        //  SERVICES SCROLLYTELLING HANDLER
+        // =====================================================
+        let currentServiceIndex = -1;
+        
+        function updateServicesScrollytelling() {
+            const servicesContainer = document.getElementById('services-section');
+            if (!servicesContainer) return;
+            
+            const rect = servicesContainer.getBoundingClientRect();
+            const containerHeight = rect.height;
+            const containerTop = rect.top;
+            
+            const startScroll = 80;
+            const scrolledVal = -containerTop + startScroll;
+            const trackHeight = containerHeight - window.innerHeight + startScroll;
+            
+            if (scrolledVal >= 0 && scrolledVal <= trackHeight) {
+                const progress = Math.min(Math.max(scrolledVal / trackHeight, 0), 1);
+                
+                const imgEl = document.getElementById('service-doodle-img');
+                const desc1 = document.getElementById('service-desc-1');
+                const desc2 = document.getElementById('service-desc-2');
+                const desc3 = document.getElementById('service-desc-3');
+                const desc4 = document.getElementById('service-desc-4');
+                
+                if (!imgEl || !desc1 || !desc2 || !desc3 || !desc4) return;
+                
+                let newIndex = 0;
+                if (progress < 0.25) {
+                    newIndex = 0;
+                } else if (progress >= 0.25 && progress < 0.5) {
+                    newIndex = 1;
+                } else if (progress >= 0.5 && progress < 0.75) {
+                    newIndex = 2;
+                } else {
+                    newIndex = 3;
+                }
+                
+                if (newIndex !== currentServiceIndex) {
+                    currentServiceIndex = newIndex;
+                    
+                    imgEl.style.opacity = '0';
+                    imgEl.style.transform = 'scale(0.97)';
+                    
+                    setTimeout(() => {
+                        const images = [
+                            './dealer_bill_scan.png',
+                            './stock_profit.png',
+                            './expiry_warnings.png',
+                            './quick_billing.png'
+                        ];
+                        imgEl.src = images[newIndex];
+                        
+                        const descs = [desc1, desc2, desc3, desc4];
+                        descs.forEach((d, idx) => {
+                            if (idx === newIndex) {
+                                d.classList.add('active');
+                            } else {
+                                d.classList.remove('active');
+                            }
+                        });
+                        imgEl.style.opacity = '1';
+                        imgEl.style.transform = 'scale(1)';
+                    }, 150);
+                }
+            }
+        }
+
+        // Scroll parallax and scrollytelling effect (Throttled with requestAnimationFrame for 60fps/120fps smoothness)
+        let ticking = false;
+
+        function updateScrollEffects() {
+            const scrollVal = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const nav = document.getElementById('top-nav');
+            
+            // Calculate scroll progress for the sticky hero section
+            const scrollRange = viewportHeight * 1.4;
+            let progress = scrollVal / scrollRange;
+            progress = Math.min(Math.max(progress, 0), 1);
+
+            const logo = document.getElementById('parallax-logo');
+            const motto = document.getElementById('parallax-motto');
+            const shops = document.getElementById('parallax-shops');
+            const indicator = document.getElementById('hero-scroll-indicator');
+
+            if (logo) {
+                // Phase 1: progress 0 to 0.5 (Logo rises and fades in)
+                const p1 = Math.min(progress / 0.5, 1);
+                logo.style.opacity = p1;
+                const logoY = 140 - p1 * 200; // Starts at 140px, goes to -60px
+                const logoScale = 0.9 + p1 * 0.1;
+                logo.style.transform = `translateY(${logoY}px) scale(${logoScale})`;
+            }
+
+            if (shops) {
+                // Shops translate downwards as progress goes from 0 to 0.6
+                const pShops = Math.min(progress / 0.6, 1);
+                const shopsY = pShops * 110; // Moves down by 110px
+                shops.style.transform = `translateX(-50%) translateY(${shopsY}px)`;
+            }
+
+            if (motto) {
+                // Phase 2: progress 0.45 to 0.9 (Motto slides up and fades in)
+                if (progress < 0.45) {
+                    motto.style.opacity = 0;
+                    motto.style.transform = `translateY(40px)`;
+                } else {
+                    const p2 = Math.min((progress - 0.45) / 0.45, 1);
+                    motto.style.opacity = p2;
+                    const mottoY = 40 - p2 * 40; // Starts at 40px, goes to 0px
+                    motto.style.transform = `translateY(${mottoY}px)`;
+                }
+            }
+
+            if (indicator) {
+                // Fade out indicator
+                const pInd = Math.max(1 - progress / 0.2, 0);
+                indicator.style.opacity = pInd;
+                if (pInd === 0) {
+                    indicator.style.pointerEvents = 'none';
+                } else {
+                    indicator.style.pointerEvents = 'auto';
+                }
+            }
+
+            // Show top navigation bar when scrolled past the storytelling hero section
+            if (nav) {
+                if (scrollVal > viewportHeight * 1.6) {
+                    nav.classList.add('visible');
+                } else {
+                    nav.classList.remove('visible');
+                }
+            }
+
+            updateServicesScrollytelling();
+
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(updateScrollEffects);
+                ticking = true;
+            }
+        });
+
+        // Scroll helper to take user to login/register form
+        function scrollToAuth(tab) {
+            switchTab(tab);
+            document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // =====================================================
+        //  Legal Modals Support
+        // =====================================================
+        const legalTexts = {
+            terms: `
+                <h5>1. Acceptance of Terms</h5>
+                <p>Welcome to Ratix. By creating an account, registering your shop, or using our inventory billing tools, you agree to follow and be bound by these Terms of Service. If you do not agree, please do not use the services.</p>
+                <h5>2. User Accounts and Verification</h5>
+                <p>To access certain features of the service, including Supabase database sync, cloud backup, and automated OCR invoice parsing, you must register for an account. You represent and warrant that all details provided are accurate and that you are a legitimate business entity.</p>
+                <h5>3. Prohibited Activities</h5>
+                <p>You agree not to modify, reverse-engineer, disrupt, or copy any system architecture, database schema, or client application files related to Ratix. Any attempt to abuse the OCR billing parser or exceed normal usage boundaries is strictly prohibited.</p>
+                <h5>4. Limitation of Liability</h5>
+                <p>Ratix is provided on an "as is" and "as available" basis. While we strive to ensure 100% data uptime via Supabase cloud architecture, we do not warrant that the service will be entirely error-free or uninterrupted. We are not liable for direct, indirect, or incidental business losses arising from system usage.</p>
+            `,
+            privacy: `
+                <h5>1. Information We Collect</h5>
+                <p>We collect basic email coordinates and password details for authentication, along with inventory logs, scanned dealer bill metadata, pricing sheets, and transaction logs. No customer credit card numbers are stored directly on our servers.</p>
+                <h5>2. How We Use Information</h5>
+                <p>We use the data to sync your inventory records between registers, maintain store account histories, process invoice scanning requests using OCR engines, and send notification updates when batches are close to expiration.</p>
+                <h5>3. Data Protection and Cloud Security</h5>
+                <p>All database records are authenticated and securely stored in Supabase with standard industry encryption at rest and in transit. Your records are private and will never be shared with or sold to third-party advertisers.</p>
+                <h5>4. Cookies and Local Storage</h5>
+                <p>We use standard local storage objects on your browser device to save active sessions so you do not have to sign in every time you open the application.</p>
+            `,
+            billing: `
+                <h5>1. Subscriptions and Cycles</h5>
+                <p>The Premium Growth plan is billed on a recurring monthly subscription cycle. Charges are processed automatically via secure billing providers on the same calendar day your upgrade started.</p>
+                <h5>2. Cancelation and Refund Policy</h5>
+                <p>You may cancel your recurring premium plan at any time through your dashboard settings. Upgraded benefits remain active until the end of the current paid month. All sales are final and non-refundable.</p>
+                <h5>3. Fair OCR Usage Agreement</h5>
+                <p>The Premium Plan includes unlimited scans subject to a Fair Use limit of 1000 parsed wholesale invoices per month. Accounts exceeding this volume will be contacted for custom Enterprise quotas.</p>
+            `
+        };
+
+        function openLegalModal(type) {
+            const modal = document.getElementById('legal-modal');
+            const titleEl = document.getElementById('legal-modal-title');
+            const contentEl = document.getElementById('legal-modal-content');
+            
+            const titles = {
+                terms: "Terms of Service",
+                privacy: "Privacy Policy",
+                billing: "Billing Agreement"
+            };
+
+            if (modal && titleEl && contentEl) {
+                titleEl.textContent = titles[type];
+                contentEl.innerHTML = legalTexts[type];
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden'; // Lock background scrolling
+            }
+        }
+
+        function closeLegalModal() {
+            const modal = document.getElementById('legal-modal');
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.style.overflow = ''; // Restore background scrolling
+            }
+        }
+
+        // Close modal when clicking outside the content card
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('legal-modal');
+            if (e.target === modal) {
+                closeLegalModal();
+            }
+        });
+
+        // =====================================================
+        //  Scroll Intersection Observer for Animations
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Find all elements to animate within this section
+                        const animElements = entry.target.querySelectorAll('.animate-on-scroll');
+                        animElements.forEach((el) => {
+                            el.classList.add('in-view');
+                        });
+                        // Unobserve after animating once
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15
+            });
+
+            // Observe all landing sections
+            document.querySelectorAll('.landing-section, .services-scroll-container, .auth-section').forEach((sec) => {
+                observer.observe(sec);
+            });
+        });
     </script>
 
 </body>
